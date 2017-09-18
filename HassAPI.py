@@ -98,7 +98,7 @@ class HassAPI():
                 self.HASS_result = self.server.createCluster(self.args.name, self.args.nodes.strip().split(",")).split(";")
             else:
                 result = self.server.createCluster(self.args.name, []).split(";")
-            print showResult(self.HASS_result)
+            print self.showResult(self.HASS_result)
 
         elif self.args.command == "cluster-delete":
             result = self.server.deleteCluster(args.uuid).split(";")
