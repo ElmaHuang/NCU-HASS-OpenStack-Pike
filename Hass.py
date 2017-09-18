@@ -153,7 +153,7 @@ class Hass (object):
     def getAllInfoOfNode(self, nodeName):
         result = ipmi_manager.getAllInfoOfNode(nodeName)
         if result["code"] == "0":
-            return result["code"], result["info"]
+            return result["code"]+";"+result["info"]
         else:
             return result["code"] + ";" + result["message"]
 
