@@ -11,9 +11,10 @@ class HassAPI():
         self.config.read('hass.conf')
         self.authUrl = "http://"+self.config.get("rpc", "rpc_username")+":"+self.config.get("rpc", "rpc_password")+"@127.0.0.1:"+self.config.get("rpc", "rpc_bind_port")
         self.server = xmlrpclib.ServerProxy(self.authUrl)
-
+        self.HASS_result = None
         # global variable for sensor get mapping
         self.sensor_mapping = {"Temp": self.generateTempTable, "Voltage": self.generateVoltageTable}
+        self.bcolors()
 
     def generateTempTable(self,result):
         self.result_Temp_Table = PrettyTable(["Sensor ID", "Device", "Value", "Lower Critical", "Upper Critical"])
@@ -34,9 +35,9 @@ class HassAPI():
 
     def showResult(self,result):
         if result[0] == '0':
-            return self.bcolors.OK_color + "[Success] " + self.bcolors.END_color + result[1]
+            return self.OK_color + "[Success] " + self.END_color + result[1]
         else:
-            return self.bcolors.ERROR_color + "[Error] " + self.bcolors.END_color + result[1]
+            return self.ERROR_color + "[Error] " + self.END_color + result[1]
 
     def Input_Command(self):
 
@@ -92,20 +93,19 @@ class HassAPI():
 
     def Input_Command_function(self):
         self.args = self.parser.parse_args()
-
-        if self.args.command is "cluster-create":
-            if self.args.nodes is not None:
+        if self.args.command == "cluster-create":
+            if self.args.nodes != None:
                 self.HASS_result = self.server.createCluster(self.args.name, self.args.nodes.strip().split(",")).split(";")
             else:
                 self.HASS_result = self.server.createCluster(self.args.name, []).split(";")
             #return createCluster_result["code"]+";"+createCluster_result["message"]
 
-        elif self.args.command is "cluster-delete":
+        elif self.args.command == "cluster-delete":
             self.HASS_result = self.server.deleteCluster(self.args.uuid).split(";")
             #return result["code"] + ";" + result["message"]
 
 
-        elif self.args.command is "cluster-list":
+        elif self.args.command == "cluster-list":
             self.HASS_result = self.server.listCluster()
 
             self.cluster_table = PrettyTable(['UUID', 'Name'])
@@ -113,50 +113,50 @@ class HassAPI():
                 self.cluster_table.add_row([uuid, name])
             print self.cluster_table
 
-        elif self.args.command is "node-add":
+        elif self.args.command == "node-add":
             self.HASS_result= self.server.addNode(self.args.uuid, self.args.nodes.strip().split(",")).split(";")
             #print showResult(result)
 
-        elif self.args.command is "node-delete":
+        elif self.args.command == "node-delete":
             self.HASS_result = self.server.deleteNode(self.args.uuid, self.args.node).split(";")
             #print showResult(result)
 
-        elif self.args.command is "node-list":
+        elif self.args.command == "node-list":
             self.HASS_result= self.server.listNode(self.args.uuid)
             #return result["code"]+";"+result["nodeList"]
 
-            if self.HASS_result.split(";")[0] is '0':
+            if self.HASS_result.split(";")[0] == '0':
                 print "Cluster uuid : " + self.args.uuid
                 self.node_table = PrettyTable(["Count", "Nodes of HA Cluster"])
                 self.node_counter = 0
                 for node in self.HASS_result.split(";")[1].split(","):
                     self.node_counter = self.node_counter + 1
 
-                    if node is not None:
+                    if node != None:
                         self.node_table.add_row([str(self.node_counter), node])
                 print self.node_table
             else:
                 print self.HASS_result
 
-        elif self.args.command is "node-start":
+        elif self.args.command == "node-start":
             self.HASS_result = self.server.startNode(self.args.node).split(";")
             #print showResult(result)
 
-        elif self.args.command is "node-shutOff":
+        elif self.args.command == "node-shutOff":
             self.HASS_result = self.server.shutOffNode(self.args.node).split(";")
             #print showResult(result)
 
-        elif self.args.command is "node-reboot":
+        elif self.args.command == "node-reboot":
             self.HASS_result = self.server.rebootNode(self.args.node).split(";")
             #print showResult(result)
 
-        elif self.args.command is "node-info-show":
+        elif self.args.command == "node-info-show":
             self.HASS_result = self.server.getAllInfoOfNode(self.args.node)
             #return result["code"]+";"+result["info"]
 
             self.temp_list = []
             self.volt_list = []
-            if self.HASS_result.split(";")[0] is '0':
+            if self.HASS_result.split(";")[0] == '0':
                 print 'Computing Node : ' + self.args.node
                 for sensor_value in self.HASS_result.split(";")[1]:
                     if "Temp" in sensor_value[0]:
@@ -170,12 +170,12 @@ class HassAPI():
             else:
                 print self.HASS_result
 
-        elif self.args.command is "node-info-get":
+        elif self.args.command == "node-info-get":
             self.type_list = self.args.types.strip().split(",")
             self.HASS_result = self.server.getNodeInfoByType(self.args.node, self.type_list)
             #return result["code"]+";"+result["info"]
 
-            if self.HASS_result.split(";")[0] is '0':
+            if self.HASS_result.split(";")[0] == '0':
                 print "Computing Node : " + self.args.node
                 for sensor_type, sensor_value_list in zip(self.type_list, self.HASS_result.split(";")[1]):
                     print "Sensor type : ", sensor_type
@@ -185,21 +185,21 @@ class HassAPI():
             else:
                 print self.HASS_result
 
-        elif self.args.command is "instance-add":
+        elif self.args.command == "instance-add":
             self.HASS_result = self.server.addInstance(self.args.uuid, self.args.vmid).split(";")
             #return result["code"]+";"+result["message"]
             #print showResult(result)
 
-        elif self.args.command is "instance-delete":
+        elif self.args.command == "instance-delete":
             self.HASS_result = self.server.deleteInstance(self.args.uuid, self.args.vmid).split(";")
             #return result["code"] + ";" + result["message"]
             #print showResult(result)
 
-        elif self.args.command is "instance-list":
+        elif self.args.command == "instance-list":
             self.HASS_result = self.server.listInstance(self.args.uuid)
             #return result["code"]+";"+result["instanceList"]
 
-            if self.HASS_result.split(";")[0] is '0':
+            if self.HASS_result.split(";")[0] == '0':
                 print "Cluster uuid : " + self.args.uuid
                 self.instance_table = PrettyTable(["Count", "Below Host", "Instance ID"])
                 self.instance_counter = 0
@@ -209,7 +209,7 @@ class HassAPI():
                     #instance[1] = Node Name
                     self.instance_counter += 1
 
-                    if vmInfo is not None:
+                    if vmInfo != None:
                         self.vm = vmInfo.split(":")
                         #instance of cluster = instanceID : instance node
                         self.instance_table.add_row([str(self.instance_counter), self.vm[0], self.vm[1]])

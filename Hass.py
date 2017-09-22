@@ -13,9 +13,8 @@ import logging
 import os
 import sys
 
-from Recovery import Recovery
-from Recovery import Cluster
-from IpmiModule import IPMIManager
+from ClusterManager import ClusterManager
+from IPMIModule import IPMIManager
 
 # Declare the configure file here. if you want to change configure file name, please modify : hass.conf.
 config = ConfigParser.RawConfigParser()
@@ -29,15 +28,16 @@ if not os.path.exists(dir):
     os.makedirs(dir)
 logging.basicConfig(filename=logFilename,level=log_level, format="%(asctime)s [%(levelname)s] : %(message)s")
 
-recovery = None
-if len(sys.argv) == 2:
-    print "System Test = ", sys.argv[1]
-    recovery = Recovery(system_test = sys.argv[1])
-else:
-# Declare Recovery class. You need to ensure that there is only one object. So I declare it as global variable.
-    recovery = Recovery()
+# recovery = None
+# if len(sys.argv) == 2:
+#     print "System Test = ", sys.argv[1]
+#     recovery = Recovery(system_test = sys.argv[1])
+# else:
+# # Declare Recovery class. You need to ensure that there is only one object. So I declare it as global variable.
+#     recovery = Recovery()
 
 ipmi_manager = IPMIManager()
+ClusterManager = ClusterManager()
 
 class RequestHandler(SimpleXMLRPCRequestHandler):
 #   Handle RPC request from remote user, and suport access authenticate. 
@@ -72,6 +72,7 @@ class RequestHandler(SimpleXMLRPCRequestHandler):
             config = ConfigParser.RawConfigParser()
             config.read('hass.conf')
             if username == config.get("rpc", "rpc_username") and password == config.get("rpc", "rpc_password"):                
+                print "Login"
                 return True
             else:
                 logging.info("Hass RequestHandler - Authentication failed, request from %s", self.clientip)
@@ -100,20 +101,20 @@ class Hass (object):
     #Unit tester call this function to get successful message if authenticate success.
         return "auth success"
         
-    def createCluster(self, name, nodeList=[], test=False):
-        createCluster_result = recovery.createCluster(name)
-        if createCluster_result["code"] == "0":
+    def createCluster(self, name, nodeList=[]):
+        result = ClusterManager.createCluster(name)
+        if result["code"] == "0":
             if nodeList != []:
-                addNode_result = recovery.addNode(createCluster_result["clusterId"], nodeList)
+                addNode_result = ClusterManager.addNode(result["clusterId"], nodeList)
             else :
-                addNode_result = {"code":0, "clusterId":createCluster_result["clusterId"], "message":"not add any node."}
+                addNode_result = {"code":0, "clusterId":result["clusterId"], "message":"not add any node."}
                     
             if addNode_result["code"] == "0":
-                return "0;Create HA cluster and add computing node success, cluster uuid is %s" % createCluster_result["clusterId"]
+                return "0;Create HA cluster and add computing node success, cluster uuid is %s , %s" % (result["clusterId"] , addNode_result["message"])
             else:
-                return "0;The cluster is created.(uuid = "+createCluster_result["clusterId"]+") But,"+ addNode_result["message"]
+                return "0;The cluster is created.(uuid = "+result["clusterId"]+") But,"+ addNode_result["message"]
         else:
-            return createCluster_result["code"]+";"+createCluster_result["message"]
+            return result["code"]+";"+result["message"]
 
     def deleteCluster(self, uuid, test=False):
         result = recovery.deleteCluster(uuid)
@@ -124,7 +125,7 @@ class Hass (object):
         return result
     
     def addNode(self, clusterId, nodeList, test=False):
-        result = recovery.addNode(clusterId, nodeList)               
+        result = ClusterManager.addNode(clusterId, nodeList)               
         return result["code"]+";"+result["message"]
 
     def deleteNode(self, clusterId, nodename, test=False):

@@ -12,8 +12,8 @@ class IPMIManager(object):
     def __init__(self):
         self.config = ConfigParser.RawConfigParser()
         self.config.read('hass.conf')
-        self.IPDict = dict(self.config._sections['ipmi'])
-        self.userDict = dict(self.config._sections['ipmi_user'])
+        self.ip_dict = dict(self.config._sections['ipmi'])
+        self.user_dict = dict(self.config._sections['ipmi_user'])
 
     def rebootNode(self, nodeID):
         code = ""
@@ -38,27 +38,27 @@ class IPMIManager(object):
             return result
 
     def startNode(self, nodeID):
-	    code = ""
-	    message = ""
+        code = ""
+        message = ""
         base = self._baseCMDGenerate(nodeID)
         if base is None:
             result = {"code" : 1}
             return result
         try:
             command = base + IPMIConf.STARTNODE
-	        response = subprocess.check_output(command, shell = True)
-	        if IPMIConf.STARTNODE_SUCCESS_MSG in response:
+            response = subprocess.check_output(command, shell = True)
+            if IPMIConf.STARTNODE_SUCCESS_MSG in response:
                 message = "The Computing Node %s is started." % nodeID
                 logging.info("IpmiModule startNode - The Computing Node %s is started." % nodeID)
                 code = "0"
-	    except Exception as e:
+        except Exception as e:
             message = "The Computing Node %s can not be started." % nodeID
             logging.error("IpmiModule startNode - %s" % e)
             code = "1"
-	    finally:
-	       result = {"code":code, "node":nodeID, "message":message}
-	       return result
-	
+        finally:
+            result = {"code":code, "node":nodeID, "message":message}
+            return result
+            
     def shutOffNode(self, nodeID):
         code = ""
         message = ""
@@ -142,7 +142,7 @@ class IPMIManager(object):
                         break
                     sensorData.append(info)
                 # data clean
-                sensorData = self.handleRawData(sensorData, sensorType, nodeID, self.ipmi_IP_dict[nodeID])
+                sensorData = self.handleRawData(sensorData, sensorType, nodeID, self.ip_dict[nodeID])
                 resultList.append(sensorData)
                 code = "0"
                 message = message + "Successfully get computing node : %s's %s information." % (nodeID, sensorType)
@@ -305,10 +305,10 @@ class IPMIManager(object):
         return status
 
     def _baseCMDGenerate(self, nodeID):
-        if nodeID in self.ipmi_user_dict:
-            user = self.ipmi_user_dict[nodeID].split(",")[0]
-            passwd = self.ipmi_user_dict[nodeID].split(",")[1]
-            cmd = IPMIConf.IPMI_BASE_CMD % (nodeID , user , passwd)
+        if nodeID in self.user_dict:
+            user = self.user_dict[nodeID].split(",")[0]
+            passwd = self.user_dict[nodeID].split(",")[1]
+            cmd = IPMIConf.IPMI_BASE_CMD % (self.ip_dict[nodeID] , user , passwd)
             return cmd
         else:
             return None
