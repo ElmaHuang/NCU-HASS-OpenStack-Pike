@@ -14,12 +14,12 @@ import paramiko
 import socket
 
 
-from Cluster import Cluster   # cluster data structure class
-from AccessDB import AccessDB
-from IpmiModule import IPMIManager
+from Cluster import Cluster   # cluster data structure pseudo
+from DatabaseManager import DatabaseManager
+from IPMIModule import IPMIManager
 ipmi_manager = IPMIManager()
 
-class Recovery (object):
+class RecoveryManager (object):
 
     def __init__ (self, system_test = False,  test=False):
         pass
