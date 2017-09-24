@@ -1,7 +1,7 @@
 sync from DB:
     Hass create Operator object
     Operator new ClusterManager and DetectionManager object
-    self.ThreadList of Operator
+    self.ThreadList of Operator.DeteManager
     Operator init() call syncFromDatabase()
         Operator.syncFromDatabase():
         DatabaseManager.syncFromDB(Operator)  //update clusterManager
