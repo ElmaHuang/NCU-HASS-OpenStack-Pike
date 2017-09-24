@@ -1,0 +1,93 @@
+sync from DB:
+    Hass create Operator object
+    Operator new ClusterManager and DetectionManager object
+    self.ThreadList of Operator
+    Operator init() call syncFromDatabase()
+        Operator.syncFromDatabase():
+        DatabaseManager.syncFromDB(Operator)  //update clusterManager
+
+        ***A.Operator.cluster.createCluster***************
+
+    1.DatabaseManager.syncFromDB(input :Operator)
+            Operator.clustermanager.reset() //clusterList = null
+            read cluster_name,cluster_uuid ,nodeList from database
+
+
+
+create cluster:
+
+    HassAPI.Inpute_Command_function
+    Hass.createCluster
+
+        ***B.Operator.cluster.createCluster**************1
+
+        if success:
+            return success message
+        else:
+            return fail message
+
+    1.Operator.createCluster(input: cluster name,cluster_uuid = None,nodeList=None)
+
+        call ClusterManager.createCluster(cluster name,cluster_uuid)*****2
+        if (create cluster success) and (nodeList is not null):
+                call ClusterManager.addNode(nodeList) #update nodeList*****3
+
+    2.Operator.UpdateThread(input: clustermanager)
+
+            call DetectionManager.updateThread(clustermanager.getClusterList)*******6
+
+
+    *2.ClusterManager.createCluster(input:cluster name,cluster_uuid)
+        //if name is overlap:
+            return fail
+
+        //create cluster
+            if cluster is exist(cluster uuid is not None)
+                //new a cluster object
+                clusterList[cluster_uuid]= cluster
+            else:
+                create cluster_uuid
+                clusterList[cluster_uuid]= cluster
+
+    *3.ClusterManager.addNode(input: cluster_uuid, nodeList)
+        //get cluster by cluster_uuid
+        Cluster.addNode********3.1
+
+
+    **3.1.Cluster.addNode(input:node_name_List)
+        self.nodeList
+        for node_name in nodeList
+            if (node is not exist) or (node already in nodeList) is False
+                //F and F = F
+                //T and F = F
+                //F and T = F
+
+                remove node from nodeList
+                continue
+
+            else: //T and T = T
+                node_object=Node(node_name,)
+                if writeDB is False
+                    continue
+
+                else
+                    write Data into DB
+
+    *6.DetectionManager.UpdateThread(input:ClusterList)
+        for cluster in ClusterList:
+            list=Cluster.getNodeList()***********4
+
+            if list:
+                DetectionManager.createPollingThread************5
+
+    *4.ClusterManager.getNodeList
+
+    **4.1.Cluster.getNodeList
+
+    *5.DetectionManager.createPollingThread(input: cluster_uuid_nodeList)
+        self.ThreadList=null
+        //len(ThreadList) <= # of node
+
+        create thread_uuid of node //node ID
+        thread={thread_ID, node_name,new thread,ipmi_status}
+        ThreadList.add(thread)
