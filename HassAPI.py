@@ -33,11 +33,7 @@ class HassAPI():
         self.ERROR_color = '\033[91m'
         self.END_color = '\033[0m'
 
-    def showResult(self,result):
-        if result[0] == '0':
-            return self.OK_color + "[Success] " + self.END_color + result[1]
-        else:
-            return self.ERROR_color + "[Error] " + self.END_color + result[1]
+
 
     def Input_Command(self):
 
@@ -99,11 +95,12 @@ class HassAPI():
             else:
                 self.HASS_result = self.server.createCluster(self.args.name, []).split(";")
             #return createCluster_result["code"]+";"+createCluster_result["message"]
+            print self.showResult(self.HASS_result)
 
         elif self.args.command == "cluster-delete":
             self.HASS_result = self.server.deleteCluster(self.args.uuid).split(";")
             #return result["code"] + ";" + result["message"]
-
+            print self.showResult(self.HASS_result)
 
         elif self.args.command == "cluster-list":
             self.HASS_result = self.server.listCluster()
@@ -115,11 +112,11 @@ class HassAPI():
 
         elif self.args.command == "node-add":
             self.HASS_result= self.server.addNode(self.args.uuid, self.args.nodes.strip().split(",")).split(";")
-            #print showResult(result)
+            print self.showResult(self.HASS_result)
 
         elif self.args.command == "node-delete":
             self.HASS_result = self.server.deleteNode(self.args.uuid, self.args.node).split(";")
-            #print showResult(result)
+            print self.showResult(self.HASS_result)
 
         elif self.args.command == "node-list":
             self.HASS_result= self.server.listNode(self.args.uuid)
@@ -140,15 +137,15 @@ class HassAPI():
 
         elif self.args.command == "node-start":
             self.HASS_result = self.server.startNode(self.args.node).split(";")
-            #print showResult(result)
+            print self.showResult(self.HASS_result)
 
         elif self.args.command == "node-shutOff":
             self.HASS_result = self.server.shutOffNode(self.args.node).split(";")
-            #print showResult(result)
+            print self.showResult(self.HASS_result)
 
         elif self.args.command == "node-reboot":
             self.HASS_result = self.server.rebootNode(self.args.node).split(";")
-            #print showResult(result)
+            print self.showResult(self.HASS_result)
 
         elif self.args.command == "node-info-show":
             self.HASS_result = self.server.getAllInfoOfNode(self.args.node)
@@ -188,12 +185,12 @@ class HassAPI():
         elif self.args.command == "instance-add":
             self.HASS_result = self.server.addInstance(self.args.uuid, self.args.vmid).split(";")
             #return result["code"]+";"+result["message"]
-            #print showResult(result)
+            print self.showResult(self.HASS_result)
 
         elif self.args.command == "instance-delete":
             self.HASS_result = self.server.deleteInstance(self.args.uuid, self.args.vmid).split(";")
             #return result["code"] + ";" + result["message"]
-            #print showResult(result)
+            print self.showResult(self.HASS_result)
 
         elif self.args.command == "instance-list":
             self.HASS_result = self.server.listInstance(self.args.uuid)
@@ -217,8 +214,11 @@ class HassAPI():
             else:
                 print self.HASS_result
 
-        print self.showResult(self.HASS_result)
-
+    def showResult(self,result):
+        if result[0] == '0':
+            return self.OK_color + "[Success] " + self.END_color + result[1]
+        else:
+            return self.ERROR_color + "[Error] " + self.END_color + result[1]
 
 def main():
     hassapi=HassAPI()
