@@ -2,7 +2,11 @@ import xmlrpclib
 import ConfigParser
 import argparse
 
+from enum import Enum
 from prettytable import PrettyTable
+
+def enum(**enums):
+    return type('Enum', (), enums)
 
 class HassAPI():
 
@@ -14,6 +18,7 @@ class HassAPI():
         self.HASS_result = None
         # global variable for sensor get mapping
         self.sensor_mapping = {"Temp": self.generateTempTable, "Voltage": self.generateVoltageTable}
+        self.TABLE = enum(CLUSTER='cluster', NODE='node', INSTANCE='instance')
         self.bcolors()
 
     def generateTempTable(self,result):
@@ -38,6 +43,26 @@ class HassAPI():
             return self.OK_color + "[Success] " + self.END_color + result[1]
         else:
             return self.ERROR_color + "[Error] " + self.END_color + result[1]
+
+    def showTable(self, result , type):
+        # cluster list info
+        if type == self.TABLE.CLUSTER:
+            self.cluster_table = PrettyTable(['UUID', 'Name'])
+            for (uuid, name) in self.HASS_result :
+                self.cluster_table.add_row([uuid, name])
+            print self.cluster_table
+        # node list info
+        elif type == self.TABLE.NODE:
+            self.node_table = PrettyTable(["id", "name","cluster_id"])
+            for id,name,cluster_id in self.HASS_result:
+                self.node_table.add_row([id,name,cluster_id])
+            print self.node_table
+        elif type == self.TABLE.INSTANCE:
+            self.instance_table = PrettyTable(["id", "name","host"])
+            for id,name,host in self.HASS_result:
+                self.instance_table.add_row([id,name,host])
+            print self.instance_table
+
 
     def Input_Command(self):
 
@@ -99,56 +124,44 @@ class HassAPI():
             else:
                 self.HASS_result = self.server.createCluster(self.args.name, []).split(";")
             #return createCluster_result["code"]+";"+createCluster_result["message"]
+            print self.showResult(self.HASS_result)
 
         elif self.args.command == "cluster-delete":
             self.HASS_result = self.server.deleteCluster(self.args.uuid).split(";")
             #return result["code"] + ";" + result["message"]
-
+            print self.showResult(self.HASS_result)
 
         elif self.args.command == "cluster-list":
             self.HASS_result = self.server.listCluster()
-
-            self.cluster_table = PrettyTable(['UUID', 'Name'])
-            for (uuid, name) in self.HASS_result :
-                self.cluster_table.add_row([uuid, name])
-            print self.cluster_table
+            self.showTable(self.HASS_result , self.TABLE.CLUSTER)
 
         elif self.args.command == "node-add":
             self.HASS_result= self.server.addNode(self.args.uuid, self.args.nodes.strip().split(",")).split(";")
-            #print showResult(result)
+            print self.showResult(self.HASS_result)
 
         elif self.args.command == "node-delete":
             self.HASS_result = self.server.deleteNode(self.args.uuid, self.args.node).split(";")
-            #print showResult(result)
+            print self.showResult(self.HASS_result)
 
         elif self.args.command == "node-list":
-            self.HASS_result= self.server.listNode(self.args.uuid)
-            #return result["code"]+";"+result["nodeList"]
-
-            if self.HASS_result.split(";")[0] == '0':
-                print "Cluster uuid : " + self.args.uuid
-                self.node_table = PrettyTable(["Count", "Nodes of HA Cluster"])
-                self.node_counter = 0
-                for node in self.HASS_result.split(";")[1].split(","):
-                    self.node_counter = self.node_counter + 1
-
-                    if node != None:
-                        self.node_table.add_row([str(self.node_counter), node])
-                print self.node_table
-            else:
-                print self.HASS_result
+            try:
+                self.HASS_result= self.server.listNode(self.args.uuid)
+            except Exception as e:
+                print self.ERROR_color + "[Error] " + self.END_color + str(e)
+                return
+            self.showTable(self.HASS_result, self.TABLE.NODE)
 
         elif self.args.command == "node-start":
             self.HASS_result = self.server.startNode(self.args.node).split(";")
-            #print showResult(result)
+            print self.showResult(self.HASS_result)
 
         elif self.args.command == "node-shutOff":
             self.HASS_result = self.server.shutOffNode(self.args.node).split(";")
-            #print showResult(result)
+            print self.showResult(self.HASS_result)
 
         elif self.args.command == "node-reboot":
             self.HASS_result = self.server.rebootNode(self.args.node).split(";")
-            #print showResult(result)
+            print self.showResult(self.HASS_result)
 
         elif self.args.command == "node-info-show":
             self.HASS_result = self.server.getAllInfoOfNode(self.args.node)
@@ -186,38 +199,28 @@ class HassAPI():
                 print self.HASS_result
 
         elif self.args.command == "instance-add":
-            self.HASS_result = self.server.addInstance(self.args.uuid, self.args.vmid).split(";")
-            #return result["code"]+";"+result["message"]
-            #print showResult(result)
+            try:
+                self.HASS_result = self.server.addInstance(self.args.uuid, self.args.vmid).split(";")
+            except Exception as e:
+                print self.ERROR_color + "[Error] " + self.END_color + str(e)
+                return
+            print self.showResult(self.HASS_result)
 
         elif self.args.command == "instance-delete":
             self.HASS_result = self.server.deleteInstance(self.args.uuid, self.args.vmid).split(";")
             #return result["code"] + ";" + result["message"]
-            #print showResult(result)
+            print self.showResult(self.HASS_result)
 
         elif self.args.command == "instance-list":
-            self.HASS_result = self.server.listInstance(self.args.uuid)
+            try:
+                self.HASS_result = self.server.listInstance(self.args.uuid)
+            except Exception as e:
+                print self.ERROR_color + "[Error] " + self.END_color + str(e)
+                return
             #return result["code"]+";"+result["instanceList"]
+            self.showTable(self.HASS_result, self.TABLE.INSTANCE)
 
-            if self.HASS_result.split(";")[0] == '0':
-                print "Cluster uuid : " + self.args.uuid
-                self.instance_table = PrettyTable(["Count", "Below Host", "Instance ID"])
-                self.instance_counter = 0
-                for vmInfo in self.HASS_result.split(";")[1].split(","):
-                    #vmInfo:
-                    #instance[0] = instanceID
-                    #instance[1] = Node Name
-                    self.instance_counter += 1
-
-                    if vmInfo != None:
-                        self.vm = vmInfo.split(":")
-                        #instance of cluster = instanceID : instance node
-                        self.instance_table.add_row([str(self.instance_counter), self.vm[0], self.vm[1]])
-                print self.instance_table
-            else:
-                print self.HASS_result
-
-        print self.showResult(self.HASS_result)
+        #print self.showResult(self.HASS_result)
 
 
 def main():

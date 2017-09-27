@@ -51,22 +51,23 @@ class DatabaseManager(object):
             logging.error("Hass AccessDB - Create Table failed (MySQL Error: %s)", str(e))
             print "MySQL Error: %s" % str(e)
             sys.exit(1)
-    def syncFromDB(self , cluster_manager):
+
+    def syncFromDB(self, cluster_manager):
         cluster_manager.reset()
         try:
             self.db.execute("SELECT * FROM ha_cluster;")
             ha_cluster_date = self.db.fetchall()
             for cluster in ha_cluster_date:
-                print cluster
                 node_list = []
                 self.db.execute("SELECT * FROM ha_node WHERE below_cluster = '%s'" % cluster["cluster_uuid"])
                 ha_node_date = self.db.fetchall()
                 for node in ha_node_date:
                     node_list.append(node["node_name"])
-                cluster_id = cluster["cluster_uuid"][:8]+"-"+cluster["cluster_uuid"][8:12]+"-"+cluster["cluster_uuid"][12:16]+"-"+cluster["cluster_uuid"][16:20]+"-"+cluster["cluster_uuid"][20:]
+                #cluster_id = cluster["cluster_uuid"][:8]+"-"+cluster["cluster_uuid"][8:12]+"-"+cluster["cluster_uuid"][12:16]+"-"+cluster["cluster_uuid"][16:20]+"-"+cluster["cluster_uuid"][20:]
+                cluster_id = cluster["cluster_uuid"]
                 name = cluster["cluster_name"]
                 cluster_manager.createCluster(cluster_name = name , cluster_id = cluster_id)
-                cluster_manager.addNode(cluster_id, node_list, write_DB=False)
+                cluster_manager.addNode(cluster_id, node_list)
                 
         except MySQLdb.Error, e:
             self.closeDB()
@@ -75,9 +76,8 @@ class DatabaseManager(object):
             sys.exit(1)
 
 
-    def syncToDB(self , cluster_manager):
-        self.resetTable("ha_cluster") # foreign key has reference to ha_node , must reset ha_cluster first
-        self.resetTable("ha_node")
+    def syncToDB(self, cluster_manager):
+        self.resetAll()
         try:
             cluster_list = cluster_manager.getClusterList()
             for cluster_id , cluster in cluster_list.items():
@@ -107,7 +107,23 @@ class DatabaseManager(object):
             logging.error("Hass AccessDB - write data to DB Failed (MySQL Error: %s)", str(e))
             print "MySQL Error: %s" % str(e)
             raise
-    def resetTable(self , table_name):
+
+    def _getAllTable(self):
+        table_list = []
+        cmd = "show tables"
+        self.db.execute(cmd)
+        res = self.db.fetchall() #({'Tables_in_hass': 'talbe1'}, {'Tables_in_hass': 'table2'})
+
+        for table in res:
+            table_list.append(table["Tables_in_hass"])
+        return table_list
+
+    def resetAll(self):
+        table_list = self._getAllTable()
+        for table in table_list:
+            self._resetTable(table)
+
+    def _resetTable(self, table_name):
         cmd = " DELETE FROM  `%s` WHERE true" % table_name
         self.db.execute(cmd)
         self.db_conn.commit()
@@ -120,4 +136,4 @@ class DatabaseManager(object):
 
 if __name__ == "__main__":
     a = DatabaseManager()
-    a.syncToDB()
+    print a.resetAll()

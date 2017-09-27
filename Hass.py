@@ -37,7 +37,7 @@ logging.basicConfig(filename=logFilename,level=log_level, format="%(asctime)s [%
 #     recovery = Recovery()
 
 ipmi_manager = IPMIManager()
-ClusterManager = ClusterManager()
+ClusterManager.init()
 
 class RequestHandler(SimpleXMLRPCRequestHandler):
 #   Handle RPC request from remote user, and suport access authenticate. 
@@ -117,27 +117,24 @@ class Hass (object):
             return result["code"]+";"+result["message"]
 
     def deleteCluster(self, uuid, test=False):
-        result = recovery.deleteCluster(uuid)
+        result = ClusterManager.deleteCluster(uuid)
         return result["code"]+";"+result["message"]
     
     def listCluster(self):
-        result = recovery.listCluster()
+        result = ClusterManager.listCluster()
         return result
     
     def addNode(self, clusterId, nodeList, test=False):
         result = ClusterManager.addNode(clusterId, nodeList)               
         return result["code"]+";"+result["message"]
 
-    def deleteNode(self, clusterId, nodename, test=False):
-        result = recovery.deleteNode(clusterId, nodename)
+    def deleteNode(self, cluster_id, node_id, test=False):
+        result = ClusterManager.deleteNode(cluster_id, node_id)
         return result["code"]+";"+result["message"]
         
     def listNode(self, clusterId) :
-        result = recovery.listNode(clusterId)
-        if result["code"]== "0":
-            return result["code"]+";"+result["nodeList"]
-        else:
-            return result["code"]+";"+result["message"]
+        result = ClusterManager.listNode(clusterId)
+        return result
             
     def startNode(self, nodeName):
         result = ipmi_manager.startNode(nodeName)
@@ -166,19 +163,17 @@ class Hass (object):
             return result["code"] + ";" + result["message"]
 
     def addInstance(self, clusterId, instanceId):
-        result = recovery.addInstance(clusterId, instanceId)
-        return result["code"]+";"+result["message"]
-    
+        result = ClusterManager.addInstance(clusterId, instanceId)
+        return result["code"] + ";" + result["message"]
+
     def deleteInstance(self, clusterId, instanceId):
-        result = recovery.deleteInstance(clusterId, instanceId)
+        result = ClusterManager.deleteInstance(clusterId, instanceId)
+        print 123123
         return result["code"]+";"+result["message"]
     
     def listInstance(self, clusterId) :
-        result = recovery.listInstance(clusterId)
-        if result["code"]== "0":
-            return result["code"]+";"+result["instanceList"]
-        else:
-            return result["code"]+";"+result["message"]
+        result = ClusterManager.listInstance(clusterId)
+        return result
             
     def recoveryVM(self, clusterId, nodeName):
         result = recovery.recoveryVM(clusterId, nodeName)

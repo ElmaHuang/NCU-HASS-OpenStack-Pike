@@ -1,17 +1,12 @@
+from ClusterInterface import ClusterInterface
 from DetectionManager import DetectionManager
-from NovaClient import NovaClient
-from DatabaseManager import DatabaseManager
 from Node import Node
 import uuid
 import logging
 
-class Cluster(object):
-	def __init__(self , uuid , name):
-		self.uuid = uuid
-		self.name = name
-		self.node_list = []
-		self.nova_client = NovaClient.getInstance()
-		self.db = DatabaseManager()
+class Cluster(ClusterInterface):
+	def __init__(self , id , name):
+		super(Cluster, self).__init__(id, name)
 
 	def addNode(self , node_name_list , write_DB = True):
 		code = ""
@@ -19,15 +14,15 @@ class Cluster(object):
 		# create node list
 		tmp = []
 		for node_name in node_name_list:
-			node_id = str(uuid.uuid4())
-			node = Node(node_id = node_id , name = node_name , cluster_id = self.uuid)
+			id = str(uuid.uuid4())
+			node = Node(id = id , name = node_name , cluster_id = self.id)
 			tmp.append(node)
 		# check node is illegal
 		if not self._nodeIsIllegal(tmp):
 			code = "1"
 			message = "Cluster add node fail , maybe overlapping or not in compute pool please check again!"
 			logging.info("Cluster add node fail , maybe overlapping or not in compute pool please check again!")
-			result = {"code":code, "clusterId":self.uuid, "message":message}
+			result = {"code":code, "clusterId":self.id, "message":message}
 			return result
 		# add node
 		for node in tmp:
@@ -36,36 +31,38 @@ class Cluster(object):
 			if not write_DB:
 				message += node.name + " sync from DB \n"
 				continue
-			# start write to DB
-			try:
-				db_uuid = self.uuid.replace("-","")
-				data = {"node_name": node.name,"below_cluster":db_uuid}
-				self.db.writeDB("ha_node" , data)
-				code = "0"
-				message = "The node %s is added to cluster." % self.getAllNodeStr()
-			except Exception as e:
-				print str(e)
-				logging.error("Cluster addnode - Access database failed.")
-				code = "1"
-				message = "Access database failed."
-		result = {"code":code, "clusterId":self.uuid, "message":message}
+		code = "0"
+		message = "The node %s is added to cluster." % self.getAllNodeStr()
+		result = {"code":code, "clusterId":self.id, "message":message}
 		return result
 
-	def _nodeIsIllegal(self , unchecked_nodes):
-		for unchecked_node in unchecked_nodes:
-			if not ( unchecked_node.isInComputePool() and # check node is in compute pool
-					 self._isNodeDuplicate(unchecked_node) ): # check node is duplicate
-				return False
-		return True
+	def findNodeByInstance(self, instance_id):
+		for node in self.node_list:
+			if node.containsInstance(instance_id):
+				return node
+		return None
 
 	def _isNodeDuplicate(self , unchecked_node):
 		for node in self.node_list:
 			if node.name == unchecked_node.name:
+				return True
+		return False
+
+	def _nodeIsIllegal(self , unchecked_nodes):
+		for unchecked_node in unchecked_nodes:
+			if not unchecked_node.isInComputePool() or self._isNodeDuplicate(unchecked_node) : # check node is duplicate
 				return False
 		return True
 
 	def getNodeList(self):
 		return self.node_list
+
+	def getNode(self , node_id):
+		node_list = self.getNodeList()
+		for node in node_list:
+			if node.id == node_id:
+				return node
+		return None
 
 	def getAllNodeStr(self):
 		ret = ""
@@ -73,6 +70,48 @@ class Cluster(object):
 			ret += node.name
 		return ret
 
-	def removeNode():
-		pass
+	def deleteNode(self , node_id):
+		node = self.getNode(node_id)
+		if not node:
+			raise Exception("Delete node : Not found the node %s" % node_id)
+		#node.deleteDetectionThread()
+		self.node_list.remove(node)
+
+	def deleteAllNode(self):
+		for node in self.node_list:
+			self.deleteNode(node.id)
+
+	def getInfo(self):
+		return [self.id, self.name]
+
+	def getAllNodeInfo(self):
+		ret = []
+		for node in self.node_list:
+			ret.append(node.getInfo())
+		return ret
+
+	def getProtectedInstanceList(self):
+		ret = []
+		node_list = self.getNodeList()
+		for node in node_list:
+			instance_list = node.getProtectedInstanceList()
+			for instance in instance_list:
+				ret.append(instance)
+		return ret
+
+	def getAllInstanceInfo(self):
+		ret = []
+		instance_list = self.getProtectedInstanceList()
+		for instance in instance_list:
+			ret.append(instance.getInfo())
+		return ret
+
+	def checkInstanceExist(self, instance_id):
+		node_list = self.getNodeList()
+		print node_list
+		for node in node_list:
+			if node.containsInstance(instance_id):
+				return True
+		return False
+
 
