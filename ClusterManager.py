@@ -6,7 +6,7 @@ import logging
 class ClusterManager():
 	_cluster_list = None
 	_db = None
-	_RESET_DB = True
+	_RESET_DB = False
 
 	@staticmethod
 	def init():
