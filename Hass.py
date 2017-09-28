@@ -149,11 +149,8 @@ class Hass (object):
         return result["code"] + ";" + result["message"]
 
     def getAllInfoOfNode(self, nodeName):
-        result = ipmi_manager.getAllInfoOfNode(nodeName)
-        if result["code"] == "0":
-            return result["code"]+";"+result["info"]
-        else:
-            return result["code"] + ";" + result["message"]
+        result = ipmi_manager.getTempInfoByNode(nodeName)
+        return result["code"], result["info"]
 
     def getNodeInfoByType(self, nodeName, sensorType):
         result = ipmi_manager.getNodeInfoByType(nodeName, sensorType)
@@ -168,7 +165,6 @@ class Hass (object):
 
     def deleteInstance(self, clusterId, instanceId):
         result = ClusterManager.deleteInstance(clusterId, instanceId)
-        print 123123
         return result["code"]+";"+result["message"]
     
     def listInstance(self, clusterId) :

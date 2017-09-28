@@ -23,8 +23,7 @@ class HassAPI():
 
     def generateTempTable(self,result):
         self.result_Temp_Table = PrettyTable(["Sensor ID", "Device", "Value", "Lower Critical", "Upper Critical"])
-        for Temp_sensor_value in result:
-            self.result_Temp_Table.add_row(Temp_sensor_value)
+        self.result_Temp_Table.add_row(result)
         return self.result_Temp_Table
 
     def generateVoltageTable(self,result):
@@ -147,41 +146,37 @@ class HassAPI():
             try:
                 self.HASS_result= self.server.listNode(self.args.uuid)
             except Exception as e:
-                print self.ERROR_color + "[Error] " + self.END_color + str(e)
-                return
+               print self.ERROR_color + "[Error] " + self.END_color + str(e)
+               return
             self.showTable(self.HASS_result, self.TABLE.NODE)
 
         elif self.args.command == "node-start":
-            self.HASS_result = self.server.startNode(self.args.node).split(";")
-            print self.showResult(self.HASS_result)
+            try:
+                self.HASS_result = self.server.startNode(self.args.node).split(";")
+                print self.showResult(self.HASS_result)
+            except Exception as e:
+                print self.ERROR_color + "[Error] " + self.END_color + str(e)
 
         elif self.args.command == "node-shutOff":
-            self.HASS_result = self.server.shutOffNode(self.args.node).split(";")
-            print self.showResult(self.HASS_result)
+            try:
+                self.HASS_result = self.server.shutOffNode(self.args.node).split(";")
+                print self.showResult(self.HASS_result)
+            except Exception as e:
+                print self.ERROR_color + "[Error] " + self.END_color + str(e)
 
         elif self.args.command == "node-reboot":
-            self.HASS_result = self.server.rebootNode(self.args.node).split(";")
-            print self.showResult(self.HASS_result)
+            try:
+                self.HASS_result = self.server.rebootNode(self.args.node).split(";")
+                print self.showResult(self.HASS_result)
+            except Exception as e:
+                print self.ERROR_color + "[Error] " + self.END_color + str(e)
 
         elif self.args.command == "node-info-show":
-            self.HASS_result = self.server.getAllInfoOfNode(self.args.node)
-            #return result["code"]+";"+result["info"]
-
-            self.temp_list = []
-            self.volt_list = []
-            if self.HASS_result.split(";")[0] == '0':
-                print 'Computing Node : ' + self.args.node
-                for sensor_value in self.HASS_result.split(";")[1]:
-                    if "Temp" in sensor_value[0]:
-                        self.temp_list.append(sensor_value)
-                    else:
-                        self.volt_list.append(sensor_value)
-                print "Sensor type : Temperature"
-                print self.generateTempTable(self.temp_list)
-                print "Sensor type : Voltage"
-                print self.generateVoltageTable(self.volt_list)
-            else:
-                print self.HASS_result
+            try:
+                code , result = self.server.getAllInfoOfNode(self.args.node)
+                print self.generateTempTable(result)
+            except Exception as e:
+                print self.ERROR_color + "[Error] " + self.END_color + str(e)
 
         elif self.args.command == "node-info-get":
             self.type_list = self.args.types.strip().split(",")

@@ -181,17 +181,15 @@ class PollingThread(threading.Thread):
 
             #check sensor status
             if self.ipmi_status:
-                sensor_status, critical_temp_sensor, critical_volt_sensor = ipmi_manager.checkSensorStatus(self.node)
-                if sensor_status == "OK":
+                sensor_status, message = ipmi_manager.checkSensorStatus(self.node)
+                if sensor_status == True:
                     self.state_list[4] = 0
                     #print "sensor ok"
-                elif sensor_status == "Error":
+                elif sensor_status == False:
                     print "[ %s ] 's sensors value exceed threshold" % self.node
                     self.state_list[4] = self.state_list[4] + 1
                     if critical_temp_sensor:
-                        self.print_critical_sensor(critical_temp_sensor, "temperature")
-                    if critical_volt_sensor:
-                        self.print_critical_sensor(critical_volt_sensor, "voltage")
+                       print message
                     logging.error("DetectionManager PollingThread - The %s's sensors value exceed threshold." % self.node)
                     #sensor failed
                 else:

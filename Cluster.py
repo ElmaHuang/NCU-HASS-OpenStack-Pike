@@ -11,6 +11,7 @@ class Cluster(ClusterInterface):
 	def addNode(self , node_name_list , write_DB = True):
 		code = ""
 		message = ""
+		fail = False
 		# create node list
 		tmp = []
 		for node_name in node_name_list:
@@ -18,23 +19,31 @@ class Cluster(ClusterInterface):
 			node = Node(id = id , name = node_name , cluster_id = self.id)
 			tmp.append(node)
 		# check node is illegal
-		if not self._nodeIsIllegal(tmp):
-			code = "1"
-			message = "Cluster add node fail , maybe overlapping or not in compute pool please check again!"
-			logging.info("Cluster add node fail , maybe overlapping or not in compute pool please check again!")
-			result = {"code":code, "clusterId":self.id, "message":message}
-			return result
+
+		correct_node = []
+		for unchecked_node in tmp:
+			if self._nodeIsIllegal(unchecked_node):
+				correct_node.append(unchecked_node)
+			else:
+				fail = True
 		# add node
-		for node in tmp:
+		for node in correct_node:
 			self.node_list.append(node)
 			#node.startDetection()
 			if not write_DB:
 				message += node.name + " sync from DB \n"
 				continue
-		code = "0"
-		message = "The node %s is added to cluster." % self.getAllNodeStr()
-		result = {"code":code, "clusterId":self.id, "message":message}
-		return result
+		if fail:
+			code = "1"
+			message = "Cluster add node fail , some node maybe overlapping or not in compute pool please check again! The node list is %s." % (self.getAllNodeStr()+",")
+			logging.info("Cluster add node fail , maybe overlapping or not in compute pool please check again!")
+			result = {"code":code, "clusterId":self.id, "message":message}
+			return result
+		else:
+			code = "0"
+			message = "The node %s is added to cluster." % self.getAllNodeStr()
+			result = {"code":code, "clusterId":self.id, "message":message}
+			return result
 
 	def findNodeByInstance(self, instance_id):
 		for node in self.node_list:
@@ -48,10 +57,11 @@ class Cluster(ClusterInterface):
 				return True
 		return False
 
-	def _nodeIsIllegal(self , unchecked_nodes):
-		for unchecked_node in unchecked_nodes:
-			if not unchecked_node.isInComputePool() or self._isNodeDuplicate(unchecked_node) : # check node is duplicate
-				return False
+	def _nodeIsIllegal(self , unchecked_node):
+		if not unchecked_node.isInComputePool():
+			return False
+		if self._isNodeDuplicate(unchecked_node):
+			return False
 		return True
 
 	def getNodeList(self):
