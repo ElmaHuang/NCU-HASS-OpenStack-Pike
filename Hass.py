@@ -150,7 +150,7 @@ class Hass (object):
 
     def getAllInfoOfNode(self, nodeName):
         result = ipmi_manager.getTempInfoByNode(nodeName)
-        return result["code"], result["info"]
+        return result["code"] + ";" + result["info"]
 
     def getNodeInfoByType(self, nodeName, sensorType):
         result = ipmi_manager.getNodeInfoByType(nodeName, sensorType)

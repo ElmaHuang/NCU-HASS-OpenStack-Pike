@@ -93,7 +93,7 @@ class IPMIManager(object):
             p = subprocess.Popen(command, stdout = subprocess.PIPE, stderr = subprocess.PIPE, shell=True)
             response, err = p.communicate()
             response = response.split("\n")
-            dataList = self._tempDataClean(response)
+            dataList = self._dataClean(response , "temperature")
             code = "0"
             message = "Successfully get computing node : %s's hardware information." % node_id
             logging.info("IpmiModule getNodeInfo - " + message)
@@ -146,7 +146,59 @@ class IPMIManager(object):
     #             result.append(cleanData)
     #     return result
 
+    # def getNodeInfoByType(self, node_id, sensor_type_list):
+    #     base = self._baseCMDGenerate(node_id)
+    #     if base is None:
+    #         raise Exception("node not found , node_name : %s" % node_id)
+    #     try:
+    #         for sensor_type in sensor_type_list:
+    #             command = base + NODEINFO_BY_TYPE % sensor_type
+    #             p = subprocess.Popen(command, stdout = subprocess.PIPE, stderr = subprocess.PIPE, shell=True)
+    #             response, err = p.communicate()
+    #             response = response.split("\n")
+    #             dataList = self._dataClean(response, sensor_type)
+    #             code = "0"
+    #             message = "Successfully get computing node : %s's hardware information." % node_id
+    #             logging.info("IpmiModule getNodeInfo - " + message)
+    #     except Exception as e:
+    #         code = "1"
+    #         message = "Error! Unable to get computing node : %s's hardware information." % node_id
+    #         logging.error("IpmiModule getNodeInfo - " + err)
+    #     finally:
+    #         result = {"code" : code, "info" : dataList, "message" : message}
+    #         return result
+
+
+    def dataClean(self, raw_data, type=None):
+        if type == "temperature":
+            return _tempDataClean(raw_data)
+
+        sensor_id = raw_data[1].split(":")[1].strip()
+        device = raw_data[2].split(":")[1].strip()
+        sensor_type = raw_data[3].split(":")[1].strip()
+        value = raw_data[4].split(":")[1].strip()
+        status = raw_data[5].split(":")[1].strip()
+        return [sensor_id, device, sensor_type, value, status]
+
     def _tempDataClean(self , raw_data):
+
+        # data format:
+        # Locating sensor record...
+        # Sensor ID              : 02-CPU 1 (0x4)
+        # Entity ID             : 65.1 (Processor)
+        # Sensor Type (Threshold)  : Temperature (0x01)
+        # Sensor Reading        : 40 (+/- 0) degrees C
+        # Status                : ok
+        # Positive Hysteresis   : Unspecified
+        # Negative Hysteresis   : Unspecified
+        # Minimum sensor range  : 110.000
+        # Maximum sensor range  : Unspecified
+        # Event Message Control : Global Disable Only
+        # Readable Thresholds   : ucr 
+        # Settable Thresholds   : 
+        # Threshold Read Mask   : ucr 
+        # Assertions Enabled    : ucr+ 
+
         sensor_id = raw_data[1].split(":")[1].strip()
         device = raw_data[2].split(":")[1].strip()
         value = raw_data[4].split(":")[1]
@@ -155,78 +207,33 @@ class IPMIManager(object):
         upper_critical = self.TEMP_UPPER_CRITICAL
         return [sensor_id, device, value, lower_critical, upper_critical]
 
-
-    def getNodeInfoByType(self, nodeID, sensorTypeList):
+    def getNodeInfoByType(self, node_id, sensor_type_list):
         code = ""
         message = ""
-        resultList = []
-        base = self._baseCMDGenerate(nodeID)
+        result_list = []
+        base = self._baseCMDGenerate(node_id)
         if base is None:
-            result = {"code" : 1}
-            return result
-        for sensorType in sensorTypeList:
-            sensorData = []
-            command = base + IPMIConf.NODEINFO_BY_TYPE % sensorType
+            raise Exception("node not found , node_name : %s" % node_id)
+        for sensor_type in sensor_type_list:
+            command = base + IPMIConf.NODEINFO_BY_TYPE % sensor_type
+            print command
             try:
                 p = subprocess.Popen(command, stdout = subprocess.PIPE, stderr = subprocess.PIPE, shell=True)
-                response = p.wait()
-                if response != 0: # check subprocess's status
-                    raise Exception("Error! The subprocess's command is invalid")
-	        while True:
-	    	    info = p.stdout.readline()
-                    if not info:
-                        break
-                    sensorData.append(info)
+                response, err = p.communicate()
+                response = response.split("\n")
                 # data clean
-                sensorData = self.handleRawData(sensorData, sensorType, nodeID, self.ip_dict[nodeID])
-                resultList.append(sensorData)
+                sensor_data = self.dataClean(response)
+                result_list.append(sensor_data)
                 code = "0"
-                message = message + "Successfully get computing node : %s's %s information." % (nodeID, sensorType)
+                message = message + "Successfully get computing node : %s's %s information." % (node_id, sensor_type_list)
                 logging.info("IpmiModule getNodeInfo - " + message)
-	    except Exception as e:
-                message = message + "Error! Unable to get computing node : %s's %s information." % (nodeID, sensorType)
+            except Exception as e:
+                message = message + "Error! Unable to get computing node : %s's %s information." % (node_id, sensor_type_list)
                 logging.error("IpmiModule getNodeInfo - %s" % e)
                 code = "1"
                 break
-        
+        print result_list
         result = {"code":code, "info":result_list, "message":message}
-        return result
-
-    def handleRawData(self, rawDataList, sensorType, nodeID, nodeIP):
-        result = []
-        base = self._baseCMDGenerate(nodeID)
-        if base is None:
-            result = {"code" : 1}
-            return result
-        for rawData in rawDataList:
-            cleanData = [] # to store the data which want to show to user
-            # example of rawData: Temp             | 0Eh | ok  |  3.1 | 45 degrees C
-            # we wnat to get "Temp"
-            sensorID = rawData.split("|")[0].split("  ")[0]  # get sensor ID by rawData
-            cleanData.append(sensorID)
-            command = base + IPMIConf.RAW_DATA % sensorID
-	    try:
-	        p = subprocess.Popen(command, stdout = subprocess.PIPE , stderr = subprocess.PIPE, shell=True)
-                response = p.wait()
-                if response != 0: # check subprocess's status
-                    raise Exception("Error! The subprocess's command is invalid")
-                    #raise subprocess.CalledProcessError response, command)
-                while True:
-                    info = p.stdout.readline()
-                    if not info:
-                        break
-                    if 'Sensor Reading' in info or 'Upper critical' in info or 'Lower critical' in info:
-                        # use regular expression to find actual data
-                        value = re.findall("[0-9\.]+", info)[0]
-                        cleanData.append(value)
-                    if 'Entity ID' in info:
-                        # example data: "Entity ID             : 7.1 (System Board) "
-                        # actual need: "System Board"
-                        entityID = info.split("(")[-1][:-2]
-                        cleanData.append(entityID)
-                result.append(cleanData)
-            except Exception as e:
-                logging.error("IpmiModule handleRawData - %s" % e)
         return result
 
     def checkOSstatus(self, nodeID):
@@ -370,4 +377,4 @@ class IPMIManager(object):
 
 if __name__ == "__main__":
     i = IPMIManager()
-    print i.checkPowerStatus("compute1")
+    print i.getNodeInfoByType("compute1",["01-Inlet Ambient","02-CPU 1"])

@@ -17,20 +17,25 @@ class HassAPI():
         self.server = xmlrpclib.ServerProxy(self.authUrl)
         self.HASS_result = None
         # global variable for sensor get mapping
-        self.sensor_mapping = {"Temp": self.generateTempTable, "Voltage": self.generateVoltageTable}
         self.TABLE = enum(CLUSTER='cluster', NODE='node', INSTANCE='instance')
         self.bcolors()
 
-    def generateTempTable(self,result):
-        self.result_Temp_Table = PrettyTable(["Sensor ID", "Device", "Value", "Lower Critical", "Upper Critical"])
-        self.result_Temp_Table.add_row(result)
-        return self.result_Temp_Table
+    # def generateTempTable(self,result):
+    #     self.result_Temp_Table = PrettyTable(["Sensor ID", "Device", "Value", "Lower Critical", "Upper Critical"])
+    #     self.result_Temp_Table.add_row(result)
+    #     return self.result_Temp_Table
 
-    def generateVoltageTable(self,result):
-        self.result_Voltage_Table = PrettyTable(["Sensor ID", "Device", "Value"])
-        for Voltage_sensor_value  in result:
-            self.result_Voltage_Table.add_row(Voltage_sensor_value)
-        return self.result_Voltage_Table
+    # def generateVoltageTable(self,result):
+    #     self.result_Voltage_Table = PrettyTable(["Sensor ID", "Device", "Value"])
+    #     for Voltage_sensor_value  in result:
+    #         self.result_Voltage_Table.add_row(Voltage_sensor_value)
+    #     return self.result_Voltage_Table
+
+    def generateSensorTable(self, result):
+        sensor_table = PrettyTable(["Sensor ID", "Entity ID", "Sensor Type", "Value", "status"])
+        for value in result:
+            sensor_table.add_row(value)
+        print sensor_table
 
     def bcolors(self):
         self.OK_color = '\033[92m'
@@ -174,24 +179,18 @@ class HassAPI():
         elif self.args.command == "node-info-show":
             try:
                 code , result = self.server.getAllInfoOfNode(self.args.node)
-                print self.generateTempTable(result)
+                print self.generateSensorTable(result)
             except Exception as e:
                 print self.ERROR_color + "[Error] " + self.END_color + str(e)
 
         elif self.args.command == "node-info-get":
             self.type_list = self.args.types.strip().split(",")
-            self.HASS_result = self.server.getNodeInfoByType(self.args.node, self.type_list)
-            #return result["code"]+";"+result["info"]
-
-            if self.HASS_result.split(";")[0] == '0':
+            try:
+                code, self.HASS_result = self.server.getNodeInfoByType(self.args.node, self.type_list)
                 print "Computing Node : " + self.args.node
-                for sensor_type, sensor_value_list in zip(self.type_list, self.HASS_result.split(";")[1]):
-                    print "Sensor type : ", sensor_type
-                    # get corresponding table by sensor
-                    self.sensor_table = self.sensor_mapping[sensor_type](sensor_value_list)
-                    print self.sensor_table
-            else:
-                print self.HASS_result
+                self.generateSensorTable(self.HASS_result)
+            except Exception as e:
+                print self.ERROR_color + "[Error] " + self.END_color + str(e) 
 
         elif self.args.command == "instance-add":
             try:
