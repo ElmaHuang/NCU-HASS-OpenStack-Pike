@@ -4,6 +4,7 @@ import uuid
 import logging
 
 class ClusterManager(object):
+
 	def __init__(self):
 		self.cluster_list = {}
 		self.db = DatabaseManager()
@@ -11,40 +12,53 @@ class ClusterManager(object):
 		self.syncFromDatabase()
 
 	def syncFromDatabase(self):
-		self.db.syncFromDB(self)
+		self.reset()
+		exist_cluster=self.db.syncFromDB()
+		for cluster in exist_cluster:
+			self.createCluster(exist_cluster["cluster_name"],exist_cluster["cluster_id",False])
+			self.addNode(exist_cluster["cluster_id"],exist_cluster["node_list"],False)
 
 	def syncToDatabase(self):
-		self.db.syncToDB(self)
+		cluster_list = self.getClusterList()
+		self.db.syncToDB(cluster_list)
 
-	def createCluster(self , cluster_name , cluster_id = None):
-		result = None
+	def createCluster(self , cluster_name , cluster_id = None,write_DB = True):
+		#result = None
 		if self._isOverLapping(cluster_name):
 			logging.error("ClusterManager - cluster name overlapping")
 			result = {"code": "1", "clusterId":None, "message":"cluster overlapping abort!"}
 			return result
 		#result = self._addToCluster(cluster_name)
 		result = self._addToCluster(cluster_name, cluster_id)
+		if write_DB:
+			self.syncToDatabase()
 		return result
 
-	def removeCluster(self,cluster_id):
+	def deleteCluster(self,cluster_id):
 		result = None
 
 		return result
 
 	def listAllCluster(self):
-		pass
+		result = []
+		for uuid, cluster in self.cluster_list.iteritems():
+			result.append((uuid, cluster.name))
+		return result
 
 	def addNode(self , cluster_id , node_name_list , write_DB = True):
 		cluster = self._getCluster(cluster_id)
 		if not cluster:
-			code = "1"
-			message = "Add the instance to cluster failed. The cluster is not found. (cluster_id = %s)" % cluster_id
-			result = {"code": code, "clusterId":cluster_id, "message":message}
+			#code = "1"
+			message = "Add the node to cluster failed. The cluster is not found. (cluster_id = %s)" % cluster_id
+			result = {"code": "1", "clusterId":cluster_id, "message":message}
 			return result
 		result = cluster.addNode(node_name_list , write_DB)
+		if write_DB:
+			self.syncToDatabase()
+
 		return result
 
-	def removeNode(self,cluster_id,node_name):
+	def deleteNode(self,cluster_id,node_name):
 		pass
 
 	def listAllNode(self,cluster_id):

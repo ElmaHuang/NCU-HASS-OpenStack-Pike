@@ -41,12 +41,12 @@ class Hass (object):
         return "auth success"
         
     def createCluster(self, name, nodeList=[]):
-        result = ClusterManager.createCluster(name)
+        result = self.ClusterManager.createCluster(name)
         if result["code"] == "0":
             if nodeList != []:
-                addNode_result = ClusterManager.addNode(result["clusterId"], nodeList)
+                addNode_result = self.ClusterManager.addNode(result["clusterId"], nodeList)
             else :
-                addNode_result = {"code":0, "clusterId":result["clusterId"], "message":"not add any node."}
+                addNode_result = {"code":"0", "clusterId":result["clusterId"], "message":"not add any node."}
                     
             if addNode_result["code"] == "0":
                 return "0;Create HA cluster and add computing node success, cluster uuid is %s , %s" % (result["clusterId"] , addNode_result["message"])
@@ -60,7 +60,7 @@ class Hass (object):
         return result["code"]+";"+result["message"]
     
     def listCluster(self):
-        result = self.ClusterManager.listCluster()
+        result = self.ClusterManager.listAllCluster()
         return result
     
     def addNode(self, clusterId, nodeList, test=False):
@@ -72,7 +72,7 @@ class Hass (object):
         return result["code"]+";"+result["message"]
         
     def listNode(self, clusterId) :
-        result = self.ClusterManager.listNode(clusterId)
+        result = self.ClusterManager.listAllNode(clusterId)
         if result["code"]== "0":
             return result["code"]+";"+result["nodeList"]
         else:

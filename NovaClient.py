@@ -24,7 +24,7 @@ class NovaClient (object):
 		if not NovaClient._instance:
 			NovaClient()
 		if not NovaClient._helper:
-			self.initializeHelper()
+			NovaClient._instance.initializeHelper()
 		return NovaClient._instance
 
 	def initializeHelper(self):
