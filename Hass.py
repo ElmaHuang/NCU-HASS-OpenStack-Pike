@@ -15,7 +15,7 @@ import sys
 
 from RecoveryManager import RecoveryManager
 from ClusterManager import ClusterManager
-from Operator import Operator
+from IPMINodeOperator import Operator
 #from IPMIModule import IPMIManager
 
 class Hass (object):
