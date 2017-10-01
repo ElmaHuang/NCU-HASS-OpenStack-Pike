@@ -4,7 +4,7 @@ from DetectionManager import DetectionManager
 
 class Node (object):
 	def __init__(self, name , cluster_id):
-		self.node_id = node_id
+		#self.node_id = node_id
 		self.cluster_id = cluster_id
 		self.name = name
 		self.nova_client = NovaClient.getInstance()
@@ -18,8 +18,13 @@ class Node (object):
 		pass
 	def deleteInstance(self , instanceId):
 		pass
+
 	def startDetection(self):
-		self.detect.pollingRegister(self.node_id , name)
+		#self.detect.pollingRegister(self.node_id , self.name)
+		pass
+
+	def isInComputePool(self):
+		return self.name in self.nova_client.getComputePool()
 
 if __name__ == "__main__":
 	a = Node("123","compute2")

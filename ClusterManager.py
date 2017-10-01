@@ -55,10 +55,9 @@ class ClusterManager(object):
 		result = cluster.addNode(node_name_list , write_DB)
 		if write_DB:
 			self.syncToDatabase()
-
 		return result
 
-	def deleteNode(self,cluster_id,node_name):
+	def deleteNode(self,cluster_id,node_name,wirte_DB = True):
 		pass
 
 	def listAllNode(self,cluster_id):
