@@ -67,16 +67,21 @@ class ClusterManager(object):
 		return self.cluster_list
 
 	def _addToCluster(self, cluster_name , cluster_id = None):
-		result = None
-		if cluster_id:
-			cluster = Cluster(uuid= cluster_id, name=cluster_name)
-			self.cluster_list[cluster_id] = cluster
-		else:
-			# start add to list
-			cluster_id = str(uuid.uuid4())
-			cluster = Cluster(uuid = cluster_id, name=cluster_name)
-			self.cluster_list[cluster_id] = cluster
-			result = {"code": "0", "clusterId": cluster_id, "message": "create cluster success"}
+		try:
+			result = None
+			if cluster_id:
+				cluster = Cluster(uuid= cluster_id, name=cluster_name)
+				self.cluster_list[cluster_id] = cluster
+			else:
+				# start add to list
+				cluster_id = str(uuid.uuid4())
+				cluster = Cluster(uuid = cluster_id, name=cluster_name)
+				self.cluster_list[cluster_id] = cluster
+				result = {"code": "0", "clusterId": cluster_id, "message": "create cluster success"}
+				return result
+		except:
+			logging.info("ClusterManager - createCluster._addToCluster fail")
+			result = {"code": "1", "clusterId": cluster_id, "message": "create cluster fail"}
 			return result
 
 	def _getCluster(self,cluster_id):
