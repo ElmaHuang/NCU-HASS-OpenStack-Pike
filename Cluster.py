@@ -54,10 +54,10 @@ class Cluster(object):
 
 	def isInComputePool(self, node_name):
 		return node_name in self.nova_client.getComputePool()
-'''
+
 	def getNodeList(self):
 		return self.node_list
-
+'''
 	def getAllNodeStr(self):
 		ret = ""
 		for node in self.node_list:
