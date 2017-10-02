@@ -18,6 +18,59 @@ from ClusterManager import ClusterManager
 from IPMINodeOperator import Operator
 #from IPMIModule import IPMIManager
 
+class RequestHandler(SimpleXMLRPCRequestHandler):
+    #   Handle RPC request from remote user, and suport access authenticate.
+    #
+    #   HTTP basic access authentication are encoded with Base64 in transit, but not
+    #   encrypted or hashed in any way. Authentication field contain authentication
+    #   method, username and password combined into a string. If request not contain
+    #   authentication header or contain not correct username and password, it will
+    #   return 401 error code. Otherwise, handle request and return response.
+
+    def __init__(self, request, client_address, server):
+        # initialize rpc server and get client ip address. call parent initial method.
+        rpc_paths = ('/RPC2',)
+        self.clientip = client_address[0]
+        SimpleXMLRPCRequestHandler.__init__(self, request, client_address, server)
+
+    def authenticate(self, headers):
+        # split authentication header, decode with Base64 and check username and password
+        auth = headers.get('Authorization')
+        try:
+            (basic, encoded) = headers.get('Authorization').split(' ')
+        except:
+            logging.info("Hass RequestHandler - No authentication header, request from %s", self.clientip)
+            return False
+        else:
+            (basic, encoded) = headers.get('Authorization').split(' ')
+            assert basic == 'Basic', 'Only basic authentication supported'
+            encodedByteString = encoded.encode()
+            decodedBytes = b64decode(encodedByteString)
+            decodedString = decodedBytes.decode()
+            (username, password) = decodedString.split(':')
+            config = ConfigParser.RawConfigParser()
+            config.read('hass.conf')
+            if username == config.get("rpc", "rpc_username") and password == config.get("rpc", "rpc_password"):
+                print "Login"
+                return True
+            else:
+                logging.info("Hass RequestHandler - Authentication failed, request from %s", self.clientip)
+                return False
+
+    def parse_request(self):
+        # parser request, get authentication header and send to authenticate().
+        if SimpleXMLRPCRequestHandler.parse_request(self):
+            if self.authenticate(self.headers):
+                # logging.info("Hass RequestHandler - Authentication success, request from %s", self.clientip)
+                return True
+            else:
+                self.send_error(401, 'Authentication failed')
+                return False
+        else:
+            logging.info("Hass RequestHandler - Authentication failed, request from %s", self.clientip)
+            return False
+
+
 class Hass (object):
 
     def __init__(self):
@@ -153,57 +206,6 @@ class Hass (object):
         result = self.Recovery.recoveryPowerOff(clusterId, nodeName)
         return result
 
-class RequestHandler(SimpleXMLRPCRequestHandler):
-    #   Handle RPC request from remote user, and suport access authenticate.
-    #
-    #   HTTP basic access authentication are encoded with Base64 in transit, but not
-    #   encrypted or hashed in any way. Authentication field contain authentication
-    #   method, username and password combined into a string. If request not contain
-    #   authentication header or contain not correct username and password, it will
-    #   return 401 error code. Otherwise, handle request and return response.
-
-    def __init__(self, request, client_address, server):
-        # initialize rpc server and get client ip address. call parent initial method.
-        rpc_paths = ('/RPC2',)
-        self.clientip = client_address[0]
-        SimpleXMLRPCRequestHandler.__init__(self, request, client_address, server)
-
-    def authenticate(self, headers):
-        # split authentication header, decode with Base64 and check username and password
-        auth = headers.get('Authorization')
-        try:
-            (basic, encoded) = headers.get('Authorization').split(' ')
-        except:
-            logging.info("Hass RequestHandler - No authentication header, request from %s", self.clientip)
-            return False
-        else:
-            (basic, encoded) = headers.get('Authorization').split(' ')
-            assert basic == 'Basic', 'Only basic authentication supported'
-            encodedByteString = encoded.encode()
-            decodedBytes = b64decode(encodedByteString)
-            decodedString = decodedBytes.decode()
-            (username, password) = decodedString.split(':')
-            config = ConfigParser.RawConfigParser()
-            config.read('hass.conf')
-            if username == config.get("rpc", "rpc_username") and password == config.get("rpc", "rpc_password"):
-                print "Login"
-                return True
-            else:
-                logging.info("Hass RequestHandler - Authentication failed, request from %s", self.clientip)
-                return False
-
-    def parse_request(self):
-        # parser request, get authentication header and send to authenticate().
-        if SimpleXMLRPCRequestHandler.parse_request(self):
-            if self.authenticate(self.headers):
-                # logging.info("Hass RequestHandler - Authentication success, request from %s", self.clientip)
-                return True
-            else:
-                self.send_error(401, 'Authentication failed')
-                return False
-        else:
-            logging.info("Hass RequestHandler - Authentication failed, request from %s", self.clientip)
-            return False
 
 
 def main():
