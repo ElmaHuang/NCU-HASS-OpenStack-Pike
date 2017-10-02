@@ -52,6 +52,7 @@ class DatabaseManager(object):
             sys.exit(1)
 
     def syncFromDB(self):
+        #self.resetAll()
         try:
             self.db.execute("SELECT * FROM ha_cluster;")
             ha_cluster_date = self.db.fetchall()
@@ -110,6 +111,12 @@ class DatabaseManager(object):
             print "MySQL Error: %s" % str(e)
             raise
 
+
+    def resetAll(self):
+        table_list = self._getAllTable()
+        for table in table_list:
+            self._resetTable(table)
+
     def _getAllTable(self):
         table_list = []
         cmd = "show tables"
@@ -120,10 +127,6 @@ class DatabaseManager(object):
             table_list.append(table["Tables_in_hass"])
         return table_list
 
-    def resetAll(self):
-        table_list = self._getAllTable()
-        for table in table_list:
-            self._resetTable(table)
 
     def _resetTable(self, table_name):
         cmd = " DELETE FROM  `%s` WHERE true" % table_name

@@ -43,10 +43,11 @@ class ClusterManager():
 		message = "delete cluster success. The cluster is deleted. (cluster_id = %s)" % cluster_id
 		result = {"code": code, "clusterId":cluster_id, "message":message}
 		return result
-
+	'''
 	@staticmethod
 	def getClusterList():
 		return ClusterManager._cluster_list
+	'''
 
 	@staticmethod
 	def listCluster():
@@ -197,17 +198,18 @@ class ClusterManager():
 		if cluster_id in ClusterManager._cluster_list:
 			return True
 		return False
-
+	'''
 	@staticmethod
 	def reset(reset_DB=_RESET_DB):
 		if reset_DB:
 			ClusterManager._db.resetAll()
 		ClusterManager._cluster_list = {}
-
+	'''
 
 	@staticmethod
 	def syncFromDatabase():
-		ClusterManager.reset()
+		#ClusterManager.reset()
+		ClusterManager._cluster_list = {}
 		exist_cluster=ClusterManager._db.syncFromDB()
 		for cluster in exist_cluster:
 			ClusterManager.createCluster(cluster["cluster_name"],cluster["cluster_id"],False)
@@ -215,7 +217,7 @@ class ClusterManager():
 
 	@staticmethod
 	def syncToDatabase():
-		cluster_list = ClusterManager.getClusterList()
+		cluster_list = ClusterManager._cluster_list
 		ClusterManager._db.syncToDB(cluster_list)
 
 
