@@ -24,6 +24,30 @@ class RecoveryManager (object):
     def __init__ (self, system_test = False,  test=False):
         pass
 
+    def recoveryVM(self,cluster_uuid,node_name):
+        pass
+
+    def recoveryPowerOff(self):
+        pass
+
+    def recoveryByShutOffNode(self,cluster_uuid,node_name):
+        pass
+
+    def recoveryIpmiDaemonFailure(self,node_name):
+        pass
+
+    def recoveryServiceFailure(self,cluster_uuid,):
+        pass
+
+    def recoveryWatchdogDaemonFailure(self,node_name):
+        pass
+
+    def recoveryOsHanged(self):
+        pass
+
+    def recoveryNetworkFailure(self):
+        pass
+
 def main():
    pass
 

@@ -122,35 +122,35 @@ class Hass (object):
     def recoveryVM(self, clusterId, nodeName):
         result = self.Recovery.recoveryVM(clusterId, nodeName)
 
-    def removeNodeFromCluster(self, clusterId, nodeName):
-        result = recovery.remove_node_from_cluster(clusterId, nodeName)
+    #def removeNodeFromCluster(self, clusterId, nodeName):
+       # result = self.Recovery.remove_node_from_cluster(clusterId, nodeName)
 
     def recoveryByShutOffNode(self, clusterId, nodeName, option):
-        result = recovery.recovery_by_shut_Off_Node(clusterId, nodeName)
+        result = self.Recovery.recoveryByShutOffNode(clusterId, nodeName)
         return result
 
     def recoveryServiceFailure(self, clusterId, nodeName, service_list):
-        result = recovery.recovery_service_failure(clusterId, nodeName, service_list)
+        result = self.Recovery.recoveryServiceFailure(clusterId, nodeName, service_list)
         return result
 
     def recoveryIPMIDaemonFailure(self, clusterId, nodeName, option):
-        result = recovery.recovery_ipmi_daemon_failure(nodeName)
+        result = self.Recovery.recoveryIpmiDaemonFailure(nodeName)
         return result
 
     def recoveryWatchdogDaemonFailure(self, clusterId, nodeName, option):
-        result = recovery.recovery_watchdog_daemon_failure(nodeName)
+        result = self.Recovery.recoveryWatchdogDaemonFailure(nodeName)
         return result
 
     def recoveryOSHanged(self, clusterId, nodeName, option):
-        result = recovery.recovery_os_hanged(clusterId, nodeName)
+        result = self.Recovery.recoveryOsHanged(clusterId, nodeName)
         return result
 
     def recoveryNetworkFailure(self, clusterId, nodeName, option):
-        result = recovery.recovery_network_failure(clusterId, nodeName)
+        result = self.Recovery.recoveryNetworkFailure(clusterId, nodeName)
         return result
 
     def recoveryPowerOff(self, clusterId, nodeName, option):
-        result = recovery.recovery_power_off(clusterId, nodeName)
+        result = self.Recovery.recoveryPowerOff(clusterId, nodeName)
         return result
 
 class RequestHandler(SimpleXMLRPCRequestHandler):

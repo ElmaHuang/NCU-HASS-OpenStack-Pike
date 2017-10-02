@@ -15,8 +15,8 @@ class ClusterManager(object):
 		self.reset()
 		exist_cluster=self.db.syncFromDB()
 		for cluster in exist_cluster:
-			self.createCluster(exist_cluster["cluster_name"],exist_cluster["cluster_id",False])
-			self.addNode(exist_cluster["cluster_id"],exist_cluster["node_list"],False)
+			self.createCluster(cluster["cluster_name"],cluster["cluster_id",False])
+			self.addNode(cluster["cluster_id"],cluster["node_list"],False)
 
 	def syncToDatabase(self):
 		cluster_list = self.getClusterList()
