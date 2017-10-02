@@ -27,7 +27,7 @@ class RecoveryManager (object):
     def recoveryVM(self,cluster_uuid,node_name):
         pass
 
-    def recoveryPowerOff(self):
+    def recoveryPowerOff(self,cluster_uuid,node_name):
         pass
 
     def recoveryByShutOffNode(self,cluster_uuid,node_name):
@@ -36,16 +36,16 @@ class RecoveryManager (object):
     def recoveryIpmiDaemonFailure(self,node_name):
         pass
 
-    def recoveryServiceFailure(self,cluster_uuid,):
+    def recoveryServiceFailure(self,cluster_uuid,node_name,service_fail_list):
         pass
 
     def recoveryWatchdogDaemonFailure(self,node_name):
         pass
 
-    def recoveryOsHanged(self):
+    def recoveryOsHanged(self,cluster_uuid,node_name):
         pass
 
-    def recoveryNetworkFailure(self):
+    def recoveryNetworkFailure(self,cluster_uuid,node_name):
         pass
 
 def main():

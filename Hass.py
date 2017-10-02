@@ -133,7 +133,7 @@ class Hass (object):
         else:
             return result["code"]+";"+result["message"]
 
-    def deleteCluster(self, uuid, test=False):
+    def deleteCluster(self, uuid):
         result = ClusterManager.deleteCluster(uuid)
         return result["code"]+";"+result["message"]
     

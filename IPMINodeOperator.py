@@ -8,28 +8,29 @@ import time
 
 
 class Operator(object):
-
 	def __init__(self):
-		#self.clusterList =
+		# self.clusterList =
 		pass
 
-	def Start_Node(self):
+	def startNode(self,node_name):
 		pass
 
-	def Shut_Off_Node(self):
+	def shutOffNode(self,node_name):
 		pass
 
-	def Reboot_Node(self):
+	def rebootNode(self,node_name):
 		pass
 
-	def Show_Node_Info(self):
+	def getTempInfoByNode(self,node_name):
 		pass
 
-	def Show_Spec_Node_Info(self):
+	def getNodeInfoByType(self,node_name,sensor_type):
 		pass
+
 
 def main():
 	pass
 
+
 if __name__ == '__main__':
-    	main()
+	main()

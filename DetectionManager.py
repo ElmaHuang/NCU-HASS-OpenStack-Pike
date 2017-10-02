@@ -31,6 +31,7 @@ recovery_function = {"sensor_value_critical" : server.recoveryByShutOffNode,
                      "power_off" : server.recoveryPowerOff}
 
 class DetectionManager():
+
     def __init__(self) :
         self.config = ConfigParser.RawConfigParser()
         self.config.read('hass.conf')
@@ -41,42 +42,37 @@ class DetectionManager():
         ipmi_status = True
         if node not in self.ipmi_IP_dict:
             ipmi_status = False
-        nodeInfo = {"id": id, "node": node, "thread": PollingThread(self.config.get("detection", "polling_interval"),self.config.get("detection", "polling_threshold"),id, node,int(self.config.get("detection","polling_port")),int(self.config.get("detection","wait_restart_threshold")), ipmi_status, test)}
-        print "nodeInfo:", nodeInfo
+        nodeInfo = {"id":id, "node":node, "thread":PollingThread(self.config.get("detection","polling_interval"), self.config.get("detection","polling_threshold"), id, node, int(self.config.get("detection","polling_port")), int(self.config.get("detection","wait_restart_threshold")), ipmi_status, test)}
         self.threadList.append(nodeInfo)
-        print "threadList:", self.threadList
-
         try:
-            nodeInfo["thread"].daemon = True
+            nodeInfo["thread"].daemon=True
             nodeInfo["thread"].start()
         except (KeyboardInterrupt, SystemExit):
             print '\n! Received keyboard interrupt, quitting threads.\n'
-
+        
     def pollingCancel(self, id, node):
         newthreadList = []
         for nodeInfo in self.threadList:
-            if nodeInfo["id"] == id and nodeInfo["node"] == node:
+            if nodeInfo["id"] == id and nodeInfo["node"]==node :                
                 try:
                     nodeInfo["thread"].stop()
-                    print "stop thread"
                 except:
                     pass
-            else:
+            else :
                 newthreadList.append(nodeInfo)
         self.threadList = newthreadList
-
 
 class PollingThread(threading.Thread):
     def __init__(self, interval, threshold, clusterId, node, port, restart_threshold, ipmi_status, test):
         threading.Thread.__init__(self)
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.sock.setblocking(0)
-        self.threshold = int(threshold)  # error threshold
-        self.restart_threshold = int(restart_threshold)  # not used
-        self.interval = float(interval)  # actual polling interval
-        self.default_interval = self.interval  # initial interval
+        self.threshold = int(threshold) # error threshold
+        self.restart_threshold = int(restart_threshold) # not used
+        self.interval = float(interval) # actual polling interval
+        self.default_interval = self.interval # initial interval
         self.clusterId = clusterId
-        self.test = test  # unit test
+        self.test = test # unit test
         self.node = node
         self.port = port
         self.exit = False
@@ -84,13 +80,13 @@ class PollingThread(threading.Thread):
 
         self.service_failure_data = ""
 
-        # status index represent --
-        # 0 = network
-        # 1 = libvirt,QEMU/KVM
-        # 2 = power
-        # 3 = os
-        # 4 = sensor(temperature, voltage)
-        self.state_list = [0, 0, 0, 0, 0]
+        #status index represent --
+        #0 = network
+        #1 = libvirt,QEMU/KVM
+        #2 = power
+        #3 = os
+        #4 = sensor(temperature, voltage)
+        self.state_list = [0,0,0,0,0]
         self.ipmi_status = ipmi_status
         self.config = ConfigParser.RawConfigParser()
         self.config.read('failureTable.conf')
@@ -100,28 +96,28 @@ class PollingThread(threading.Thread):
         data = ""
         failure_occured_time = 0
         failure_detection_time = 0
-        # connect to FA
+        #connect to FA
         try:
-            print "[" + self.node + "] create socket connection"
+            print "["+self.node+"] create socket connection"
             self.sock.settimeout(0.5)
             self.sock.connect((self.node, self.port))
             time.sleep(5)
         except:
-            print "Init [" + self.node + "] connection failed"
+            print "Init ["+self.node+"] connection failed"
 
         while not self.exit:
-            # check network status
+            #check network status
             if self.checkNetworkStatus(self.node):
-                # print "net ok"
+                #print "net ok"
                 self.state_list[0] = 0
-                # network ok
+                #network ok
             else:
-                # network error
+                #network error
                 self.state_list[0] = self.state_list[0] + 1
                 print "[" + self.node + "] 's network is unreachable"
                 logging.error("DetectionManager PollingThread - The %s's network is unreachable.")
 
-            # check service status
+            #check service status
             try:
                 line = "polling request"
                 self.sock.sendall(line)
@@ -129,104 +125,99 @@ class PollingThread(threading.Thread):
                 if data == "OK":
                     # service status 0 = ok
                     self.state_list[1] = 0
-                    # print "["+self.node+"] OK"
-
-                elif "error" in data:
-                    print "data:", data
+                    #print "["+self.node+"] OK" 
+                        
+                elif "error" in data :
+		    print data
                     self.service_failure_data = data
                     self.state_list[1] = self.state_list[1] + 1
-                    print "[" + self.node + "]service Failed"
+                    print "["+self.node+"]service Failed"
                 elif not data:
                     self.state_list[1] = self.state_list[1] + 1
-                    print "[" + self.node + "]no ACK"
+                    print "["+self.node+"]no ACK"
                 else:
                     self.state_list[1] = self.state_list[1] + 1
-                    print "[" + self.node + "]Receive:" + data
-
+                    print "["+self.node+"]Receive:"+data
+                        
             except Exception as e:
-                print "[" + self.node + "] connection failed"
+                print "["+self.node+"] connection failed"
                 self.sock.connect((self.node, self.port))
                 self.service_failure_data = "agents"
                 self.state_list[1] = self.state_list[1] + 1
-
-            # check power status
+            
+            #check power status
             if self.ipmi_status:
                 power_status = ipmi_manager.checkPowerStatus(self.node)
                 if power_status == "OK":
-                    # power ok
+                    #power ok
                     self.state_list[2] = 0
-                    # print "power ok"
+                    #print "power ok"
                 elif power_status == "Error":
                     print "[" + self.node + "] 's power status is off"
                     self.state_list[2] = self.state_list[2] + 1
                     logging.error("DetectionManager PollingThread - The %s's power status is off." % self.node)
-                    # power off
+                    #power off
                 else:
-                    # logging.error("DetectionManager PollingThread - The %s's IPMI session can not be established.(power status)" % self.node)
+                    #logging.error("DetectionManager PollingThread - The %s's IPMI session can not be established.(power status)" % self.node)
                     self.ipmi_status = False
 
-            # check os status
+            #check os status
             if self.ipmi_status:
                 os_status = ipmi_manager.checkOSstatus(self.node)
                 if os_status == "OK":
-                    # os ok
+                    #os ok
                     self.state_list[3] = 0
-                    # print "os ok"
+                    #print "os ok"
                 elif os_status == "Error":
                     print "[" + self.node + "] 's watchdog timer cannot be reset"
                     self.state_list[3] = self.state_list[3] + 1
-                    logging.error(
-                        "DetectionManager PollingThread - The %s's watchdog timer cannot be reset." % self.node)
+                    logging.error("DetectionManager PollingThread - The %s's watchdog timer cannot be reset." % self.node)
 
-                    # reset watchdog with a little time
+                    #reset watchdog with a little time
                     ipmi_manager.resetWatchDog(self.node)
-                    # os failed
+                    #os failed
                 else:
-                    self.ipmi_status = False
+                    self.ipmi_status = False 
 
-                    # check sensor status
+            #check sensor status
             if self.ipmi_status:
-                sensor_status, critical_temp_sensor, critical_volt_sensor = ipmi_manager.checkSensorStatus(self.node)
-                if sensor_status == "OK":
+                sensor_status, message = ipmi_manager.checkSensorStatus(self.node)
+                if sensor_status == True:
                     self.state_list[4] = 0
-                    # print "sensor ok"
-                elif sensor_status == "Error":
+                    #print "sensor ok"
+                elif sensor_status == False:
                     print "[ %s ] 's sensors value exceed threshold" % self.node
                     self.state_list[4] = self.state_list[4] + 1
                     if critical_temp_sensor:
-                        self.print_critical_sensor(critical_temp_sensor, "temperature")
-                    if critical_volt_sensor:
-                        self.print_critical_sensor(critical_volt_sensor, "voltage")
-                    logging.error(
-                        "DetectionManager PollingThread - The %s's sensors value exceed threshold." % self.node)
-                    # sensor failed
+                       print message
+                    logging.error("DetectionManager PollingThread - The %s's sensors value exceed threshold." % self.node)
+                    #sensor failed
                 else:
-                    # logging.error("DetectionManager PollingThread - The %s's IPMI session can not be established.(sensor)" % self.node)
+                    #logging.error("DetectionManager PollingThread - The %s's IPMI session can not be established.(sensor)" % self.node)
                     self.ipmi_status = False
-
-            # if error has been detected, then shorten the detection interval time
-            if sum(self.state_list) > 0 and all(
-                            state < 2 for state in self.state_list) and self.interval == self.default_interval:
+            
+            #if error has been detected, then shorten the detection interval time 
+            if sum(self.state_list) > 0 and all(state <2 for state in self.state_list) and self.interval == self.default_interval:
                 self.interval = self.default_interval / 2
-                check_code = "".join(str(state) for state in self.state_list)  # to check failure occurs in cycle or not
+                check_code = "".join(str(state) for state in self.state_list) # to check failure occurs in cycle or not
                 failure_occured_time = time.time()
-                # if check_code not in self.failure_code: # failure occered in failure cycle may lead to misjugde
+                #if check_code not in self.failure_code: # failure occered in failure cycle may lead to misjugde
                 self.state_list = [0] * 5
             elif sum(self.state_list) > 0:
                 pass
             else:
                 self.interval = self.default_interval
-
-            # check if any state value over threshold
-            print self.node, "'s state is ", self.state_list
+            
+            #check if any state value over threshold
+            #print self.node, "'s state is ", self.state_list
 
             if self.threshold in self.state_list:
                 failure_detection_time = time.time() - failure_occured_time
                 print "Failure detection time : ", failure_detection_time
                 # reset other value which small than threshold
-                state_list = [state / self.threshold if state == self.threshold else 0 for state in self.state_list]
+                state_list = [state / self.threshold if state == self.threshold else 0 for state in self.state_list] 
 
-                # recovery
+                #recovery
                 result_code = "".join(str(state) for state in state_list)
                 if result_code in self.failure_code:
                     # get failure type and call corresponding function
@@ -234,7 +225,7 @@ class PollingThread(threading.Thread):
                     print "Failure : ", recovery_type, " has occured!"
 
                     # to determine whether exit thread or not
-                    self.recovery_flag = recovery_function[recovery_type](self.clusterId, self.node,self.service_failure_data)
+                    self.recovery_flag = recovery_function[recovery_type](self.clusterId, self.node, self.service_failure_data)
                     if self.recovery_flag:
                         logging.info("DetectionManager PollingThread - The %s failed but recovery successfully")
                         self.state_list = [0] * 5
@@ -244,21 +235,20 @@ class PollingThread(threading.Thread):
                         self.sock.connect((self.node, self.port))
                         self.ipmi_status = True
                     else:
-                        # recovery fail
                         server.removeNodeFromCluster(self.clusterId, self.node)
-                        self.exit = True
+                        slef.exit = True
                 else:
                     logging.error("DetectionManager PollingThread - The %s has unknown failure so removed from cluster" % self.node)
+
                     server.recoveryVM(self.clusterId, self.node)
                     server.removeNodeFromCluster(self.clusterId, self.node)
                     self.exit = True
             else:
                 time.sleep(self.interval)
-                # thresd.stop
-
+                
     def stop(self):
         self.exit = True
-
+    
     def print_critical_sensor(self, critical_sensor, type):
         message = ""
         upper_list = []
@@ -277,7 +267,7 @@ class PollingThread(threading.Thread):
     def checkNetworkStatus(self, node):
         status = True
         try:
-            response = subprocess.check_output(['timeout', '0.2', 'ping', '-c', '1', node], stderr=subprocess.STDOUT,universal_newlines=True)
+            response = subprocess.check_output(['timeout', '0.2', 'ping', '-c', '1', node], stderr=subprocess.STDOUT, universal_newlines=True)
         except subprocess.CalledProcessError:
             status = False
         return status
@@ -291,7 +281,6 @@ def main():
             test.pollingRegister("test", "compute1")
         elif ch == "k":
             test.pollingCancel("test", "compute1")
-
-
+    
 if __name__ == "__main__":
     main()

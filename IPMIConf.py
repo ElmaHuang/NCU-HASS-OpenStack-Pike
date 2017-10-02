@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-BASE_CMD = "ipmitool -I lanplus -H %s -U %s -P %s" # %(NODEID , USER , PASSWD)
+BASE_CMD = "ipmitool -I lanplus -H %s -U %s -P %s " # %(NODEID , USER , PASSWD)
 
 REBOOTNODE = "chassis power reset"
 REBOOTNODE_SUCCESS_MSG = "Reset"
@@ -13,7 +13,8 @@ SHUTOFFNODE = "chassis power off"
 SHUTOFFNODE_SUCCESS_MSG = "Down/Off"
 
 NODEINFO = "sdr elist full -v -c sensor reading"
-NODEINFO_BY_TYPE = "sdr elist full | grep %s"
+NODEINFO_BY_TYPE = "sensor get '%s'"
+NODE_CPU_SENSOR_INFO = "sensor get '%s' " % "02-CPU 1"
 
 GET_OS_STATUS = "mc watchdog get"
 
