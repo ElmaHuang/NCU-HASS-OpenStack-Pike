@@ -15,7 +15,7 @@ class ClusterManager(object):
 		self.reset()
 		exist_cluster=self.db.syncFromDB()
 		for cluster in exist_cluster:
-			self.createCluster(cluster["cluster_name"],cluster["cluster_id",False])
+			self.createCluster(cluster["cluster_name"],cluster["cluster_id"],False)
 			self.addNode(cluster["cluster_id"],cluster["node_list"],False)
 
 	def syncToDatabase(self):
@@ -69,22 +69,14 @@ class ClusterManager(object):
 	def _addToCluster(self, cluster_name , cluster_id = None):
 		result = None
 		if cluster_id:
-			cluster = Cluster(uuid = cluster_id , name = cluster_name)
+			cluster = Cluster(uuid= cluster_id, name=cluster_name)
 			self.cluster_list[cluster_id] = cluster
 		else:
-			#start add to list
+			# start add to list
 			cluster_id = str(uuid.uuid4())
-			cluster = Cluster(uuid = cluster_id , name = cluster_name)
+			cluster = Cluster(uuid = cluster_id, name=cluster_name)
 			self.cluster_list[cluster_id] = cluster
-			#start write to DB
-			try:
-				db_uuid = cluster_id.replace("-","")
-				data = {"cluster_uuid":db_uuid, "cluster_name":cluster_name}
-				self.db.writeDB("ha_cluster", data)
-				result = {"code": "0", "clusterId":cluster_id, "message":"create cluster success"}
-			except:
-				logging.error("Recovery Recovery - Access database failed.")
-				result = {"code": "1", "clusterId":cluster_id, "message":"Access database failed, please wait a minute and try again."}
+			result = {"code": "0", "clusterId": cluster_id, "message": "create cluster success"}
 			return result
 
 	def _getCluster(self,cluster_id):

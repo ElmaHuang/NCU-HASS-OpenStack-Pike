@@ -28,7 +28,7 @@ class Cluster(object):
 				for node in node_name_list:
 					self.detect.pollingRegister(self.uuid, node, write_DB)
 			# self.nodeList.extend(nodeList)
-			result = {"code": "0", "clusterId": self.uuid, "message": "The node %s is added to cluster." % nodeList}
+			result = {"code": "0", "clusterId": self.uuid, "message": "The node %s is added to cluster." % node_name_list}
 			return result
 		except:
 			logging.info("Cluster add node fail , maybe overlapping or not in compute pool please check again!")
