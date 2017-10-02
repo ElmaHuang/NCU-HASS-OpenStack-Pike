@@ -80,7 +80,7 @@ class ClusterManager(object):
 				result = {"code": "0", "clusterId": cluster_id, "message": "create cluster success"}
 				return result
 		except:
-			logging.info("ClusterManager - createCluster._addToCluster fail")
+			logging.error("ClusterManager - createCluster._addToCluster fail")
 			result = {"code": "1", "clusterId": cluster_id, "message": "create cluster fail"}
 			return result
 

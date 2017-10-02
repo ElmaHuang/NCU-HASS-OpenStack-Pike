@@ -51,13 +51,13 @@ class DatabaseManager(object):
             logging.error("Hass AccessDB - Create Table failed (MySQL Error: %s)", str(e))
             print "MySQL Error: %s" % str(e)
             sys.exit(1)
+
     def syncFromDB(self):
         #cluster_manager.reset()
         try:
             self.db.execute("SELECT * FROM ha_cluster;")
             ha_cluster_date = self.db.fetchall()
             exist_cluster = []
-
             for cluster in ha_cluster_date:
                 #print cluster
                 node_list = []
@@ -65,8 +65,8 @@ class DatabaseManager(object):
                 ha_node_date = self.db.fetchall()
                 for node in ha_node_date:
                     node_list.append(node["node_name"])
-
-                cluster_id = cluster["cluster_uuid"][:8]+"-"+cluster["cluster_uuid"][8:12]+"-"+cluster["cluster_uuid"][12:16]+"-"+cluster["cluster_uuid"][16:20]+"-"+cluster["cluster_uuid"][20:]
+                cluster_id = cluster["cluster_uuid"]
+                #cluster_id = cluster["cluster_uuid"][:8]+"-"+cluster["cluster_uuid"][8:12]+"-"+cluster["cluster_uuid"][12:16]+"-"+cluster["cluster_uuid"][16:20]+"-"+cluster["cluster_uuid"][20:]
                 cluster_name = cluster["cluster_name"]
                 exist_cluster.append({"cluster_id":cluster_id,"cluster_name":cluster_name,"node_list":node_list})
                 #cluster_manager.createCluster(cluster_name = name , cluster_id = cluster_id)
