@@ -163,7 +163,7 @@ class ClusterManager():
 			result = None
 			if cluster_id:
 				cluster = Cluster(id = cluster_id , name = cluster_name)
-				ClusterManager._cluster_list[cluster_id] = cluster
+				ClusterManager._cluster_dict[cluster_id] = cluster
 			else:
 				#start add to list
 				cluster_id = str(uuid.uuid4())

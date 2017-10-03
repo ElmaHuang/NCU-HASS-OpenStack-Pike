@@ -67,7 +67,6 @@ class DatabaseManager(object):
                     node_list.append(node["node_name"])
                 #cluster_id = cluster["cluster_uuid"][:8]+"-"+cluster["cluster_uuid"][8:12]+"-"+cluster["cluster_uuid"][12:16]+"-"+cluster["cluster_uuid"][16:20]+"-"+cluster["cluster_uuid"][20:]
                 cluster_id = cluster["cluster_uuid"]
-
                 cluster_name = cluster["cluster_name"]
                 exist_cluster.append({"cluster_id": cluster_id, "cluster_name": cluster_name, "node_list": node_list})
                 #cluster_manager.createCluster(cluster_name = name , cluster_id = cluster_id)
