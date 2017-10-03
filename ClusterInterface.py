@@ -9,9 +9,3 @@ class ClusterInterface(object):
 		self.node_list = []
 		self.nova_client = NovaClient.getInstance()
 		self.db = DatabaseManager()
-
-	def addNode(self):
-		pass
-
-	def removeNode(self):
-		pass

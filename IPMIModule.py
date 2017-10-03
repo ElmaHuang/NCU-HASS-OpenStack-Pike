@@ -93,85 +93,16 @@ class IPMIManager(object):
             p = subprocess.Popen(command, stdout = subprocess.PIPE, stderr = subprocess.PIPE, shell=True)
             response, err = p.communicate()
             response = response.split("\n")
-            dataList = self._dataClean(response , "temperature")
-            code = "0"
-            message = "Successfully get computing node : %s's hardware information." % node_id
-            logging.info("IpmiModule getNodeInfo - " + message)
+            dataList = self.dataClean(response , "temperature")
+            return int(dataList[2]) # temperature
         except Exception as e:
             code = "1"
             message = "Error! Unable to get computing node : %s's hardware information." % node_id
             logging.error("IpmiModule getNodeInfo - " + err)
-        finally:
-            result = {"code" : code, "info" : dataList, "message" : message}
-            return result
-
-    # DELL PC SOLUTION
-    # def getAllInfoOfNode(self, nodeID):
-    #     code = ""
-    #     message = ""
-    #     dataList = []
-    #     base = self._baseCMDGenerate(nodeID)
-    #     if base is None:
-    #         result = {"code" : 1}
-    #         return result
-    #     try:
-    #         command = base + IPMIConf.NODEINFO
-    #         p = subprocess.Popen(command, stdout = subprocess.PIPE, stderr = subprocess.PIPE, shell=True)
-    #         response, err = p.communicate()
-    #         response = response.split("\n")[0:5]
-    #         dataList = self._dataClean(response)
-    #         code = "0"
-    #         message = "Successfully get computing node : %s's hardware information." % nodeID
-    #         logging.info("IpmiModule getNodeInfo - " + message)
-    #     except Exception as e:
-    #         code = "1"
-    #         message = "Error! Unable to get computing node : %s's hardware information." % nodeID
-    #         logging.error("IpmiModule getNodeInfo - " + err)
-    #     finally:
-    #         result = {"code" : code, "info" : dataList, "message" : message}
-    #         return result
-
-    # def _dataClean(self, rawDataList):
-    #     result = []
-    #     for rawData in rawDataList:
-    #         rawData = rawData.split(",")
-    #         value = rawData[1] + " " + rawData[2]
-    #         print rawData
-    #         cleanData = ""
-    #         if "degrees C" in rawData:
-    #             cleanData = [rawData[0], rawData[5], value, rawData[14], rawData[11]] #sensor_id , device , value ,lower critical , upper critical
-    #             result.append(cleanData)
-    #         if "Volts" in rawData:
-    #             cleanData = [rawData[0], rawData[5], value]    
-    #             result.append(cleanData)
-    #     return result
-
-    # def getNodeInfoByType(self, node_id, sensor_type_list):
-    #     base = self._baseCMDGenerate(node_id)
-    #     if base is None:
-    #         raise Exception("node not found , node_name : %s" % node_id)
-    #     try:
-    #         for sensor_type in sensor_type_list:
-    #             command = base + NODEINFO_BY_TYPE % sensor_type
-    #             p = subprocess.Popen(command, stdout = subprocess.PIPE, stderr = subprocess.PIPE, shell=True)
-    #             response, err = p.communicate()
-    #             response = response.split("\n")
-    #             dataList = self._dataClean(response, sensor_type)
-    #             code = "0"
-    #             message = "Successfully get computing node : %s's hardware information." % node_id
-    #             logging.info("IpmiModule getNodeInfo - " + message)
-    #     except Exception as e:
-    #         code = "1"
-    #         message = "Error! Unable to get computing node : %s's hardware information." % node_id
-    #         logging.error("IpmiModule getNodeInfo - " + err)
-    #     finally:
-    #         result = {"code" : code, "info" : dataList, "message" : message}
-    #         return result
-
 
     def dataClean(self, raw_data, type=None):
         if type == "temperature":
-            return _tempDataClean(raw_data)
+            return self._tempDataClean(raw_data)
 
         sensor_id = raw_data[1].split(":")[1].strip()
         device = raw_data[2].split(":")[1].strip()
@@ -236,11 +167,11 @@ class IPMIManager(object):
         result = {"code":code, "info":result_list, "message":message}
         return result
 
-    def checkOSstatus(self, nodeID):
+    def getOSStatus(self, node_id):
         initial = 0
         present = 0
         status = "OK"
-        base = self._baseCMDGenerate(nodeID)
+        base = self._baseCMDGenerate(node_id)
         if base is None:
             result = {"code" : 1}
             return result
@@ -269,72 +200,20 @@ class IPMIManager(object):
             status = "IPMI_disable"
             return status
 
-    def checkSensorStatus(self, node_id):
+    def getSensorStatus(self, node_id):
+        temperature = self.getTempInfoByNode(node_id)
+        return self._checkTempValue(temperature)
 
-        message = ""
-        response = self.getTempInfoByNode(node_id)
-        temperature = response[2]
-
-        result , message = _checkTempValue(temperature)
-        return result, message
-
-        # status = "OK"
-        # failureTempList = []
-        # failureVoltList = []
-        # base = self._baseCMDGenerate(nodeID)
-        # if command is None:
-        #     result = {"code" : 1}
-        #     return result
-        # try:
-        #     command = base + IPMIConf.SENSOR_STATUS
-        #     p = subprocess.Popen(command, stdout = subprocess.PIPE, stderr = subprocess.PIPE, shell=True)
-        #     response, err = p.communicate()
-        #     response = response.split("\n")[5:-1]
-        #     status, failureTempList, failureVoltList = self._checkValue(response)
-        # except Exception as e:
-        #     logging.error("IpmiModule checkSensorStatus - " + e)
-        #     status = "IPMI_disable"
-        # return status, failureTempList, failureVoltList
-
-    def _checkTempValue(temperature):
+    def _checkTempValue(self, temperature):
         if temperature > self.TEMP_UPPER_CRITICAL:
-            message = "CPU Temperature exceed upper threshold : %s , threshold , value %s " % (self.TEMP_UPPER_CRITICAL , temperature)
             return False
         if temperature < self.TEMP_LOWER_CRITICAL:
-            message = "CPU Temperature lower Lower threshold : %s , threshold , value %s " % (self.TEMP_LOWER_CRITICAL, temperature)
             return False
-        return True, message
+        return "OK"
 
-    
-    def _checkValue(self, rawDataList):
-        status = "OK"
-        failureTemp = []
-        failureVolt = []
-        for rawData in rawDataList:
-            rawData = rawData.split(",")
-            if rawData[1]: # has sensor value 
-                value = float(rawData[1])
-                upperThreshold = float(rawData[11]) if rawData[11] else value
-                lowerThreshold = float(rawData[14]) if rawData[14] else value
-                if "degrees C" in rawData:
-                    if value > upperThreshold:
-                        failureTemp.append((rawData[0],"upper"))
-                        status = "Error"
-                    elif value < lowerThreshold:
-                        failureTemp.append((rawData[0],"lower"))
-                        status = "Error"
-                if "Volts" in rawData:
-                    if value > upperThreshold:
-                        failureVolt.append((rawData[0],"upper"))
-                        status = "Error"
-                    elif value < lowerThreshold:
-                        failureVolt.append((rawData[0],"lower"))
-                        status = "Error"
-        return status, failureTemp, failureVolt
-
-    def resetWatchDog(self, nodeID):
+    def resetWatchDog(self, node_id):
         status = True
-        base = self._baseCMDGenerate(nodeID)
+        base = self._baseCMDGenerate(node_id)
         if base is None:
             result = {"code" : 1}
             return result
@@ -342,15 +221,15 @@ class IPMIManager(object):
             command = base + IPMIConf.RESET_WATCHDOG
             response = subprocess.check_output(command, shell = True)
             if IPMIConf.WATCHDOG_RESET_SUCEESS_MSG in responese:
-                logging.info("IpmiModule resetWatchDog - The Computing Node %s's watchdog timer has been reset." % nodeID)
+                logging.info("IpmiModule resetWatchDog - The Computing Node %s's watchdog timer has been reset." % node_id)
         except Exception as e:
             logging.error("IpmiModule resetWatchDog - %s" % e)
             status = False
         return status
 
-    def checkPowerStatus(self, nodeID):
+    def getPowerStatus(self, node_id):
         status = "OK"
-        base = self._baseCMDGenerate(nodeID)
+        base = self._baseCMDGenerate(node_id)
         if base is None:
             result = {"code" : 1}
             return result
@@ -361,15 +240,15 @@ class IPMIManager(object):
                 status = "Error"
             return status
         except Exception as e:
-            logging.error("IpmiModule checkPowerStatus - The Compute Node %s's IPMI session can not be established." % nodeID )
+            logging.error("IpmiModule getPowerStatus - The Compute Node %s's IPMI session can not be established." % node_id )
             status = "IPMI_disable"
         return status
 
-    def _baseCMDGenerate(self, nodeID):
-        if nodeID in self.user_dict:
-            user = self.user_dict[nodeID].split(",")[0]
-            passwd = self.user_dict[nodeID].split(",")[1]
-            cmd = IPMIConf.BASE_CMD % (self.ip_dict[nodeID] , user , passwd)
+    def _baseCMDGenerate(self, node_id):
+        if node_id in self.user_dict:
+            user = self.user_dict[node_id].split(",")[0]
+            passwd = self.user_dict[node_id].split(",")[1]
+            cmd = IPMIConf.BASE_CMD % (self.ip_dict[node_id] , user , passwd)
             return cmd
         else:
             return None
@@ -377,4 +256,4 @@ class IPMIManager(object):
 
 if __name__ == "__main__":
     i = IPMIManager()
-    print i.getNodeInfoByType("compute1",["01-Inlet Ambient","02-CPU 1"])
+    print i.checkPowerStatus("compute1")

@@ -7,7 +7,6 @@ import ConfigParser
 import argparse
 import xmlrpclib
 import subprocess
-
 import json
 from IPMIModule import IPMIManager
 ipmi_manager = IPMIManager()
@@ -38,11 +37,19 @@ class DetectionManager():
         self.threadList = []
         self.ipmi_IP_dict = dict(self.config._sections['ipmi'])
 
-    def pollingRegister(self, id, node, test):
+    def pollingRegister(self, id, node):
         ipmi_status = True
         if node not in self.ipmi_IP_dict:
             ipmi_status = False
-        nodeInfo = {"id":id, "node":node, "thread":PollingThread(self.config.get("detection","polling_interval"), self.config.get("detection","polling_threshold"), id, node, int(self.config.get("detection","polling_port")), int(self.config.get("detection","wait_restart_threshold")), ipmi_status, test)}
+        nodeInfo = {"id":id, 
+                    "node":node, 
+                    "thread":PollingThread(self.config.get("detection","polling_interval"), 
+                    self.config.get("detection","polling_threshold"), 
+                    id, 
+                    node, 
+                    int(self.config.get("detection","polling_port")), 
+                    int(self.config.get("detection","wait_restart_threshold")), 
+                    ipmi_status)}
         self.threadList.append(nodeInfo)
         try:
             nodeInfo["thread"].daemon=True
@@ -63,7 +70,7 @@ class DetectionManager():
         self.threadList = newthreadList
 
 class PollingThread(threading.Thread):
-    def __init__(self, interval, threshold, clusterId, node, port, restart_threshold, ipmi_status, test):
+    def __init__(self, interval, threshold, clusterId, node, port, restart_threshold, ipmi_status):
         threading.Thread.__init__(self)
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.sock.setblocking(0)
@@ -72,7 +79,6 @@ class PollingThread(threading.Thread):
         self.interval = float(interval) # actual polling interval
         self.default_interval = self.interval # initial interval
         self.clusterId = clusterId
-        self.test = test # unit test
         self.node = node
         self.port = port
         self.exit = False
@@ -107,6 +113,7 @@ class PollingThread(threading.Thread):
 
         while not self.exit:
             #check network status
+            print self.state_list
             if self.checkNetworkStatus(self.node):
                 #print "net ok"
                 self.state_list[0] = 0
@@ -119,6 +126,7 @@ class PollingThread(threading.Thread):
 
             #check service status
             try:
+                print self.state_list
                 line = "polling request"
                 self.sock.sendall(line)
                 data, addr = self.sock.recvfrom(1024)
@@ -147,6 +155,7 @@ class PollingThread(threading.Thread):
             
             #check power status
             if self.ipmi_status:
+                print self.state_list
                 power_status = ipmi_manager.checkPowerStatus(self.node)
                 if power_status == "OK":
                     #power ok
@@ -163,6 +172,7 @@ class PollingThread(threading.Thread):
 
             #check os status
             if self.ipmi_status:
+                print self.state_list
                 os_status = ipmi_manager.checkOSstatus(self.node)
                 if os_status == "OK":
                     #os ok
@@ -181,21 +191,22 @@ class PollingThread(threading.Thread):
 
             #check sensor status
             if self.ipmi_status:
-                sensor_status, message = ipmi_manager.checkSensorStatus(self.node)
+                print self.state_list
+                sensor_status = ipmi_manager.checkSensorStatus(self.node)
                 if sensor_status == True:
                     self.state_list[4] = 0
                     #print "sensor ok"
                 elif sensor_status == False:
                     print "[ %s ] 's sensors value exceed threshold" % self.node
                     self.state_list[4] = self.state_list[4] + 1
-                    if critical_temp_sensor:
-                       print message
                     logging.error("DetectionManager PollingThread - The %s's sensors value exceed threshold." % self.node)
                     #sensor failed
                 else:
                     #logging.error("DetectionManager PollingThread - The %s's IPMI session can not be established.(sensor)" % self.node)
                     self.ipmi_status = False
             
+
+            """
             #if error has been detected, then shorten the detection interval time 
             if sum(self.state_list) > 0 and all(state <2 for state in self.state_list) and self.interval == self.default_interval:
                 self.interval = self.default_interval / 2
@@ -236,7 +247,7 @@ class PollingThread(threading.Thread):
                         self.ipmi_status = True
                     else:
                         server.removeNodeFromCluster(self.clusterId, self.node)
-                        slef.exit = True
+                        self.exit = True
                 else:
                     logging.error("DetectionManager PollingThread - The %s has unknown failure so removed from cluster" % self.node)
 
@@ -245,6 +256,7 @@ class PollingThread(threading.Thread):
                     self.exit = True
             else:
                 time.sleep(self.interval)
+        """
                 
     def stop(self):
         self.exit = True

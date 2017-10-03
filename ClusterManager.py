@@ -4,24 +4,24 @@ import uuid
 import logging
 
 class ClusterManager():
-	_cluster_list = None
+	_cluster_dict = None
 	_db = None
-	_RESET_DB = False
+	_RESET_DB = True
 
 	@staticmethod
 	def init():
-		ClusterManager._cluster_list = {}
+		ClusterManager._cluster_dict = {}
 		ClusterManager._db = DatabaseManager()
 		ClusterManager._db.createTable()
 		ClusterManager.syncFromDatabase()
 
 	@staticmethod
-	def createCluster(cluster_name , cluster_id = None ,write_DB = True):
+	def createCluster(cluster_name, cluster_id = None, write_DB = True):
 		if ClusterManager._isOverLapping(cluster_name):
 			logging.error("ClusterManager - cluster name overlapping")
 			result = {"code": "1", "clusterId":None, "message":"cluster overlapping abort!"}
 			return result
-		result = ClusterManager._addToCluster(cluster_name , cluster_id)
+		result = ClusterManager._addToClusterList(cluster_name , cluster_id)
 		if write_DB:
 			ClusterManager.syncToDatabase()
 		return result
@@ -35,7 +35,7 @@ class ClusterManager():
 			result = {"code": code, "clusterId":cluster_id, "message":message}
 			return result
 		cluster.deleteAllNode()
-		del ClusterManager._cluster_list[cluster_id]
+		del ClusterManager._cluster_dict[cluster_id]
 
 		if write_DB:
 			ClusterManager.syncToDatabase()
@@ -46,12 +46,12 @@ class ClusterManager():
 
 	@staticmethod
 	def getClusterList():
-		return ClusterManager._cluster_list
+		return ClusterManager._cluster_dict
 
 	@staticmethod
 	def listCluster():
 		res = []
-		for id , cluster in ClusterManager._cluster_list.iteritems():
+		for id , cluster in ClusterManager._cluster_dict.iteritems():
 			res.append((cluster.getInfo()))
 		return res
 
@@ -63,7 +63,7 @@ class ClusterManager():
 			message = "Add the node to cluster failed. The cluster is not found. (cluster_id = %s)" % cluster_id
 			result = {"code": code, "clusterId":cluster_id, "message":message}
 			return result
-		result = cluster.addNode(node_name_list , write_DB)
+		result = cluster.addNode(node_name_list)
 		if write_DB:
 			ClusterManager.syncToDatabase()
 		return result
@@ -158,16 +158,16 @@ class ClusterManager():
 		return cluster.getAllInstanceInfo()
 
 	@staticmethod
-	def _addToCluster(cluster_name , cluster_id = None):
+	def _addToClusterList(cluster_name , cluster_id = None):
 		result = None
 		if cluster_id:
 			cluster = Cluster(id = cluster_id , name = cluster_name)
-			ClusterManager._cluster_list[cluster_id] = cluster
+			ClusterManager._cluster_dict[cluster_id] = cluster
 		else:
 			#start add to list
 			cluster_id = str(uuid.uuid4())
 			cluster = Cluster(id = cluster_id , name = cluster_name)
-			ClusterManager._cluster_list[cluster_id] = cluster
+			ClusterManager._cluster_dict[cluster_id] = cluster
 			result = {"code": "0", "clusterId":cluster_id, "message":"create cluster success"}
 			return result
 
@@ -176,18 +176,18 @@ class ClusterManager():
 		if not ClusterManager._isCluster(cluster_id):
 			logging.info("cluster not found id %s" % cluster_id)
 			return None
-		return ClusterManager._cluster_list[cluster_id]
+		return ClusterManager._cluster_dict[cluster_id]
 
 	@staticmethod
 	def _isOverLapping(name):
-		for cluster_id , cluster in ClusterManager._cluster_list.items():
+		for cluster_id , cluster in ClusterManager._cluster_dict.items():
 			if cluster.name == name:
 				return True
 		return False
 
 	@staticmethod
 	def _isCluster(cluster_id):
-		if cluster_id in ClusterManager._cluster_list:
+		if cluster_id in ClusterManager._cluster_dict:
 			return True
 		return False
 
@@ -195,7 +195,7 @@ class ClusterManager():
 	def reset(reset_DB=_RESET_DB):
 		if reset_DB:
 			ClusterManager._db.resetAll()
-		ClusterManager._cluster_list = {}
+		ClusterManager._cluster_dict = {}
 
 
 	@staticmethod
