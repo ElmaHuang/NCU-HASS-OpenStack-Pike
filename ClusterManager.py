@@ -6,7 +6,7 @@ import logging
 class ClusterManager():
 	_cluster_dict = None
 	_db = None
-	_RESET_DB = True
+	_RESET_DB = False
 
 	@staticmethod
 	def init():
@@ -43,11 +43,11 @@ class ClusterManager():
 		message = "delete cluster success. The cluster is deleted. (cluster_id = %s)" % cluster_id
 		result = {"code": code, "clusterId":cluster_id, "message":message}
 		return result
-
+	'''
 	@staticmethod
 	def getClusterList():
 		return ClusterManager._cluster_dict
-
+	'''
 	@staticmethod
 	def listCluster():
 		res = []
@@ -59,9 +59,9 @@ class ClusterManager():
 	def addNode(cluster_id, node_name_list, write_DB = True):
 		cluster = ClusterManager.getCluster(cluster_id)
 		if not cluster:
-			code = "1"
+			#code = "1"
 			message = "Add the node to cluster failed. The cluster is not found. (cluster_id = %s)" % cluster_id
-			result = {"code": code, "clusterId":cluster_id, "message":message}
+			result = {"code": "1", "clusterId":cluster_id, "message":message}
 			return result
 		result = cluster.addNode(node_name_list)
 		if write_DB:
@@ -159,16 +159,21 @@ class ClusterManager():
 
 	@staticmethod
 	def _addToClusterList(cluster_name , cluster_id = None):
-		result = None
-		if cluster_id:
-			cluster = Cluster(id = cluster_id , name = cluster_name)
-			ClusterManager._cluster_dict[cluster_id] = cluster
-		else:
-			#start add to list
-			cluster_id = str(uuid.uuid4())
-			cluster = Cluster(id = cluster_id , name = cluster_name)
-			ClusterManager._cluster_dict[cluster_id] = cluster
-			result = {"code": "0", "clusterId":cluster_id, "message":"create cluster success"}
+		try:
+			result = None
+			if cluster_id:
+				cluster = Cluster(id = cluster_id , name = cluster_name)
+				ClusterManager._cluster_list[cluster_id] = cluster
+			else:
+				#start add to list
+				cluster_id = str(uuid.uuid4())
+				cluster = Cluster(id = cluster_id , name = cluster_name)
+				ClusterManager._cluster_dict[cluster_id] = cluster
+				result = {"code": "0", "clusterId":cluster_id, "message":"create cluster success"}
+				return result
+		except:
+			logging.error("ClusterManager - createCluster._addToCluster fail")
+			result = {"code": "1", "clusterId": cluster_id, "message": "create cluster fail"}
 			return result
 
 	@staticmethod
@@ -197,14 +202,18 @@ class ClusterManager():
 			ClusterManager._db.resetAll()
 		ClusterManager._cluster_dict = {}
 
-
 	@staticmethod
 	def syncFromDatabase():
-		ClusterManager._db.syncFromDB(ClusterManager)
+		ClusterManager.reset()
+		exist_cluster=ClusterManager._db.syncFromDB()
+		for cluster in exist_cluster:
+			ClusterManager.createCluster(cluster["cluster_name"],cluster["cluster_id"],False)
+			ClusterManager.addNode(cluster["cluster_id"],cluster["node_list"],False)
 
 	@staticmethod
 	def syncToDatabase():
-		ClusterManager._db.syncToDB(ClusterManager)
+		cluster_list = ClusterManager._cluster_dict
+		ClusterManager._db.syncToDB(cluster_list)
 
 
 
