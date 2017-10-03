@@ -3,11 +3,11 @@ import ConfigParser
 import MySQLdb, MySQLdb.cursors
 import sys
 
-config = ConfigParser.RawConfigParser()
-config.read('hass.conf')
 
 class DatabaseManager(object):
     def __init__(self):
+        self.config = ConfigParser.RawConfigParser()
+        self.config.read('hass.conf')
         self.db_conn = None
         self.db = None
         try:
@@ -17,9 +17,10 @@ class DatabaseManager(object):
             print "MySQL Error: %s" % str(e)
             sys.exit(1)
     def connect(self):
-        self.db_conn = MySQLdb.connect(  host = config.get("mysql", "mysql_ip"),
-                                        user = config.get("mysql", "mysql_username"),
-                                        passwd = config.get("mysql", "mysql_password"),
+
+        self.db_conn = MySQLdb.connect(  host = self.config.get("mysql", "mysql_ip"),
+                                         user = self.config.get("mysql", "mysql_username"),
+                                        passwd = self.config.get("mysql", "mysql_password"),
                                         db = "hass",
                                     )
         self.db = self.db_conn.cursor(cursorclass = MySQLdb.cursors.DictCursor)
@@ -52,11 +53,12 @@ class DatabaseManager(object):
             print "MySQL Error: %s" % str(e)
             sys.exit(1)
 
-    def syncFromDB(self, cluster_manager):
-        cluster_manager.reset()
+
+    def syncFromDB(self):
         try:
             self.db.execute("SELECT * FROM ha_cluster;")
             ha_cluster_date = self.db.fetchall()
+            exist_cluster = []
             for cluster in ha_cluster_date:
                 node_list = []
                 self.db.execute("SELECT * FROM ha_node WHERE below_cluster = '%s'" % cluster["cluster_uuid"])
@@ -65,10 +67,14 @@ class DatabaseManager(object):
                     node_list.append(node["node_name"])
                 #cluster_id = cluster["cluster_uuid"][:8]+"-"+cluster["cluster_uuid"][8:12]+"-"+cluster["cluster_uuid"][12:16]+"-"+cluster["cluster_uuid"][16:20]+"-"+cluster["cluster_uuid"][20:]
                 cluster_id = cluster["cluster_uuid"]
-                name = cluster["cluster_name"]
-                cluster_manager.createCluster(cluster_name = name , cluster_id = cluster_id)
-                cluster_manager.addNode(cluster_id, node_list)
-                
+
+                cluster_name = cluster["cluster_name"]
+                exist_cluster.append({"cluster_id": cluster_id, "cluster_name": cluster_name, "node_list": node_list})
+                #cluster_manager.createCluster(cluster_name = name , cluster_id = cluster_id)
+                #cluster_manager.addNode(cluster_id, node_list)
+
+            return exist_cluster
+
         except MySQLdb.Error, e:
             self.closeDB()
             logging.error("Hass AccessDB - Read data failed (MySQL Error: %s)", str(e))
@@ -76,10 +82,11 @@ class DatabaseManager(object):
             sys.exit(1)
 
 
-    def syncToDB(self, cluster_manager):
+
+    def syncToDB(self, cluster_list):
         self.resetAll()
         try:
-            cluster_list = cluster_manager.getClusterList()
+            #cluster_list = cluster_manager.getClusterList()
             for cluster_id , cluster in cluster_list.items():
                 # sync cluster
                 data = {"cluster_uuid":cluster_id, "cluster_name":cluster.name}
