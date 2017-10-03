@@ -45,7 +45,7 @@ class Cluster(ClusterInterface):
 		return unchecked_node_name in self.nova_client.getComputePool()
 
 	def _nodeIsIllegal(self , unchecked_node_name):
-		if self._isInComputePool(unchecked_node_name):
+		if not self._isInComputePool(unchecked_node_name):
 			return False
 		if self._isNodeDuplicate(unchecked_node_name):
 			return False
