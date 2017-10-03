@@ -10,30 +10,25 @@ class Cluster(ClusterInterface):
 		super(Cluster, self).__init__(id, name)
 
 	def addNode(self, node_name_list):
-		code = ""
-		message = ""
 		fail = False
 		# create node list
 		for node_name in node_name_list:
-			if not self._nodeIsIllegal(node_name):
-				id = str(uuid.uuid4())
-				ipmi_status = self._getIPMIStatus(node_name)
-				node = Node(id = id , name = node_name , cluster_id = self.id , ipmi_status = ipmi_status)
-				self.node_list.append(node)
-				#node.startDetection()
-			else:
-				fail = True
-		if fail:
-			code = "1"
-			message = "Cluster add node fail , some node maybe overlapping or not in compute pool please check again! The node list is %s." % (self.getAllNodeStr()+",")
-			logging.info("Cluster add node fail , maybe overlapping or not in compute pool please check again!")
-			result = {"code":code, "clusterId":self.id, "message":message}
-			return result
-		else:
-			code = "0"
-			message = "The node %s is added to cluster." % self.getAllNodeStr()
-			result = {"code":code, "clusterId":self.id, "message":message}
-			return result
+			try:
+				if  self._nodeIsIllegal(node_name) != False:
+					id = str(uuid.uuid4())
+					ipmi_status = self._getIPMIStatus(node_name)
+					node = Node(id = id , name = node_name , cluster_id = self.id , ipmi_status = ipmi_status)
+					self.node_list.append(node)
+					#node.startDetection()
+
+				message = "The node %s is added to cluster." % self.getAllNodeStr()
+				result = {"code": "0", "clusterId": self.id, "message": message}
+				return result
+			except:
+				message = "Cluster add node fail , some node maybe overlapping or not in compute pool please check again! The node list is %s." % (self.getAllNodeStr() + ",")
+				logging.info("Cluster add node fail , maybe overlapping or not in compute pool please check again!")
+				result = {"code": "1", "clusterId": self.id, "message": message}
+				return result
 
 	def findNodeByInstance(self, instance_id):
 		for node in self.node_list:
@@ -46,6 +41,7 @@ class Cluster(ClusterInterface):
 			if node.name == unchecked_node_name:
 				return True
 		return False
+
 	def _isInComputePool(self, unchecked_node_name):
 		return unchecked_node_name in self.nova_client.getComputePool()
 
