@@ -60,9 +60,9 @@ class ClusterManager():
 	def addNode(cluster_id, node_name_list, write_DB = True):
 		cluster = ClusterManager.getCluster(cluster_id)
 		if not cluster:
-			code = "1"
+			#code = "1"
 			message = "Add the node to cluster failed. The cluster is not found. (cluster_id = %s)" % cluster_id
-			result = {"code": code, "clusterId":cluster_id, "message":message}
+			result = {"code": "1", "clusterId":cluster_id, "message":message}
 			return result
 
 		result = cluster.addNode(node_name_list )

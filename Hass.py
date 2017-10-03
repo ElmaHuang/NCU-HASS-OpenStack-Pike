@@ -141,11 +141,11 @@ class Hass (object):
         result = ClusterManager.listCluster()
         return result
     
-    def addNode(self, clusterId, nodeList, test=False):
+    def addNode(self, clusterId, nodeList, writeDB=True):
         result = ClusterManager.addNode(clusterId, nodeList)               
         return result["code"]+";"+result["message"]
 
-    def deleteNode(self, cluster_id, node_id, test=False):
+    def deleteNode(self, cluster_id, node_id, writeDB=True):
         result = ClusterManager.deleteNode(cluster_id, node_id)
         return result["code"]+";"+result["message"]
         
