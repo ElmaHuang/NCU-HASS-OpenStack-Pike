@@ -67,7 +67,6 @@ class HassAPI():
                 self.instance_table.add_row([id,name,host])
             print self.instance_table
 
-
     def Input_Command(self):
 
         self.parser = argparse.ArgumentParser(description='Openstack high availability software service(HASS)')
@@ -198,6 +197,7 @@ class HassAPI():
             except Exception as e:
                 print self.ERROR_color + "[Error] " + self.END_color + str(e)
                 return
+
             print self.showResult(self.HASS_result)
 
         elif self.args.command == "instance-delete":
@@ -213,8 +213,6 @@ class HassAPI():
                 return
             #return result["code"]+";"+result["instanceList"]
             self.showTable(self.HASS_result, self.TABLE.INSTANCE)
-
-        #print self.showResult(self.HASS_result)
 
 
 def main():
