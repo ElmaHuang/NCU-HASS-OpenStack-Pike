@@ -38,7 +38,7 @@ class NovaClient (object):
 						user_domain_name = self.config.get("openstack", "openstack_user_domain_id"),
 						project_domain_name = self.config.get("openstack", "openstack_project_domain_id"))
 		sess = session.Session(auth = auth)
-		novaClient = client.Client(2.29 , session = sess)
+		novaClient = client.Client(2.25 , session = sess)
 		return novaClient
 
 	def getComputePool(self):
