@@ -6,7 +6,7 @@ import logging
 class ClusterManager():
 	_cluster_dict = None
 	_db = None
-	_RESET_DB = True
+	_RESET_DB = False
 
 	@staticmethod
 	def init():
@@ -69,7 +69,7 @@ class ClusterManager():
 		return result
 
 	@staticmethod
-	def deleteNode(cluster_id, node_id , write_DB=True):
+	def deleteNode(cluster_id, node_name , write_DB=True):
 		cluster = ClusterManager.getCluster(cluster_id)
 		if not cluster:
 			code = "1"
@@ -77,16 +77,16 @@ class ClusterManager():
 			result = {"code": code, "clusterId":cluster_id, "message":message}
 			return result
 		try:
-			cluster.deleteNode(node_id)
+			cluster.deleteNode(node_name)
 			if write_DB:
 				ClusterManager.syncToDatabase()
 			code = "0"
-			message = "delete the node success. node is deleted. (node_id = %s)" % node_id
+			message = "delete the node success. node is deleted. (node_name = %s)" % node_name
 			result = {"code": code, "clusterId":cluster_id, "message":message}
 			return result
 		except:
 			code = "1"
-			message = "delete node fail. node not found. (node_id = %s)" % node_id
+			message = "delete node fail. node not found. (node_name = %s)" % node_name
 			result = {"code": code, "clusterId":cluster_id, "message":message}
 		return result
 
@@ -109,14 +109,7 @@ class ClusterManager():
 			message = "Add the instance to cluster failed. The cluster is not found. (cluster_id = %s)" % cluster_id
 			result = {"code": code, "clusterId":cluster_id, "message":message}
 			return result
-
-		if not cluster.checkInstanceExist(instance_id):
-			raise Exception("Not any node have this instance!")
-
-		# node add instance
-		node = cluster.findNodeByInstance(instance_id)
-		node.addInstance(instance_id)
-
+		cluster.addInstance(instance_id)
 		# log message
 		code = "0"
 		message = "Add instance success , instance_id : %s , cluster_id : %s" % (instance_id , cluster_id) 
@@ -129,15 +122,12 @@ class ClusterManager():
 		if not cluster:
 			code = "1"
 			message = "Add the instance to cluster failed. The cluster is not found. (cluster_id = %s)" % cluster_id
-		node = cluster.findNodeByInstance(instance_id)
-		if not node:
-			code = "1"
-			message = "delete instance failed. compute node pool don't have this instance (instance_id = %s)" % instance_id
 		try:
-			node.deleteInstance(instance_id)
+			cluster.deleteInstance(instance_id)
 			code = "0"
 			message = "delete instance success. this instance is now deleted (instance_id = %s)" % instance_id
-		except:
+		except Exception as e:
+			print str(e)
 			code = "1"
 			message = "delete instance failed. this instance is not being protected (instance_id = %s)" % instance_id
 		result = {"code": code, "clusterId":cluster_id, "message":message}

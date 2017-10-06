@@ -38,7 +38,7 @@ class NovaClient (object):
 						user_domain_name = self.config.get("openstack", "openstack_user_domain_id"),
 						project_domain_name = self.config.get("openstack", "openstack_project_domain_id"))
 		sess = session.Session(auth = auth)
-		novaClient = client.Client(2.25 , session = sess)
+		novaClient = client.Client(2.29 , session = sess)
 		return novaClient
 
 	def getComputePool(self):
@@ -66,9 +66,13 @@ class NovaClient (object):
 	def getAllInstanceList(self):
 		return NovaClient._helper.servers.list(search_opts={'all_tenants': 1})
 
-	def getInstanceNameById(self , instanceId):
+	def getInstanceName(self, instanceId):
 		instance = self.getVM(instanceId)
 		return getattr(instance, "OS-EXT-SRV-ATTR:instance_name")
+
+	def getInstanceHost(self, instance_id):
+		instance = self.getVM(instance_id)
+		return getattr(instance, "OS-EXT-SRV-ATTR:host")
 
 	def isInstanceExist(self, instanceId):
 		try:
@@ -94,23 +98,30 @@ class NovaClient (object):
 		return True
 		
 	def novaServiceUp(self,node):
-		return NovaClient._helper.services.force_down(node , "nova-compute" , False)
+		return NovaClient._helper.services.force_down(node.name , "nova-compute" , False)
+		# return NovaClient._helper.services.force_down(node , "nova-compute" , False)
 
 	def novaServiceDown(self, node):
-		return NovaClient._helper.services.force_down(node , "nova-compute" , True)
+		return NovaClient._helper.services.force_down(node.name , "nova-compute" , True)
+		# return NovaClient._helper.services.force_down(node , "nova-compute" , True)
 
-	def evacuate(vm, failNode, target):
-		self.novaServiceDown(failNode)
-		NovaClient._helper.servers.evacuate(vm , target , force=True)
-		self.novaServiceUp(failNode)
-
+	def evacuate(self, instance, target_host, fail_node):
+		self.novaServiceDown(fail_node)
+		openstack_instance = self.getVM(instance.id)
+		NovaClient._helper.servers.evacuate(openstack_instance , target_host.name , force=True)
+		self.novaServiceUp(fail_node)
 
 
 if __name__ == "__main__":
 	a = NovaClient.getInstance()
-	#print NovaClient().getHypervisorsList()
+	print a.getComputePool()
 	#print a.getVM("4df5a97d-9cf2-4d47-99a2-cf68e107acf6")
 	#print a.isInstanceExist("4df5a97d-9cf2-4d47-99a2-cf68e107acf6")
 	#print a.getInstanceList()[0].isIllegal()
-	print a.getAllInstanceList()
-	print a.getInstanceListByNode("compute1")
+	#print a.getAllInstanceList()
+	#print a.getInstanceListByNode("compute1")
+
+	try:
+	 	a.evacuate("021cba2c-aa49-41c6-ba36-88e7b902cb43", "compute1", "compute2")
+	except Exception as e:
+		print "excetpion" , str(e)

@@ -7,5 +7,6 @@ class ClusterInterface(object):
 		self.id = id
 		self.name = name
 		self.node_list = []
+		self.protected_instance_list = []
 		self.nova_client = NovaClient.getInstance()
 		self.db = DatabaseManager()

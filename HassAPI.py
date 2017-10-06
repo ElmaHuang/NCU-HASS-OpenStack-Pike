@@ -201,8 +201,11 @@ class HassAPI():
             print self.showResult(self.HASS_result)
 
         elif self.args.command == "instance-delete":
-            self.HASS_result = self.server.deleteInstance(self.args.uuid, self.args.vmid).split(";")
-            #return result["code"] + ";" + result["message"]
+            try:
+                self.HASS_result = self.server.deleteInstance(self.args.uuid, self.args.vmid).split(";")
+            except Exception as e:
+                print self.ERROR_color + "[Error] " + self.END_color + str(e)
+                return
             print self.showResult(self.HASS_result)
 
         elif self.args.command == "instance-list":

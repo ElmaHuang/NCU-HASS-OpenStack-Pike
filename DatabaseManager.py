@@ -37,10 +37,9 @@ class DatabaseManager(object):
             self.db.execute("""
                             CREATE TABLE IF NOT EXISTS ha_node 
                             (
-                            node_id MEDIUMINT NOT NULL AUTO_INCREMENT,
                             node_name char(18),
                             below_cluster char(36),
-                            PRIMARY KEY(node_id),
+                            PRIMARY KEY(node_name),
                             FOREIGN KEY(below_cluster)
                             REFERENCES ha_cluster(cluster_uuid)
                             ON DELETE CASCADE

@@ -1,4 +1,3 @@
-import socket
 import sys
 import threading
 import time
@@ -6,65 +5,36 @@ import logging
 import ConfigParser
 import argparse
 import xmlrpclib
-import subprocess
 import json
-import copy
-from IPMIModule import IPMIManager
-
-
-ipmi_manager = IPMIManager()
-
-HEALTH = "health"
-NETWORK_FAIL = "network"
-SERVICE_FAIL = "service"
-POWER_FAIL = "power"
-SENSOR_FAIL = "sensor"
-OS_FAIL = "os"
-
+from Detector import Detector
+import State
 
 
 class DetectionThread(threading.Thread):
     def __init__(self, interval, threshold, clusterId, node, port, restart_threshold, ipmi_status):
         threading.Thread.__init__(self)
-        self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.sock.setblocking(0)
         self.threshold = int(threshold) # error threshold
         self.restart_threshold = int(restart_threshold) # not used
         self.interval = float(interval) # actual polling interval
         self.default_interval = self.interval # initial interval
         self.clusterId = clusterId
         self.node = node
-        self.port = port
         self.exit = False
         self.recovery_flag = True
         self.service_failure_data = ""
-        #status index represent --
-        #0 = network
-        #1 = libvirt,QEMU/KVM
-        #2 = power
-        #3 = os
-        #4 = sensor(temperature, voltage)
-        self.state_list = [0,0,0,0,0]
         self.ipmi_status = ipmi_status
         self.config = ConfigParser.RawConfigParser()
         self.config.read('failureTable.conf')
-        self.failure_code = dict(self.config._sections['failure_code'])
-        self.function_map = [self.checkPowerStatus, self.checkOSStatus, self.checkNetworkStatus, self.checkServiceStatus]
+        self.detector = Detector(node, port)
+        self.function_map = [self.detector.checkNetworkStatus, self.detector.checkOSStatus, self.detector.checkNetworkStatus, self.detector.checkServiceStatus]
 
     def run(self):
         data = ""
         failure_occured_time = 0
         failure_detection_time = 0
-        #connect to FA
-        try:
-            print "["+self.node+"] create socket connection"
-            self.sock.settimeout(0.5)
-            self.sock.connect((self.node, self.port))
-            time.sleep(5)
-        except:
-            print "Init ["+self.node+"] connection failed"
+        
         while not self.exit:
-
+            time.sleep(1)
             state = self.detect()
             print state
 
@@ -141,74 +111,30 @@ class DetectionThread(threading.Thread):
 
     def detect(self):
         for _ in self.function_map:
-            state = _()
-            if state == HEALTH:
+            state = self.verify(_)
+            if state == State.HEALTH:
                 continue
             else:
-                return self.verify(_)
-        return HEALTH
+                return state
+        return State.HEALTH
 
     def verify(self, func):
         index = self.function_map.index(func)
-        reversed_function_map = self.function_map[:]
-        reversed_function_map = reversed_function_map[0:index+1]
-        reversed_function_map.reverse()
-
-        #print reversed_function_map
+        cloned_function_map = self.function_map[:] # clone from function map
+        cloned_function_map = cloned_function_map[0:index+1] # remove uneeded detection function
+        reversed_function_map = self._reverse(cloned_function_map)
 
         fail = None
         for _ in reversed_function_map:
             state = _()
-            if state == HEALTH and _ == func:
-                return HEALTH
-            elif state == HEALTH:
+            if state == State.HEALTH and _ == func:
+                return State.HEALTH
+            elif state == State.HEALTH:
                 return fail
-            elif not state == HEALTH:
+            elif not state == State.HEALTH:
                 fail = state
         return fail
 
-    def checkNetworkStatus(self):
-        try:
-            response = subprocess.check_output(['timeout', '0.2', 'ping', '-c', '1', self.node], stderr=subprocess.STDOUT, universal_newlines=True)
-        except subprocess.CalledProcessError:
-            return NETWORK_FAIL
-        return HEALTH
-
-    def checkServiceStatus(self):
-        try:
-            line = "polling request"
-            self.sock.sendall(line)
-            data, addr = self.sock.recvfrom(1024)
-            if data == "OK":
-                return HEALTH
-                print "["+self.node+"] OK" 
-            elif "error" in data :
-                print data
-                print "["+self.node+"]service Failed"
-            elif not data:
-                print "["+self.node+"]no ACK"
-            else:
-                 print "["+self.node+"]Receive:"+data   
-            return SERVICE_FAIL
-        except Exception as e:
-                print "["+self.node+"] connection failed"
-                self.sock.connect((self.node, self.port))
-                return SERVICE_FAIL
-
-    def checkPowerStatus(self):
-        status = ipmi_manager.getPowerStatus(self.node)
-        if status == "OK":
-            return HEALTH
-        return POWER_FAIL
-
-    def checkOSStatus(self):
-        status = ipmi_manager.getOSStatus(self.node)
-        if status == "OK":
-            return HEALTH
-        return OS_FAIL
-
-    def checkSensorStatus(self):
-        status = ipmi_manager.getSensorStatus(self.node)
-        if status == "OK":
-            return HEALTH
-        return SENSOR_FAIL
+    def _reverse(self, list):
+        list.reverse()
+        return list

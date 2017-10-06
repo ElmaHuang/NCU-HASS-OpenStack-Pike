@@ -1,6 +1,7 @@
 from ClusterInterface import ClusterInterface
 from DetectionManager import DetectionManager
 from Node import Node
+from Instance import Instance
 import uuid
 import logging
 import ConfigParser
@@ -16,16 +17,15 @@ class Cluster(ClusterInterface):
 		# create node list
 		for node_name in node_name_list:
 			if not self._nodeIsIllegal(node_name):
-				id = str(uuid.uuid4())
 				ipmi_status = self._getIPMIStatus(node_name)
-				node = Node(id = id , name = node_name , cluster_id = self.id , ipmi_status = ipmi_status)
+				node = Node(name = node_name , cluster_id = self.id , ipmi_status = ipmi_status)
 				self.node_list.append(node)
-				#node.startDetection()
+				#node.startDetectionThread()
 			else:
 				fail = True
 		if fail:
 			code = "1"
-			message = "Cluster add node fail , some node maybe overlapping or not in compute pool please check again! The node list is %s." % (self.getAllNodeStr()+",")
+			message = "Cluster add node fail , some node maybe overlapping or not in compute pool please check again! current node list is %s." % (self.getAllNodeStr()+",")
 			logging.info("Cluster add node fail , maybe overlapping or not in compute pool please check again!")
 			result = {"code":code, "clusterId":self.id, "message":message}
 			return result
@@ -34,12 +34,6 @@ class Cluster(ClusterInterface):
 			message = "The node %s is added to cluster." % self.getAllNodeStr()
 			result = {"code":code, "clusterId":self.id, "message":message}
 			return result
-
-	def findNodeByInstance(self, instance_id):
-		for node in self.node_list:
-			if node.containsInstance(instance_id):
-				return node
-		return None
 
 	def _isNodeDuplicate(self , unchecked_node_name):
 		for node in self.node_list:
@@ -50,23 +44,69 @@ class Cluster(ClusterInterface):
 		return unchecked_node_name in self.nova_client.getComputePool()
 
 	def _nodeIsIllegal(self , unchecked_node_name):
-		if self._isInComputePool(unchecked_node_name):
-			return False
+		if not self._isInComputePool(unchecked_node_name):
+			return True
 		if self._isNodeDuplicate(unchecked_node_name):
-			return False
-		return True
+			return True
+		return False
+
+	def deleteNode(self , node_name):
+		node = self.getNode(node_name)
+		if not node:
+			raise Exception("Delete node : Not found the node %s" % node_name)
+		#node.deleteDetectionThread()
+		self.node_list.remove(node)
+
+	def deleteAllNode(self):
+		for node in self.node_list:
+			self.deleteNode(node.name)
+
+
+	def addInstance(self, instance_id):
+		if not self.checkInstanceExist(instance_id): # check instance is exist
+			raise Exception("this instance not exist") 
+		if self.isProtected(instance_id): # check is protected
+			raise Exception("this instance is already being protected!")
+		if not self.nova_client.isInstancePowerOn(instance_id): # check is power on
+			raise Exception("this instance is not running!")
+		if not self.nova_client.isInstanceGetVolume(instance_id): # check has volume
+			raise Exception("this instance not having volume!")
+
+		instance = Instance(id=instance_id, 
+							name=self.nova_client.getInstanceName(instance_id), 
+							host=self.nova_client.getInstanceHost(instance_id))
+
+		self.protected_instance_list.append(instance)
+
+	def deleteInstance(self, instance_id):
+		if not self.isProtected(instance_id):
+			raise Exception("this instance is not being protected")
+		for instance in self.protected_instance_list:
+			if instance.id == instance_id:
+				self.protected_instance_list.remove(instance)
+				break
+
+	def updateInstance(self):
+		for instance in self.protected_instance_list:
+			host = self.nova_client.getInstanceHost(instance.id)
+			instance.host = host
+
+	def isProtected(self, instance_id):
+		for instance in self.protected_instance_list:
+			if instance.id == instance_id:
+				return True
+		return False
+
+	def findNodeByInstance(self, instance_id):
+		for node in self.node_list:
+			if node.containsInstance(instance_id):
+				return node
+		return None
 
 	def getNodeList(self):
 		return self.node_list
 
-	def getNodeById(self, node_id):
-		node_list = self.getNodeList()
-		for node in node_list:
-			if node.id == node_id:
-				return node
-		return None
-
-	def getNodeByName(self, name):
+	def getNode(self, name):
 		node_list = self.getNodeList()
 		for node in node_list:
 			if node.name == name:
@@ -79,17 +119,6 @@ class Cluster(ClusterInterface):
 			ret += node.name
 		return ret
 
-	def deleteNode(self , node_id):
-		node = self.getNodeById(node_id)
-		if not node:
-			raise Exception("Delete node : Not found the node %s" % node_id)
-		#node.deleteDetectionThread()
-		self.node_list.remove(node)
-
-	def deleteAllNode(self):
-		for node in self.node_list:
-			self.deleteNode(node.id)
-
 	def getInfo(self):
 		return [self.id, self.name]
 
@@ -100,13 +129,7 @@ class Cluster(ClusterInterface):
 		return ret
 
 	def getProtectedInstanceList(self):
-		ret = []
-		node_list = self.getNodeList()
-		for node in node_list:
-			instance_list = node.getProtectedInstanceList()
-			for instance in instance_list:
-				ret.append(instance)
-		return ret
+		return self.protected_instance_list
 
 	def getAllInstanceInfo(self):
 		ret = []
@@ -117,15 +140,25 @@ class Cluster(ClusterInterface):
 
 	def checkInstanceExist(self, instance_id):
 		node_list = self.getNodeList()
-		print node_list
 		for node in node_list:
 			if node.containsInstance(instance_id):
 				return True
 		return False
 
-	def _getIPMIStatus(self, node_id):
+	def _getIPMIStatus(self, node_name):
 		config = ConfigParser.RawConfigParser()
 		config.read('hass.conf')
 		ip_dict = dict(config._sections['ipmi'])
-		return node_id in ip_dict
+		return node_name in ip_dict
+
+	def findTargetHost(self, fail_node):
+		import random
+		target_list = [node for node in self.node_list if node != fail_node]
+		target_host = random.choice(target_list)
+		print "target_host : " + target_host
+		return target_host
+
+	def evacuate(self, instance, target_host, fail_node):
+		self.nova_client.evacuate(instance, target_host, fail_node)
+
 
