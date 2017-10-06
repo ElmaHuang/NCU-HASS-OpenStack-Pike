@@ -14,14 +14,14 @@ class Cluster(ClusterInterface):
 		# create node list
 		try:
 			for node_name in node_name_list:
-				if  self._nodeIsIllegal(node_name) != False:
+				if  not self._nodeIsIllegal(node_name) :
 					id = str(uuid.uuid4())
 					ipmi_status = self._getIPMIStatus(node_name)
 					node = Node(id = id , name = node_name , cluster_id = self.id , ipmi_status = ipmi_status)
 					self.node_list.append(node)
 					#node.startDetection()
-			message = "The node %s is added to cluster." % self.getAllNodeStr()
-			result = {"code": "0", "clusterId": self.id, "message": message}
+					message = "The node %s is added to cluster." % self.getAllNodeStr()
+					result = {"code": "0", "clusterId": self.id, "message": message}
 			return result
 		except:
 			message = "Cluster add node fail , some node maybe overlapping or not in compute pool please check again! The node list is %s." % (self.getAllNodeStr() + ",")
@@ -46,10 +46,10 @@ class Cluster(ClusterInterface):
 
 	def _nodeIsIllegal(self , unchecked_node_name):
 		if not self._isInComputePool(unchecked_node_name):
-			return False
+			return True
 		if self._isNodeDuplicate(unchecked_node_name):
-			return False
-		return True
+			return True
+		return False
 
 	def getNodeList(self):
 		return self.node_list
