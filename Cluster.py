@@ -10,10 +10,9 @@ class Cluster(ClusterInterface):
 	def __init__(self, id , name):
 		super(Cluster, self).__init__(id, name)
 
-	def addNode(self, node_name_list):
+	def addNode(self, node_name_list, fail=False):
 		code = ""
 		message = ""
-		fail = False
 		# create node list
 		for node_name in node_name_list:
 			if not self._nodeIsIllegal(node_name):
@@ -46,8 +45,6 @@ class Cluster(ClusterInterface):
 	def _nodeIsIllegal(self , unchecked_node_name):
 		if not self._isInComputePool(unchecked_node_name):
 			return True
-		if self._isNodeDuplicate(unchecked_node_name):
-			return True
 		return False
 
 	def deleteNode(self , node_name):
@@ -65,8 +62,6 @@ class Cluster(ClusterInterface):
 	def addInstance(self, instance_id):
 		if not self.checkInstanceExist(instance_id): # check instance is exist
 			raise Exception("this instance not exist") 
-		if self.isProtected(instance_id): # check is protected
-			raise Exception("this instance is already being protected!")
 		if not self.nova_client.isInstancePowerOn(instance_id): # check is power on
 			raise Exception("this instance is not running!")
 		if not self.nova_client.isInstanceGetVolume(instance_id): # check has volume
@@ -137,6 +132,13 @@ class Cluster(ClusterInterface):
 		for instance in instance_list:
 			ret.append(instance.getInfo())
 		return ret
+
+	def nodeExist(self, node_name):
+		node_list = self.getNodeList()
+		for node in node_list:
+			if node.name == node_name:
+				print node.name
+				return True
 
 	def checkInstanceExist(self, instance_id):
 		node_list = self.getNodeList()

@@ -63,7 +63,16 @@ class ClusterManager():
 			message = "Add the node to cluster failed. The cluster is not found. (cluster_id = %s)" % cluster_id
 			result = {"code": code, "clusterId":cluster_id, "message":message}
 			return result
-		result = cluster.addNode(node_name_list)
+
+		fail = False
+		#check every cluster exist the node
+		for id, cluster in ClusterManager._cluster_dict.iteritems():
+			for node_name in node_name_list:
+				if cluster.nodeExist(node_name):
+					node_name_list.remove(node_name)
+					fail = True
+
+		result = cluster.addNode(node_name_list, fail=fail)
 		if write_DB:
 			ClusterManager.syncToDatabase()
 		return result
@@ -109,6 +118,14 @@ class ClusterManager():
 			message = "Add the instance to cluster failed. The cluster is not found. (cluster_id = %s)" % cluster_id
 			result = {"code": code, "clusterId":cluster_id, "message":message}
 			return result
+
+		for id, cluster in ClusterManager._cluster_dict.iteritems():
+			if cluster.isProtected(instance_id):
+				code = "1"
+				message = "Add the instance to cluster failed. instance already being protected by cluster %s" % cluster.id
+				result = {"code": code, "clusterId":cluster_id, "message":message}
+				return result
+				
 		cluster.addInstance(instance_id)
 		# log message
 		code = "0"
