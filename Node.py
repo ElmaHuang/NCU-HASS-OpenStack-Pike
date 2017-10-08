@@ -15,8 +15,9 @@ class Node (NodeInterface):
 	def addInstance(self , instance_id):
 		if self.isProtected(instance_id): # check instance is already being protected
 			raise Exception("this instance is already being protected!")
-		instance = Instance(id=instance_id, 
-							name=self.nova_client.getInstanceNameById(instance_id), 
+		else:
+			instance = Instance(id=instance_id,
+							name=self.nova_client.getInstanceNameById(instance_id),
 							host=self.name)
 
 		if not instance.isIllegal(): # check instance is running and has volume or not
@@ -53,13 +54,13 @@ class Node (NodeInterface):
 		return False
 
 	def boot(self):
-		ipmi_module.startNode(self.id)
+		self.ipmi_module.startNode(self.id)
 
 	def shutdown(self):
-		ipmi_module.shutOffNode(self.id)
+		self.ipmi_module.shutOffNode(self.id)
 
 	def reboot(self):
-		ipmi_module.rebootNode(self.id)
+		self.ipmi_module.rebootNode(self.id)
 
 	def evacuateInstances(self):
 		pass
