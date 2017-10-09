@@ -54,20 +54,21 @@ class Node (NodeInterface):
 		return False
 
 	def boot(self):
-		self.ipmi_module.startNode(self.id)
+		self.ipmi_module.startNode(self.name)
 
 	def shutdown(self):
-		self.ipmi_module.shutOffNode(self.id)
+		self.ipmi_module.shutOffNode(self.name)
 
 	def reboot(self):
-		self.ipmi_module.rebootNode(self.id)
+		self.ipmi_module.rebootNode(self.name)
 
 	def evacuateInstances(self):
 		pass
-
+	'''
 	def isInComputePool(self):
 		return self.name in self.nova_client.getComputePool()
-
+	'''
+	
 if __name__ == "__main__":
 	pass
 	#a = Node("123","compute1", "23123")
