@@ -58,8 +58,8 @@ class HassAPI():
         # node list info
         elif type == self.TABLE.NODE:
             self.node_table = PrettyTable(["id", "name","cluster_id"])
-            for id,name,cluster_id in self.HASS_result:
-                self.node_table.add_row([id,name,cluster_id])
+            for name,cluster_id in self.HASS_result:
+                self.node_table.add_row([name,cluster_id])
             print self.node_table
         elif type == self.TABLE.INSTANCE:
             self.instance_table = PrettyTable(["id", "name","host"])

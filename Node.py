@@ -68,7 +68,7 @@ class Node (NodeInterface):
 	def isInComputePool(self):
 		return self.name in self.nova_client.getComputePool()
 	'''
-	
+
 if __name__ == "__main__":
 	pass
 	#a = Node("123","compute1", "23123")
