@@ -85,20 +85,19 @@ class Hass (object):
         return "auth success"
         
     def createCluster(self, name, nodeList=[]):
-        result = ClusterManager.createCluster(name)
-        if result["code"] == "0":
+        createCluster_result = ClusterManager.createCluster(name)
+        if createCluster_result["code"] == "0":
             if nodeList != []:
-                addNode_result = ClusterManager.addNode(result["clusterId"], nodeList)
+                addNode_result = ClusterManager.addNode(createCluster_result["clusterId"], nodeList)
             else :
-
-                addNode_result = {"code":"0", "clusterId":result["clusterId"], "message":"not add any node."}
+                addNode_result = {"code":"0", "clusterId":createCluster_result["clusterId"], "message":"not add any node."}
 
             if addNode_result["code"] == "0":
-                return "0;Create HA cluster and add computing node success, cluster uuid is %s , %s" % (result["clusterId"] , addNode_result["message"])
+                return "0;Create HA cluster and add computing node success, cluster uuid is %s , %s" % (createCluster_result["clusterId"] , addNode_result["message"])
             else:
-                return "1;The cluster is created.(uuid = "+result["clusterId"]+") But,"+ addNode_result["message"]
+                return "1;The cluster is created.(uuid = "+createCluster_result["clusterId"]+") But,"+ addNode_result["message"]
         else:
-            return result["code"]+";"+result["message"]
+            return createCluster_result["code"]+";"+createCluster_result["message"]
 
     def deleteCluster(self, uuid,write_DB = True):
         result = ClusterManager.deleteCluster(uuid)

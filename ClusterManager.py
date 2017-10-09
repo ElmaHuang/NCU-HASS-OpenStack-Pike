@@ -21,10 +21,13 @@ class ClusterManager():
 			logging.error("ClusterManager - cluster name overlapping")
 			result = {"code": "1", "clusterId":None, "message":"cluster overlapping abort!"}
 			return result
-		result = ClusterManager._addToClusterList(cluster_name , cluster_id)
-		if write_DB:
-			ClusterManager.syncToDatabase()
-		return result
+		else:
+			logging.info("ClusterManager - cluster name is not overlapping")
+			result = ClusterManager._addToClusterList(cluster_name , cluster_id)
+
+			if write_DB:
+				ClusterManager.syncToDatabase()
+			return result
 
 	@staticmethod
 	def deleteCluster(cluster_id , write_DB = True):
@@ -160,15 +163,16 @@ class ClusterManager():
 	@staticmethod
 	def _addToClusterList(cluster_name , cluster_id = None):
 		try:
-			result = None
+			#result = None
 			if cluster_id:
 				cluster = Cluster(id = cluster_id , name = cluster_name)
 				ClusterManager._cluster_dict[cluster_id] = cluster
 			else:
-				#start add to list
+				#start add to cluster list
 				cluster_id = str(uuid.uuid4())
 				cluster = Cluster(id = cluster_id , name = cluster_name)
 				ClusterManager._cluster_dict[cluster_id] = cluster
+				logging.info("ClusterManager - createCluster._addToClusterList success")
 				result = {"code": "0", "clusterId":cluster_id, "message":"create cluster success"}
 				return result
 		except:
