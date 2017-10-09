@@ -5,10 +5,9 @@ from IPMIModule import IPMIManager
 
 
 class Node (NodeInterface):
-	def __init__(self, id , name , cluster_id):
-		super(Node, self).__init__(id, name , cluster_id)
+	def __init__(self, id , name , cluster_id, ipmi_status):
+		super(Node, self).__init__(id, name , cluster_id, ipmi_status)
 		self.ipmi_module = IPMIManager()
-
 
 	def getProtectedInstanceList(self):
 		return self.protected_instance_list
@@ -18,7 +17,7 @@ class Node (NodeInterface):
 			raise Exception("this instance is already being protected!")
 		else:
 			instance = Instance(id=instance_id,
-							name=self.nova_client.getInstanceNameById(instance_id), 
+							name=self.nova_client.getInstanceNameById(instance_id),
 							host=self.name)
 
 		if not instance.isIllegal(): # check instance is running and has volume or not
@@ -55,25 +54,19 @@ class Node (NodeInterface):
 		return False
 
 	def boot(self):
-		ipmi_module.startNode(self.id)
+		self.ipmi_module.startNode(self.id)
 
 	def shutdown(self):
-		ipmi_module.shutOffNode(self.id)
+		self.ipmi_module.shutOffNode(self.id)
 
 	def reboot(self):
-		ipmi_module.rebootNode(self.id)
+		self.ipmi_module.rebootNode(self.id)
 
 	def evacuateInstances(self):
 		pass
 
 	def isInComputePool(self):
 		return self.name in self.nova_client.getComputePool()
-
-	def initDetectionThread(self):
-		self.detect.pollingRegister(self.node_id , name)
-		
-	def deleteDetectionThread(self):
-		self.detection_thread.stop()
 
 if __name__ == "__main__":
 	a = Node("123","compute1", "23123")

@@ -3,7 +3,10 @@ import ConfigParser
 import MySQLdb, MySQLdb.cursors
 import sys
 
+
 class DatabaseManager(object):
+
+
     def __init__(self):
         self.config = ConfigParser.RawConfigParser()
         self.config.read('hass.conf')
@@ -15,6 +18,8 @@ class DatabaseManager(object):
             logging.error("Hass AccessDB - connect to database failed (MySQL Error: %s)", str(e))
             print "MySQL Error: %s" % str(e)
             sys.exit(1)
+
+
     def connect(self):
         self.db_conn = MySQLdb.connect(  host = self.config.get("mysql", "mysql_ip"),
                                          user = self.config.get("mysql", "mysql_username"),
@@ -22,6 +27,8 @@ class DatabaseManager(object):
                                         db = "hass",
                                     )
         self.db = self.db_conn.cursor(cursorclass = MySQLdb.cursors.DictCursor)
+
+
     def createTable(self):
         try:
             self.db.execute("SET sql_notes = 0;")
@@ -51,8 +58,8 @@ class DatabaseManager(object):
             print "MySQL Error: %s" % str(e)
             sys.exit(1)
 
+
     def syncFromDB(self):
-        #self.resetAll()
         try:
             self.db.execute("SELECT * FROM ha_cluster;")
             ha_cluster_date = self.db.fetchall()
@@ -61,15 +68,17 @@ class DatabaseManager(object):
                 node_list = []
                 self.db.execute("SELECT * FROM ha_node WHERE below_cluster = '%s'" % cluster["cluster_uuid"])
                 ha_node_date = self.db.fetchall()
+
                 for node in ha_node_date:
                     node_list.append(node["node_name"])
+
                 #cluster_id = cluster["cluster_uuid"][:8]+"-"+cluster["cluster_uuid"][8:12]+"-"+cluster["cluster_uuid"][12:16]+"-"+cluster["cluster_uuid"][16:20]+"-"+cluster["cluster_uuid"][20:]
                 cluster_id = cluster["cluster_uuid"]
                 cluster_name = cluster["cluster_name"]
                 exist_cluster.append({"cluster_id": cluster_id, "cluster_name": cluster_name, "node_list": node_list})
                 #cluster_manager.createCluster(cluster_name = name , cluster_id = cluster_id)
                 #cluster_manager.addNode(cluster_id, node_list)
-
+            logging.info("Hass AccessDB - Read data success")
             return exist_cluster
 
         except MySQLdb.Error, e:
@@ -98,6 +107,7 @@ class DatabaseManager(object):
             print "MySQL Error: %s" % str(e)
             sys.exit(1)
 
+
     def writeDB(self , dbName , data):
         if dbName == "ha_cluster":
             format = "INSERT INTO ha_cluster (cluster_uuid,cluster_name) VALUES (%(cluster_uuid)s, %(cluster_name)s);"
@@ -112,11 +122,6 @@ class DatabaseManager(object):
             raise
 
 
-    def resetAll(self):
-        table_list = self._getAllTable()
-        for table in table_list:
-            self._resetTable(table)
-
     def _getAllTable(self):
         table_list = []
         cmd = "show tables"
@@ -126,6 +131,12 @@ class DatabaseManager(object):
         for table in res:
             table_list.append(table["Tables_in_hass"])
         return table_list
+
+
+    def resetAll(self):
+        table_list = self._getAllTable()
+        for table in table_list:
+            self._resetTable(table)
 
 
     def _resetTable(self, table_name):

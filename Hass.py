@@ -16,31 +16,6 @@ import sys
 from RecoveryManager import RecoveryManager
 from ClusterManager import ClusterManager
 from IPMINodeOperator import Operator
-#from IPMIModule import IPMIManager
-
-# Declare the configure file here. if you want to change configure file name, please modify : hass.conf.
-'''
-config = ConfigParser.RawConfigParser()
-config.read('hass.conf')
-
-# Set log file here. if you want to change log format, please modify : %(asctime)s [%(levelname)s] : %(message)s.
-log_level = logging.getLevelName(config.get("log", "level"))
-logFilename=config.get("log", "location")
-dir = os.path.dirname(logFilename)
-if not os.path.exists(dir):
-    os.makedirs(dir)
-logging.basicConfig(filename=logFilename,level=log_level, format="%(asctime)s [%(levelname)s] : %(message)s")
-'''
-# recovery = None
-# if len(sys.argv) == 2:
-#     print "System Test = ", sys.argv[1]
-#     recovery = Recovery(system_test = sys.argv[1])
-# else:
-# # Declare Recovery class. You need to ensure that there is only one object. So I declare it as global variable.
-#     recovery = Recovery()
-
-#ipmi_manager = IPMIManager()
-#ClusterManager.init()
 
 class RequestHandler(SimpleXMLRPCRequestHandler):
 #   Handle RPC request from remote user, and suport access authenticate. 
@@ -85,7 +60,7 @@ class RequestHandler(SimpleXMLRPCRequestHandler):
     # parser request, get authentication header and send to authenticate().
         if SimpleXMLRPCRequestHandler.parse_request(self):
             if self.authenticate(self.headers):
-                #logging.info("Hass RequestHandler - Authentication success, request from %s", self.clientip)
+                logging.info("Hass RequestHandler - Authentication success, request from %s", self.clientip)
                 return True
             else:
                 self.send_error(401, 'Authentication failed')
@@ -100,16 +75,7 @@ class Hass (object):
 #   Declare method here, and client can call it directly.
 #   All of methods just process return data from recovery module
     def __init__(self):
-        #self.config = ConfigParser.RawConfigParser()
-        #self.config.read('hass.conf')
 
-        #log_level = logging.getLevelName(self.config.get("log", "level"))
-        #logFilename = self.config.get("log", "location")
-        #dir = os.path.dirname(logFilename)
-        #if not os.path.exists(dir):
-         #   os.makedirs(dir)
-        #logging.basicConfig(filename=logFilename, level=log_level, format="%(asctime)s [%(levelname)s] : %(message)s")
-        # ipmi_manager = IPMIManager()
         ClusterManager.init()
         self.Operator = Operator()
         self.Recovery = RecoveryManager()
@@ -119,33 +85,33 @@ class Hass (object):
         return "auth success"
         
     def createCluster(self, name, nodeList=[]):
-        result = ClusterManager.createCluster(name)
-        if result["code"] == "0":
+        createCluster_result = ClusterManager.createCluster(name)
+        if createCluster_result["code"] == "0":
             if nodeList != []:
-                addNode_result = ClusterManager.addNode(result["clusterId"], nodeList)
+                addNode_result = ClusterManager.addNode(createCluster_result["clusterId"], nodeList)
             else :
-                addNode_result = {"code":"0", "clusterId":result["clusterId"], "message":"not add any node."}
-                    
-            if addNode_result["code"] == "0":
-                return "0;Create HA cluster and add computing node success, cluster uuid is %s , %s" % (result["clusterId"] , addNode_result["message"])
-            else:
-                return "1;The cluster is created.(uuid = "+result["clusterId"]+") But,"+ addNode_result["message"]
-        else:
-            return result["code"]+";"+result["message"]
+                addNode_result = {"code":"0", "clusterId":createCluster_result["clusterId"], "message":"not add any node."}
 
-    def deleteCluster(self, uuid):
-        result = ClusterManager.deleteCluster(uuid)
+            if addNode_result["code"] == "0":
+                return "0;Create HA cluster and add computing node success, cluster uuid is %s , %s" % (createCluster_result["clusterId"] , addNode_result["message"])
+            else:
+                return "1;The cluster is created.(uuid = "+createCluster_result["clusterId"]+") But,"+ addNode_result["message"]
+        else:
+            return createCluster_result["code"]+";"+createCluster_result["message"]
+
+    def deleteCluster(self, cluster_uuid):
+        result = ClusterManager.deleteCluster(cluster_uuid)
         return result["code"]+";"+result["message"]
     
     def listCluster(self):
         result = ClusterManager.listCluster()
         return result
-    
-    def addNode(self, clusterId, nodeList, writeDB=True):
+
+    def addNode(self, clusterId, nodeList):
         result = ClusterManager.addNode(clusterId, nodeList)               
         return result["code"]+";"+result["message"]
 
-    def deleteNode(self, cluster_id, node_id, writeDB=True):
+    def deleteNode(self, cluster_id, node_id):
         result = ClusterManager.deleteNode(cluster_id, node_id)
         return result["code"]+";"+result["message"]
         
@@ -153,18 +119,6 @@ class Hass (object):
         result = ClusterManager.listNode(clusterId)
         return result
 
-    def addInstance(self, clusterId, instanceId):
-        result = ClusterManager.addInstance(clusterId, instanceId)
-        return result["code"] + ";" + result["message"]
-
-    def deleteInstance(self, clusterId, instanceId):
-        result = ClusterManager.deleteInstance(clusterId, instanceId)
-        return result["code"] + ";" + result["message"]
-
-    def listInstance(self, clusterId):
-        result = ClusterManager.listInstance(clusterId)
-        return result
-            
     def startNode(self, nodeName):
         result = self.Operator.startNode(nodeName)
         return result["code"] + ";" + result["message"]
@@ -187,6 +141,19 @@ class Hass (object):
             return result["code"], result["info"]
         else: 
             return result["code"] + ";" + result["message"]
+
+    def addInstance(self, clusterId, instanceId):
+        result = ClusterManager.addInstance(clusterId, instanceId)
+        return result["code"] + ";" + result["message"]
+
+    def deleteInstance(self, clusterId, instanceId):
+        result = ClusterManager.deleteInstance(clusterId, instanceId)
+        return result["code"]+";"+result["message"]
+    
+    def listInstance(self, clusterId) :
+        result = ClusterManager.listInstance(clusterId)
+        return result
+
     def recoveryVM(self, clusterId, nodeName):
         result = self.Recovery.recoveryVM(clusterId, nodeName)
 
@@ -231,7 +198,6 @@ def main():
     if not os.path.exists(dir):
         os.makedirs(dir)
     logging.basicConfig(filename=logFilename, level=log_level, format="%(asctime)s [%(levelname)s] : %(message)s")
-    # ipmi_manager = IPMIManager()
 
     server = SimpleXMLRPCServer(('',int(config.get("rpc", "rpc_bind_port"))), requestHandler=RequestHandler, allow_none = True, logRequests=False)
     server.register_introspection_functions()
