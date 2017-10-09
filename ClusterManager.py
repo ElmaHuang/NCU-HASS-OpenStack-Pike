@@ -33,19 +33,20 @@ class ClusterManager():
 	def deleteCluster(cluster_id , write_DB = True):
 		cluster = ClusterManager.getCluster(cluster_id)
 		if not cluster:
-			code = "1"
+			logging.error("delete cluster fail. The cluster is not found. (cluster_id = %s)" % cluster_id)
 			message = "delete cluster fail. The cluster is not found. (cluster_id = %s)" % cluster_id
-			result = {"code": code, "clusterId":cluster_id, "message":message}
+			result = {"code": "1", "clusterId":cluster_id, "message":message}
 			return result
-		cluster.deleteAllNode()
-		del ClusterManager._cluster_dict[cluster_id]
+		else:
+			cluster.deleteAllNode()
+			del ClusterManager._cluster_dict[cluster_id]
 
-		if write_DB:
-			ClusterManager.syncToDatabase()
-		code = "0"
-		message = "delete cluster success. The cluster is deleted. (cluster_id = %s)" % cluster_id
-		result = {"code": code, "clusterId":cluster_id, "message":message}
-		return result
+			if write_DB:
+				ClusterManager.syncToDatabase()
+			#code = "0"
+			message = "delete cluster success. The cluster is deleted. (cluster_id = %s)" % cluster_id
+			result = {"code": "0", "clusterId":cluster_id, "message":message}
+			return result
 	'''
 	@staticmethod
 	def getClusterList():
@@ -66,10 +67,11 @@ class ClusterManager():
 			message = "Add the node to cluster failed. The cluster is not found. (cluster_id = %s)" % cluster_id
 			result = {"code": "1", "clusterId":cluster_id, "message":message}
 			return result
-		result = cluster.addNode(node_name_list)
-		if write_DB:
-			ClusterManager.syncToDatabase()
-		return result
+		else:
+			result = cluster.addNode(node_name_list)
+			if write_DB:
+				ClusterManager.syncToDatabase()
+			return result
 
 	@staticmethod
 	def deleteNode(cluster_id, node_id , write_DB=True):

@@ -99,19 +99,19 @@ class Hass (object):
         else:
             return createCluster_result["code"]+";"+createCluster_result["message"]
 
-    def deleteCluster(self, uuid,write_DB = True):
-        result = ClusterManager.deleteCluster(uuid)
+    def deleteCluster(self, cluster_uuid):
+        result = ClusterManager.deleteCluster(cluster_uuid)
         return result["code"]+";"+result["message"]
     
     def listCluster(self):
         result = ClusterManager.listCluster()
         return result
 
-    def addNode(self, clusterId, nodeList, writeDB=True):
+    def addNode(self, clusterId, nodeList):
         result = ClusterManager.addNode(clusterId, nodeList)               
         return result["code"]+";"+result["message"]
 
-    def deleteNode(self, cluster_id, node_id, writeDB=True):
+    def deleteNode(self, cluster_id, node_id):
         result = ClusterManager.deleteNode(cluster_id, node_id)
         return result["code"]+";"+result["message"]
         
