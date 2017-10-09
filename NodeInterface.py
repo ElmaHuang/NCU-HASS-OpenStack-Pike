@@ -4,8 +4,8 @@ import ConfigParser
 
 class NodeInterface(object):
 
-	def __init__(self, id, name, cluster_id , ipmi_status):
-		self.id = id
+	def __init__(self ,name, cluster_id , ipmi_status):
+		#self.id = id
 		self.name = name
 		self.protected_instance_list = []
 		self.cluster_id = cluster_id
@@ -68,7 +68,7 @@ class NodeInterface(object):
 		return [self.id , self.name , self.cluster_id]
 
 if __name__ == "__main__":
-	a = NodeInterface(123, "compute1" , "23" , True)
+	a = NodeInterface("compute1" , "23" , True)
 	a.startDetectionThread()
 	while True:
 		pass

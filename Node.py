@@ -5,8 +5,8 @@ from IPMIModule import IPMIManager
 
 
 class Node (NodeInterface):
-	def __init__(self, id , name , cluster_id, ipmi_status):
-		super(Node, self).__init__(id, name , cluster_id, ipmi_status)
+	def __init__(self, name , cluster_id, ipmi_status):
+		super(Node, self).__init__(name , cluster_id, ipmi_status)
 		self.ipmi_module = IPMIManager()
 
 	def getProtectedInstanceList(self):
@@ -69,6 +69,7 @@ class Node (NodeInterface):
 		return self.name in self.nova_client.getComputePool()
 
 if __name__ == "__main__":
-	a = Node("123","compute1", "23123")
-	print a.getInstanceList()
-	print a.getInstanceList()[1].isIllegal()
+	pass
+	#a = Node("123","compute1", "23123")
+	#print a.getInstanceList()
+	#print a.getInstanceList()[1].isIllegal()

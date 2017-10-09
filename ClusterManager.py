@@ -56,11 +56,17 @@ class ClusterManager():
 	def listCluster():
 		res = []
 		for id , cluster in ClusterManager._cluster_dict.iteritems():
-			res.append((cluster.getInfo()))
+			res.append((id,cluster.name))
 		return res
 
 	@staticmethod
 	def addNode(cluster_id, node_name_list, write_DB = True):
+		#check overlapping
+		for node_name in node_name_list:
+			if not ClusterManager._checkOverlappingForAllCluster(node_name):
+				print "%s is already in a HA cluster. " %node_name
+				node_name_list.remove(node_name)
+
 		cluster = ClusterManager.getCluster(cluster_id)
 		if not cluster:
 			#code = "1"
@@ -105,9 +111,6 @@ class ClusterManager():
 
 	@staticmethod
 	def addInstance(cluster_id, instance_id):
-		code = ""
-		message = "" 
-
 		cluster = ClusterManager.getCluster(cluster_id)
 		if not cluster:
 			code = "1"
@@ -183,9 +186,17 @@ class ClusterManager():
 			return result
 
 	@staticmethod
+	def _checkOverlappingForAllCluster(node_name):
+		for id,cluster in ClusterManager._cluster_dict.items():
+			for node in cluster.node_list:
+				if node_name==node.name:
+					return False
+		return True
+
+	@staticmethod
 	def getCluster(cluster_id):
 		if not ClusterManager._isCluster(cluster_id):
-			logging.info("cluster not found id %s" % cluster_id)
+			logging.error("cluster not found id %s" % cluster_id)
 			return None
 		return ClusterManager._cluster_dict[cluster_id]
 
