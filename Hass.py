@@ -111,8 +111,8 @@ class Hass (object):
         result = ClusterManager.addNode(clusterId, nodeList)               
         return result["code"]+";"+result["message"]
 
-    def deleteNode(self, cluster_id, node_id):
-        result = ClusterManager.deleteNode(cluster_id, node_id)
+    def deleteNode(self, cluster_id, node_name):
+        result = ClusterManager.deleteNode(cluster_id, node_name)
         return result["code"]+";"+result["message"]
         
     def listNode(self, clusterId) :

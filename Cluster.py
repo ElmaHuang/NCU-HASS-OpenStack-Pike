@@ -12,6 +12,8 @@ class Cluster(ClusterInterface):
 	def addNode(self, node_name_list):
 		# create node list
 		try:
+			message=""
+			result=None
 			for node_name in node_name_list:
 				if  not self._nodeIsIllegal(node_name) :
 					#id = str(uuid.uuid4())
@@ -21,12 +23,27 @@ class Cluster(ClusterInterface):
 					#node.startDetection()
 					message = "The node %s is added to cluster." % self.getAllNodeStr()
 					result = {"code": "0", "clusterId": self.id, "message": message}
+			logging.info(message)
 			return result
+
 		except:
 			message = "Cluster add node fail , some node maybe overlapping or not in compute pool please check again! The node list is %s." % (self.getAllNodeStr() + ",")
 			logging.error(message)
 			result = {"code": "1", "clusterId": self.id, "message": message}
 			return result
+
+	def deleteNode(self , node_name):
+		node = self.getNodeByName(node_name)
+		if not node:
+			raise Exception("Delete node : Not found the node %s" % node_name)
+		#node.deleteDetectionThread()
+		self.node_list.remove(node)
+
+	def getAllNodeInfo(self):
+		ret = []
+		for node in self.node_list:
+			ret.append(node.getInfo())
+		return ret
 
 	def findNodeByInstance(self, instance_id):
 		for node in self.node_list:
@@ -55,13 +72,14 @@ class Cluster(ClusterInterface):
 	#be DB called
 	def getNodeList(self):
 		return self.node_list
-
+	'''
 	def getNodeById(self, node_id):
 		#node_list = self.getNodeList()
 		for node in self.node_list:
 			if node.id == node_id:
 				return node
 		return None
+	'''
 
 	def getNodeByName(self, name):
 		#node_list = self.getNodeList()
@@ -76,12 +94,6 @@ class Cluster(ClusterInterface):
 			ret += node.name
 		return ret
 
-	def deleteNode(self , node_id):
-		node = self.getNodeById(node_id)
-		if not node:
-			raise Exception("Delete node : Not found the node %s" % node_id)
-		#node.deleteDetectionThread()
-		self.node_list.remove(node)
 
 	def deleteAllNode(self):
 		for node in self.node_list:
@@ -91,11 +103,6 @@ class Cluster(ClusterInterface):
 		return [self.id, self.name]
 	'''
 
-	def getAllNodeInfo(self):
-		ret = []
-		for node in self.node_list:
-			ret.append(node.getInfo())
-		return ret
 
 	def getProtectedInstanceList(self):
 		ret = []

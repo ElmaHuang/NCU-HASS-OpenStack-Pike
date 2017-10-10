@@ -17,7 +17,7 @@ class ClusterManager():
 
 	@staticmethod
 	def createCluster(cluster_name, cluster_id = None, write_DB = True):
-		if ClusterManager._isOverLapping(cluster_name):
+		if ClusterManager._isNameOverLapping(cluster_name):
 			logging.error("ClusterManager - cluster name overlapping")
 			result = {"code": "1", "clusterId":None, "message":"cluster overlapping abort!"}
 			return result
@@ -63,7 +63,7 @@ class ClusterManager():
 	def addNode(cluster_id, node_name_list, write_DB = True):
 		#check overlapping
 		for node_name in node_name_list:
-			if not ClusterManager._checkOverlappingForAllCluster(node_name):
+			if not ClusterManager._checkNodeOverlappingForAllCluster(node_name):
 				print "%s is already in a HA cluster. " %node_name
 				node_name_list.remove(node_name)
 
@@ -80,15 +80,15 @@ class ClusterManager():
 			return result
 
 	@staticmethod
-	def deleteNode(cluster_id, node_id , write_DB=True):
+	def deleteNode(cluster_id, node_name , write_DB=True):
 		cluster = ClusterManager.getCluster(cluster_id)
 		if not cluster:
-			code = "1"
+			#code = "1"
 			message = "delete the node failed. The cluster is not found. (cluster_id = %s)" % cluster_id
-			result = {"code": code, "clusterId":cluster_id, "message":message}
+			result = {"code": "1", "clusterId":cluster_id, "message":message}
 			return result
 		try:
-			cluster.deleteNode(node_id)
+			cluster.deleteNode(node_name)
 			if write_DB:
 				ClusterManager.syncToDatabase()
 			code = "0"
@@ -186,7 +186,7 @@ class ClusterManager():
 			return result
 
 	@staticmethod
-	def _checkOverlappingForAllCluster(node_name):
+	def _checkNodeOverlappingForAllCluster(node_name):
 		for id,cluster in ClusterManager._cluster_dict.items():
 			for node in cluster.node_list:
 				if node_name==node.name:
@@ -201,7 +201,7 @@ class ClusterManager():
 		return ClusterManager._cluster_dict[cluster_id]
 
 	@staticmethod
-	def _isOverLapping(name):
+	def _isNameOverLapping(name):
 		for cluster_id , cluster in ClusterManager._cluster_dict.items():
 			if cluster.name == name:
 				return True
