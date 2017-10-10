@@ -72,14 +72,6 @@ class Cluster(ClusterInterface):
 	#be DB called
 	def getNodeList(self):
 		return self.node_list
-	'''
-	def getNodeById(self, node_id):
-		#node_list = self.getNodeList()
-		for node in self.node_list:
-			if node.id == node_id:
-				return node
-		return None
-	'''
 
 	def getNodeByName(self, name):
 		#node_list = self.getNodeList()
@@ -98,11 +90,6 @@ class Cluster(ClusterInterface):
 	def deleteAllNode(self):
 		for node in self.node_list:
 			self.deleteNode(node.id)
-	'''
-	def getInfo(self):
-		return [self.id, self.name]
-	'''
-
 
 	def getProtectedInstanceList(self):
 		ret = []
@@ -128,9 +115,9 @@ class Cluster(ClusterInterface):
 				return True
 		return False
 
-	def _getIPMIStatus(self, node_id):
+	def _getIPMIStatus(self, node_name):
 		config = ConfigParser.RawConfigParser()
 		config.read('hass.conf')
 		ip_dict = dict(config._sections['ipmi'])
-		return node_id in ip_dict
+		return node_name in ip_dict
 

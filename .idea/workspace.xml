@@ -21,7 +21,6 @@
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../HASS-Newton-106/.idea/vcs.xml" afterPath="$PROJECT_DIR$/../HASS-Newton-106/.idea/vcs.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../HASS-Newton-106/.idea/workspace.xml" afterPath="$PROJECT_DIR$/../HASS-Newton-106/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Cluster.py" afterPath="$PROJECT_DIR$/Cluster.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/HassAPI.py" afterPath="$PROJECT_DIR$/HassAPI.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/NodeInterface.py" afterPath="$PROJECT_DIR$/NodeInterface.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -37,7 +36,7 @@
       <file leaf-file-name="HassAPI.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/HassAPI.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1625">
+            <state relative-caret-position="575">
               <caret line="65" column="49" lean-forward="true" selection-start-line="65" selection-start-column="49" selection-end-line="65" selection-end-column="49" />
               <folding>
                 <element signature="e#0#16#0" expanded="true" />
@@ -66,10 +65,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Cluster.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="Cluster.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Cluster.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="529">
+            <state relative-caret-position="2104">
               <caret line="117" column="38" lean-forward="false" selection-start-line="117" selection-start-column="38" selection-end-line="117" selection-end-column="38" />
               <folding />
             </state>
@@ -106,10 +105,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="NodeInterface.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="NodeInterface.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/NodeInterface.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="779">
+            <state relative-caret-position="550">
               <caret line="67" column="44" lean-forward="false" selection-start-line="67" selection-start-column="44" selection-end-line="67" selection-end-column="44" />
               <folding>
                 <element signature="e#0#33#0" expanded="true" />
@@ -129,8 +128,8 @@
       <find>getNode</find>
       <find>getInfo</find>
       <find>addN</find>
-      <find>id</find>
       <find>getNodeList</find>
+      <find>id</find>
       <find>isInComputePool</find>
     </findStrings>
   </component>
@@ -431,42 +430,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/ClusterManager.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="268">
-          <caret line="108" column="8" lean-forward="false" selection-start-line="108" selection-start-column="8" selection-end-line="108" selection-end-column="8" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/HassAPI.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1625">
-          <caret line="65" column="49" lean-forward="true" selection-start-line="65" selection-start-column="49" selection-end-line="65" selection-end-column="49" />
-          <folding>
-            <element signature="e#0#16#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/NodeInterface.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="779">
-          <caret line="67" column="44" lean-forward="false" selection-start-line="67" selection-start-column="44" selection-end-line="67" selection-end-column="44" />
-          <folding>
-            <element signature="e#0#33#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Node.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1250">
-          <caret line="70" column="0" lean-forward="false" selection-start-line="70" selection-start-column="0" selection-end-line="70" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/ClusterInterface.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="175">
@@ -483,11 +446,47 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/HassAPI.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="575">
+          <caret line="65" column="49" lean-forward="true" selection-start-line="65" selection-start-column="49" selection-end-line="65" selection-end-column="49" />
+          <folding>
+            <element signature="e#0#16#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ClusterManager.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="268">
+          <caret line="108" column="8" lean-forward="false" selection-start-line="108" selection-start-column="8" selection-end-line="108" selection-end-column="8" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/Cluster.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="529">
+        <state relative-caret-position="2104">
           <caret line="117" column="38" lean-forward="false" selection-start-line="117" selection-start-column="38" selection-end-line="117" selection-end-column="38" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Node.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1250">
+          <caret line="70" column="0" lean-forward="false" selection-start-line="70" selection-start-column="0" selection-end-line="70" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/NodeInterface.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="550">
+          <caret line="67" column="44" lean-forward="false" selection-start-line="67" selection-start-column="44" selection-end-line="67" selection-end-column="44" />
+          <folding>
+            <element signature="e#0#33#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

@@ -65,7 +65,7 @@ class NodeInterface(object):
 		self.detection_thread.stop()
 		
 	def getInfo(self):
-		return [self.name , self.cluster_id]
+		return [self.name ,self.ipmi_status, self.cluster_id]
 
 if __name__ == "__main__":
 	a = NodeInterface("compute1" , "23" , True)
