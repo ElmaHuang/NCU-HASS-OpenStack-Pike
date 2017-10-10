@@ -87,19 +87,23 @@ class ClusterManager():
 			message = "delete the node failed. The cluster is not found. (cluster_id = %s)" % cluster_id
 			result = {"code": "1", "clusterId":cluster_id, "message":message}
 			return result
-		try:
-			cluster.deleteNode(node_name)
-			if write_DB:
-				ClusterManager.syncToDatabase()
-			code = "0"
-			message = "delete the node success. node is deleted. (node_id = %s)" % node_id
-			result = {"code": code, "clusterId":cluster_id, "message":message}
-			return result
-		except:
-			code = "1"
-			message = "delete node fail. node not found. (node_id = %s)" % node_id
-			result = {"code": code, "clusterId":cluster_id, "message":message}
-		return result
+		else:
+			try:
+				cluster.deleteNode(node_name)
+				if write_DB:
+					ClusterManager.syncToDatabase()
+				#code = "0"
+				message = "delete the node success. node is deleted. (node_name = %s)" % node_name
+				logging.info(message)
+				result = {"code": "0", "clusterId":cluster_id, "message":message}
+				return result
+
+			except:
+				#code = "1"
+				message = "delete node fail. node not found. (node_name = %s)" % node_name
+				logging.error(message)
+				result = {"code": "1", "clusterId":cluster_id, "message":message}
+				return result
 
 	@staticmethod
 	def listNode(cluster_id):
