@@ -1,13 +1,13 @@
 from NodeInterface import NodeInterface
 from Instance import Instance
-from IPMIModule import IPMIManager
-#from DetectionManager import DetectionManager
+#from IPMIModule import IPMIManager
+from DetectionThread import DetectionThread
 
 
 class Node (NodeInterface):
 	def __init__(self, name , cluster_id, ipmi_status):
 		super(Node, self).__init__(name , cluster_id, ipmi_status)
-		self.ipmi_module = IPMIManager()
+		#self.ipmi_module = IPMIManager()
 
 	def getProtectedInstanceList(self):
 		return self.protected_instance_list
@@ -52,7 +52,7 @@ class Node (NodeInterface):
 			if instance.id == instance_id:
 				return True
 		return False
-
+	'''
 	def boot(self):
 		self.ipmi_module.startNode(self.name)
 
@@ -64,7 +64,7 @@ class Node (NodeInterface):
 
 	def evacuateInstances(self):
 		pass
-	'''
+	
 	def isInComputePool(self):
 		return self.name in self.nova_client.getComputePool()
 	'''

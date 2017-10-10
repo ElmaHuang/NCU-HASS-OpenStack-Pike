@@ -117,23 +117,23 @@ class ClusterManager():
 	def addInstance(cluster_id, instance_id):
 		cluster = ClusterManager.getCluster(cluster_id)
 		if not cluster:
-			code = "1"
+			#code = "1"
 			message = "Add the instance to cluster failed. The cluster is not found. (cluster_id = %s)" % cluster_id
+			result = {"code": "1", "clusterId":cluster_id, "message":message}
+			return result
+		else:
+			if not cluster.checkInstanceExist(instance_id):
+				raise Exception("Not any node have this instance!")
+
+			# node add instance
+			node = cluster.findNodeByInstance(instance_id)
+			node.addInstance(instance_id)
+
+			# log message
+			code = "0"
+			message = "Add instance success , instance_id : %s , cluster_id : %s" % (instance_id , cluster_id)
 			result = {"code": code, "clusterId":cluster_id, "message":message}
 			return result
-
-		if not cluster.checkInstanceExist(instance_id):
-			raise Exception("Not any node have this instance!")
-
-		# node add instance
-		node = cluster.findNodeByInstance(instance_id)
-		node.addInstance(instance_id)
-
-		# log message
-		code = "0"
-		message = "Add instance success , instance_id : %s , cluster_id : %s" % (instance_id , cluster_id) 
-		result = {"code": code, "clusterId":cluster_id, "message":message}
-		return result
 
 	@staticmethod
 	def deleteInstance(cluster_id , instance_id):

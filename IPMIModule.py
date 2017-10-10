@@ -38,25 +38,25 @@ class IPMIManager(object):
             result = {"code":code, "node":node_id, "message":message}
             return result
 
-    def startNode(self, node_id):
+    def startNode(self, node_name):
         code = ""
         message = ""
-        base = self._baseCMDGenerate(node_id)
+        base = self._baseCMDGenerate(node_name)
         if base is None:
-            raise Exception("node not found , node_name : %s" % node_id)
+            raise Exception("node not found , node_name : %s" % node_name)
         try:
             command = base + IPMIConf.STARTNODE
             response = subprocess.check_output(command, shell = True)
             if IPMIConf.STARTNODE_SUCCESS_MSG in response:
-                message = "The Computing Node %s is started." % node_id
-                logging.info("IpmiModule startNode - The Computing Node %s is started." % node_id)
+                message = "The Computing Node %s is started." % node_name
+                logging.info("IpmiModule startNode - The Computing Node %s is started." % node_name)
                 code = "0"
         except Exception as e:
-            message = "The Computing Node %s can not be started." % node_id
+            message = "The Computing Node %s can not be started." % node_name
             logging.error("IpmiModule startNode - %s" % e)
             code = "1"
         finally:
-            result = {"code":code, "node":nodeID, "message":message}
+            result = {"code":code, "node":node_name, "message":message}
             return result
             
     def shutOffNode(self, nodeID):

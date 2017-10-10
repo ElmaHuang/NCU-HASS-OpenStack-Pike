@@ -1,5 +1,5 @@
 from ClusterInterface import ClusterInterface
-from DetectionManager import DetectionManager
+#from DetectionManager import DetectionManager
 from Node import Node
 import uuid
 import logging
@@ -45,6 +45,7 @@ class Cluster(ClusterInterface):
 			ret.append(node.getInfo())
 		return ret
 
+	#cluster.addInstance
 	def findNodeByInstance(self, instance_id):
 		for node in self.node_list:
 			if node.containsInstance(instance_id):
@@ -73,6 +74,7 @@ class Cluster(ClusterInterface):
 	def getNodeList(self):
 		return self.node_list
 
+	#be deleteNode called
 	def getNodeByName(self, name):
 		#node_list = self.getNodeList()
 		for node in self.node_list:
@@ -80,13 +82,14 @@ class Cluster(ClusterInterface):
 				return node
 		return None
 
+	#addNode message
 	def getAllNodeStr(self):
 		ret = ""
 		for node in self.node_list:
 			ret += node.name
 		return ret
 
-
+	#cluster.deleteNode call
 	def deleteAllNode(self):
 		for node in self.node_list:
 			self.deleteNode(node.id)
@@ -107,6 +110,7 @@ class Cluster(ClusterInterface):
 			ret.append(instance.getInfo())
 		return ret
 
+	#cluster.addInstance
 	def checkInstanceExist(self, instance_id):
 		#node_list = self.getNodeList()
 		print "node list of cluster:",self.node_list
@@ -115,6 +119,7 @@ class Cluster(ClusterInterface):
 				return True
 		return False
 
+	#addNode call
 	def _getIPMIStatus(self, node_name):
 		config = ConfigParser.RawConfigParser()
 		config.read('hass.conf')

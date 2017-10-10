@@ -132,7 +132,7 @@ class Hass (object):
         return result["code"] + ";" + result["message"]
 
     def getAllInfoOfNode(self, nodeName):
-        result = self.Operator.getTempInfoByNode(nodeName)
+        result = self.Operator.getAllInfoByNode(nodeName)
         return result["code"] + ";" + result["info"]
 
     def getNodeInfoByType(self, nodeName, sensorType):
