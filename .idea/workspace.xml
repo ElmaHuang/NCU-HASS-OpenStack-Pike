@@ -20,9 +20,8 @@
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../HASS-Newton-106/.idea/modules.xml" afterPath="$PROJECT_DIR$/../HASS-Newton-106/.idea/modules.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../HASS-Newton-106/.idea/vcs.xml" afterPath="$PROJECT_DIR$/../HASS-Newton-106/.idea/vcs.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../HASS-Newton-106/.idea/workspace.xml" afterPath="$PROJECT_DIR$/../HASS-Newton-106/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Cluster.py" afterPath="$PROJECT_DIR$/Cluster.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ClusterManager.py" afterPath="$PROJECT_DIR$/ClusterManager.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Hass.py" afterPath="$PROJECT_DIR$/Hass.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -37,7 +36,7 @@
       <file leaf-file-name="HassAPI.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/HassAPI.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1825">
+            <state relative-caret-position="-1450">
               <caret line="59" column="43" lean-forward="false" selection-start-line="59" selection-start-column="43" selection-end-line="59" selection-end-column="43" />
               <folding>
                 <element signature="e#0#16#0" expanded="true" />
@@ -59,8 +58,8 @@
       <file leaf-file-name="ClusterManager.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/ClusterManager.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="543">
-              <caret line="59" column="18" lean-forward="true" selection-start-line="59" selection-start-column="18" selection-end-line="59" selection-end-column="18" />
+            <state relative-caret-position="368">
+              <caret line="75" column="12" lean-forward="false" selection-start-line="75" selection-start-column="12" selection-end-line="75" selection-end-column="12" />
               <folding />
             </state>
           </provider>
@@ -69,12 +68,11 @@
       <file leaf-file-name="Cluster.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Cluster.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="825">
-              <caret line="83" column="8" lean-forward="false" selection-start-line="83" selection-start-column="8" selection-end-line="83" selection-end-column="8" />
+            <state relative-caret-position="600">
+              <caret line="29" column="163" lean-forward="false" selection-start-line="29" selection-start-column="163" selection-end-line="29" selection-end-column="163" />
               <folding>
-                <element signature="e#308#1138#0" expanded="false" />
-                <element signature="e#1391#1472#0" expanded="false" />
-                <marker date="1507570919557" expanded="false" signature="2200:2320" ph="..." />
+                <element signature="e#1387#1468#0" expanded="false" />
+                <marker date="1507630185950" expanded="false" signature="2196:2316" ph="..." />
               </folding>
             </state>
           </provider>
@@ -143,8 +141,8 @@
         <option value="$PROJECT_DIR$/Node.py" />
         <option value="$PROJECT_DIR$/HassAPI.py" />
         <option value="$PROJECT_DIR$/Hass.py" />
-        <option value="$PROJECT_DIR$/Cluster.py" />
         <option value="$PROJECT_DIR$/ClusterManager.py" />
+        <option value="$PROJECT_DIR$/Cluster.py" />
       </list>
     </option>
   </component>
@@ -384,7 +382,7 @@
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#0#33#0" expanded="true" />
+            <element signature="e#0#33#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -394,7 +392,7 @@
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#0#33#0" expanded="true" />
+            <element signature="e#0#33#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -404,7 +402,7 @@
         <state relative-caret-position="193">
           <caret line="99" column="49" lean-forward="true" selection-start-line="99" selection-start-column="49" selection-end-line="99" selection-end-column="49" />
           <folding>
-            <element signature="e#0#14#0" expanded="true" />
+            <element signature="e#0#14#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -443,9 +441,17 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/Hass.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="893">
+          <caret line="114" column="35" lean-forward="false" selection-start-line="114" selection-start-column="35" selection-end-line="114" selection-end-column="35" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/HassAPI.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1825">
+        <state relative-caret-position="-1450">
           <caret line="59" column="43" lean-forward="false" selection-start-line="59" selection-start-column="43" selection-end-line="59" selection-end-column="43" />
           <folding>
             <element signature="e#0#16#0" expanded="true" />
@@ -455,28 +461,19 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/ClusterManager.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="543">
-          <caret line="59" column="18" lean-forward="true" selection-start-line="59" selection-start-column="18" selection-end-line="59" selection-end-column="18" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Hass.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="893">
-          <caret line="114" column="35" lean-forward="false" selection-start-line="114" selection-start-column="35" selection-end-line="114" selection-end-column="35" />
+        <state relative-caret-position="368">
+          <caret line="75" column="12" lean-forward="false" selection-start-line="75" selection-start-column="12" selection-end-line="75" selection-end-column="12" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Cluster.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="825">
-          <caret line="83" column="8" lean-forward="false" selection-start-line="83" selection-start-column="8" selection-end-line="83" selection-end-column="8" />
+        <state relative-caret-position="600">
+          <caret line="29" column="163" lean-forward="false" selection-start-line="29" selection-start-column="163" selection-end-line="29" selection-end-column="163" />
           <folding>
-            <element signature="e#308#1138#0" expanded="false" />
-            <element signature="e#1391#1472#0" expanded="false" />
-            <marker date="1507570919557" expanded="false" signature="2200:2320" ph="..." />
+            <element signature="e#1387#1468#0" expanded="false" />
+            <marker date="1507630185950" expanded="false" signature="2196:2316" ph="..." />
           </folding>
         </state>
       </provider>

@@ -12,8 +12,8 @@ class Cluster(ClusterInterface):
 	def addNode(self, node_name_list):
 		# create node list
 		try:
-			message=""
-			result=None
+			#message=""
+			#result=None
 			for node_name in node_name_list:
 				if  not self._nodeIsIllegal(node_name) :
 					#id = str(uuid.uuid4())
@@ -27,7 +27,7 @@ class Cluster(ClusterInterface):
 			return result
 
 		except:
-			message = "Cluster add node fail , some node maybe overlapping or not in compute pool please check again! The node list is %s." % (self.getAllNodeStr() + ",")
+			message = "Cluster add node fail , some node maybe overlapping or not in compute pool please check again! The node list is %s." % (self.getAllNodeStr())
 			logging.error(message)
 			result = {"code": "1", "clusterId": self.id, "message": message}
 			return result
