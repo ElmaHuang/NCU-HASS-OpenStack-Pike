@@ -11,20 +11,22 @@ class DetectionAgent():
         config = ConfigParser.RawConfigParser()
         config.read('hass_node.conf')
         self.port = int(config.get("polling","listen_port"))
+        self.version = int(config.get("version","version"))
         
     def startListen(self):
         print "create listen thread"
-        server = PollingHandler('192.168.1.21', self.port)
+        server = PollingHandler('', self.port, self.version)
         asyncore.loop()
     
 
 class PollingHandler(asyncore.dispatcher):
-    def __init__(self, host, port):
+    def __init__(self, host, port, version):
         asyncore.dispatcher.__init__(self)
         self.create_socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.set_reuse_addr()
         self.bind((host, port))
         self.libvirt_uri = "qemu:///system"
+        self.version = version
         print port
         
     def handle_read(self):
@@ -48,7 +50,7 @@ class PollingHandler(asyncore.dispatcher):
         if not self._checkNovaCompute():
             message += "nova;"
         if not self._checkQEMUKVM():
-            message += "qemu-kvm"
+            message += "qemukvm;"
         return message
 
     def _checkLibvirt(self):
@@ -70,13 +72,25 @@ class PollingHandler(asyncore.dispatcher):
     def _checkQEMUKVM(self):
         try:
             output = subprocess.check_output(['service', 'qemu-kvm', 'status'])
-            if "start/running" not in output:
-                return False
-        except:
+            if self.version == 14:
+                if "start/running" not in output:
+                    return False
+            elif self.version == 16:
+                if "active" not in output:
+                    return False
+        except Exception as e:
+            print str(e)
             return False
         return True
-    
+def main():
+    agent = DetectionAgent()
+    agent.startListen()
+    try:
+        while True:
+            pass
+    except:
+        sys.exit(1)
+
 if __name__ == "__main__":
-    server = PollingHandler('192.168.1.21', 20000)
-    asyncore.loop()
+    main()
 
