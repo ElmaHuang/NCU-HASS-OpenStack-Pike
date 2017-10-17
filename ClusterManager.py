@@ -116,58 +116,81 @@ class ClusterManager():
 	@staticmethod
 	def addInstance(cluster_id, instance_id):
 		cluster = ClusterManager.getCluster(cluster_id)
+		message = ""
 		if not cluster:
 			#code = "1"
-			message = "Add the instance to cluster failed. The cluster is not found. (cluster_id = %s)" % cluster_id
+			message = "ClusterManager--Add the instance to cluster failed. The cluster is not found. (cluster_id = %s)" % cluster_id
+			logging.error(message)
 			result = {"code": "1", "clusterId":cluster_id, "message":message}
 			return result
 		else:
-			if not cluster.checkInstanceExist(instance_id):
-				raise Exception("Not any node have this instance!")
+			try:
+				if not cluster.checkInstanceExist(instance_id):
+					raise Exception("Not any node have this instance!")
+				elif not cluster.checkInstanceGetVolume(instance_id):
+					raise Exception("Instance don't have Volume")
+				elif not ClusterManager._checkInstanceNOTOverlappingForAllCluster(instance_id):
+					raise Exception("instance already being protected ")
 
-			# node add instance
-			node = cluster.findNodeByInstance(instance_id)
-			node.addInstance(instance_id)
+				# node add instance
+				#node = cluster.findNodeByInstance(instance_id)
+				cluster.addInstance(instance_id)
 
-			# log message
-			code = "0"
-			message = "Add instance success , instance_id : %s , cluster_id : %s" % (instance_id , cluster_id)
-			result = {"code": code, "clusterId":cluster_id, "message":message}
-			return result
+				# log message
+				#code = "0"
+				message = "ClusterManager--Add instance success , instance_id : %s , cluster_id : %s" % (instance_id , cluster_id)
+				logging.info(message)
+				result = {"code": "0", "clusterId":cluster_id, "message":message}
+				return result
+			except Exception as e:
+				print e
+				message = "ClusterManager --add the instacne fail.instance_id : %s , cluster_id : %s" % (instance_id , cluster_id)
+				logging.error(message)
+				result = {"code": "1", "clusterId": cluster_id, "message": message}
+				return result
 
 	@staticmethod
 	def deleteInstance(cluster_id , instance_id):
 		cluster = ClusterManager.getCluster(cluster_id)
 		if not cluster:
-			code = "1"
+			#code = "1"
 			message = "Add the instance to cluster failed. The cluster is not found. (cluster_id = %s)" % cluster_id
-		node = cluster.findNodeByInstance(instance_id)
-		if not node:
-			code = "1"
-			message = "delete instance failed. compute node pool don't have this instance (instance_id = %s)" % instance_id
+			result = {"code": "1", "clusterId": cluster_id, "message": message}
+			return result
 		try:
-			node.deleteInstance(instance_id)
-			code = "0"
-			message = "delete instance success. this instance is now deleted (instance_id = %s)" % instance_id
-		except:
+			if cluster.deleteInstance(instance_id):
+			#code = "0"
+				message = "delete instance success. this instance is now deleted (instance_id = %s)" % instance_id
+				logging.info(message)
+				result = {"code": "0", "clusterId": cluster_id, "message": message}
+				return result
+			else: raise Exception
+		except Exception as e:
+			print str(e)
 			code = "1"
 			message = "delete instance failed. this instance is not being protected (instance_id = %s)" % instance_id
-		result = {"code": code, "clusterId":cluster_id, "message":message}
-		return result
-
+			result = {"code": "1", "clusterId":cluster_id, "message":"ClusterManager--delete Instance fail(instance_id = %s)" % instance_id}
+			return result
+	'''
 	@staticmethod
 	def getProtectedInstanceList(cluster_id):
 		cluster = ClusterManager.getCluster(cluster_id)
 		if not cluster:
 			raise Exception("get instance list fail , not find the cluster %s" % cluster_id)
 		return cluster.getProtectedInstanceList()
-
+	'''
 	@staticmethod
 	def listInstance(cluster_id):
 		cluster = ClusterManager.getCluster(cluster_id)
 		if not cluster:
 			raise Exception("get instance list fail , not find the cluster %s" % cluster_id)
-		return cluster.getAllInstanceInfo()
+		try:
+			instance_list= cluster.getAllInstanceInfo()
+		#if not instance_list:
+			logging.info("ClusterManager--listInstance,getInstanceList success,instanceList is %s" % instance_list)
+			return instance_list
+		except:
+			logging.error("ClusterManager--listInstance,getInstanceList fail")
 
 	@staticmethod
 	def _addToClusterList(cluster_name , cluster_id = None):
@@ -194,6 +217,14 @@ class ClusterManager():
 		for id,cluster in ClusterManager._cluster_dict.items():
 			for node in cluster.node_list:
 				if node_name==node.name:
+					return False
+		return True
+
+	@staticmethod
+	def _checkInstanceNOTOverlappingForAllCluster(instance_id):
+		for id, cluster in ClusterManager._cluster_dict.items():
+			for instance in cluster.instance_list:
+				if  instance_id== instance.id:
 					return False
 		return True
 

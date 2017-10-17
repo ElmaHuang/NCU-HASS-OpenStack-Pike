@@ -70,6 +70,11 @@ class NovaClient (object):
 		instance = self.getVM(instanceId)
 		return getattr(instance, "OS-EXT-SRV-ATTR:instance_name")
 
+	def getInstanceHost(self, instance_id):
+		instance = self.getVM(instance_id)
+		return getattr(instance, "OS-EXT-SRV-ATTR:host")
+
+
 	def isInstanceExist(self, instanceId):
 		try:
 			NovaClient._helper.servers.get(instanceId)

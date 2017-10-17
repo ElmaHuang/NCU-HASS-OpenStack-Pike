@@ -1,5 +1,5 @@
 from NovaClient import NovaClient
-from DatabaseManager import DatabaseManager
+#from DatabaseManager import DatabaseManager
 
 
 class ClusterInterface(object):
@@ -8,4 +8,5 @@ class ClusterInterface(object):
 		self.name = name
 		self.node_list = []
 		self.nova_client = NovaClient.getInstance()
-		self.db = DatabaseManager()
+		self.instance_list = []
+		#self.db = DatabaseManager()

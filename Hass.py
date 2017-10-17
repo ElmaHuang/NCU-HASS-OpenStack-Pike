@@ -75,7 +75,6 @@ class Hass (object):
 #   Declare method here, and client can call it directly.
 #   All of methods just process return data from recovery module
     def __init__(self):
-
         ClusterManager.init()
         self.Operator = Operator()
         self.Recovery = RecoveryManager()
@@ -143,22 +142,34 @@ class Hass (object):
             return result["code"] + ";" + result["message"]
 
     def addInstance(self, clusterId, instanceId):
-        result = ClusterManager.addInstance(clusterId, instanceId)
-        return result["code"] + ";" + result["message"]
+        try:
+            result = ClusterManager.addInstance(clusterId, instanceId)
+            return result["code"] + ";" + result["message"]
+        except:
+            logging.error("HASS--add Instance fail")
 
     def deleteInstance(self, clusterId, instanceId):
-        result = ClusterManager.deleteInstance(clusterId, instanceId)
-        return result["code"]+";"+result["message"]
-    
-    def listInstance(self, clusterId) :
-        result = ClusterManager.listInstance(clusterId)
-        return result
+        try:
+            result = ClusterManager.deleteInstance(clusterId, instanceId)
+            logging.info("HASS--delete instance success")
+            return result["code"]+";"+result["message"]
+        except:
+            logging.error("HASS--delete instance fail")
 
+    def listInstance(self, clusterId) :
+        try:
+            result = ClusterManager.listInstance(clusterId)
+            logging.info("HASS-list instance success")
+            return result
+        except :
+            logging.error("HASS--list instance fail")
+    '''
     def recoveryVM(self, clusterId, nodeName):
         result = self.Recovery.recoveryVM(clusterId, nodeName)
 
-    #def removeNodeFromCluster(self, clusterId, nodeName):
-       # result = self.Recovery.remove_node_from_cluster(clusterId, nodeName)
+    def removeNodeFromCluster(self, clusterId, nodeName):
+        result = self.Recovery.remove_node_from_cluster(clusterId, nodeName)
+    '''
 
     def recoveryByShutOffNode(self, clusterId, nodeName, option):
         result = self.Recovery.recoveryByShutOffNode(clusterId, nodeName)

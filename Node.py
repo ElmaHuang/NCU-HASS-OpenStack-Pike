@@ -5,54 +5,31 @@ from DetectionThread import DetectionThread
 
 
 class Node (NodeInterface):
-	def __init__(self, name , cluster_id, ipmi_status):
-		super(Node, self).__init__(name , cluster_id, ipmi_status)
+	def __init__(self, name , cluster_id):
+		super(Node, self).__init__(name , cluster_id)
 		#self.ipmi_module = IPMIManager()
 
+	'''
 	def getProtectedInstanceList(self):
-		return self.protected_instance_list
-
-	def addInstance(self , instance_id):
-		if self.isProtected(instance_id): # check instance is already being protected
-			raise Exception("this instance is already being protected!")
-		else:
-			instance = Instance(id=instance_id,
-							name=self.nova_client.getInstanceNameById(instance_id),
-							host=self.name)
-
-		if not instance.isIllegal(): # check instance is running and has volume or not
-			raise Exception("this instance may either have not running or has no volume")
-		self.protected_instance_list.append(instance)
-
-	def deleteInstance(self , instance_id):
-		if not self.isProtected(instance_id):
-			raise Exception("this instance is not being protected")
-		for instance in self.protected_instance_list:
-			if instance.id == instance_id:
-				self.protected_instance_list.remove(instance)
-				break
-		return True
+		return self.instance_listnam
+	'''
 
 	def containsInstance(self, instance_id):
 		node_instance_list = self.nova_client.getInstanceListByNode(self.name)
 		for instance in node_instance_list:
 			id = getattr(instance , "id")
+			#print instance_id,id
 			if id == instance_id:
 				return True
 		return False
 
+	'''
 	def getInstanceInfo(self):
 		res = []
 		for instance in self.protected_instance_list:
 			res.append(instance.getInfo())
 		return res
-
-	def isProtected(self, instance_id):
-		for instance in self.protected_instance_list:
-			if instance.id == instance_id:
-				return True
-		return False
-	'''
+	
 	def boot(self):
 		self.ipmi_module.startNode(self.name)
 

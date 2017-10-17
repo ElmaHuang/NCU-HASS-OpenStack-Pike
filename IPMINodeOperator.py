@@ -93,6 +93,7 @@ class Operator(object):
 				data, addr = sock.recvfrom(2048)
 				if "OK" in data:
 					status = True
+				sock.close()
 			except Exception as e:
 				print e
 			finally:

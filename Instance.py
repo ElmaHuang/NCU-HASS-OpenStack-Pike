@@ -14,15 +14,12 @@ class Instance(object):
 
 	def hasVolume(self):
 		return self.nova_client.isInstanceGetVolume(self.id)
-
-	def isIllegal(self):	
+	''''
+	def isPowerOn(self):
 		if not self.isPowerOn():
 			logging.info("VM %s is not running" % self.name)
 			return False
-		# elif not self.hasVolume():
-		# 	logging.info("VM %s is not having volume" % self.name)
-		# 	return False
 		return True
-
+	'''
 	def getInfo(self):
 		return [self.id , self.name , self.host]

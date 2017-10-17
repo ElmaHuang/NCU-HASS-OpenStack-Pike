@@ -1,24 +1,21 @@
 from NovaClient import NovaClient
 from DetectionThread import DetectionThread
+from IPMIModule import IPMIManager
 import ConfigParser
 
 class NodeInterface(object):
 
-	def __init__(self ,name, cluster_id , ipmi_status):
+	def __init__(self ,name, cluster_id):
 		#self.id = id
 		self.name = name
-		self.protected_instance_list = []
+		#self.protected_instance_list = []
 		self.cluster_id = cluster_id
-		self.ipmi_status = ipmi_status
+		self.ipmi=IPMIManager()
+		self.ipmi_status = self.ipmi._getIPMIStatus(self.name)
+
 		self.nova_client = NovaClient.getInstance()
 		self.detection_thread = None
 		#self.initDetectionThread()
-	
-	#def setNodeId(self, id):
-		#self.id = id
-
-	#def getNodeId(self):
-		#return self.id
 
 	def setNodeName(self, name):
 		self.name = name

@@ -20,17 +20,6 @@ class HassAPI():
         self.TABLE = enum(CLUSTER='cluster', NODE='node', INSTANCE='instance')
         self.bcolors()
 
-    # def generateTempTable(self,result):
-    #     self.result_Temp_Table = PrettyTable(["Sensor ID", "Device", "Value", "Lower Critical", "Upper Critical"])
-    #     self.result_Temp_Table.add_row(result)
-    #     return self.result_Temp_Table
-
-    # def generateVoltageTable(self,result):
-    #     self.result_Voltage_Table = PrettyTable(["Sensor ID", "Device", "Value"])
-    #     for Voltage_sensor_value  in result:
-    #         self.result_Voltage_Table.add_row(Voltage_sensor_value)
-    #     return self.result_Voltage_Table
-
     def generateSensorTable(self, result):
         sensor_table = PrettyTable(["Sensor ID", "Entity ID", "Sensor Type", "Value", "status"])
         for value in result:

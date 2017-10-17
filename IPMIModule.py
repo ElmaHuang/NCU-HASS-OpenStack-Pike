@@ -51,7 +51,6 @@ class IPMIManager(object):
                 message = "The Computing Node %s is started." % node_name
                 logging.info("IpmiModule startNode - The Computing Node %s is started." % node_name)
                 code = "0"
-            else: raise Exception
         except Exception as e:
             message = "The Computing Node %s can not be started." % node_name
             logging.error("IpmiModule startNode - %s" % e)
