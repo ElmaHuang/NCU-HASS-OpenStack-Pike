@@ -84,23 +84,37 @@ class Hass (object):
         return "auth success"
         
     def createCluster(self, name, nodeList=[]):
-        createCluster_result = ClusterManager.createCluster(name)
-        if createCluster_result["code"] == "0":
-            if nodeList != []:
-                addNode_result = ClusterManager.addNode(createCluster_result["clusterId"], nodeList)
-            else :
-                addNode_result = {"code":"0", "clusterId":createCluster_result["clusterId"], "message":"not add any node."}
+        try:
+            createCluster_result = ClusterManager.createCluster(name)
+            if createCluster_result["code"] == "0":
+                if nodeList != []:
+                    addNode_result = ClusterManager.addNode(createCluster_result["clusterId"], nodeList)
 
-            if addNode_result["code"] == "0":
-                return "0;Create HA cluster and add computing node success, cluster uuid is %s , %s" % (createCluster_result["clusterId"] , addNode_result["message"])
+                    if addNode_result["code"] == "0":
+                        message = "Create HA cluster and add computing node success, cluster uuid is %s , add node message %s" % (createCluster_result["clusterId"], addNode_result["message"])
+                        logging.info(message)
+                        result= {"code" : "0","message": message}
+                        return result
+                    else:
+                        #add node fail
+                        message = "The cluster is created.(uuid = " + createCluster_result["clusterId"] + ") But," + addNode_result["message"]
+                        logging.error(message)
+                        result ={"code":"1","message":message}
+                        return result
+                else :#nodelist is None
+                    #addNode_result = {"code":"0", "clusterId":createCluster_result["clusterId"], "message":"not add any node."}
+                    logging.info(createCluster_result["message"])
+                    return createCluster_result
             else:
-                return "1;The cluster is created.(uuid = "+createCluster_result["clusterId"]+") But,"+ addNode_result["message"]
-        else:
-            return createCluster_result["code"]+";"+createCluster_result["message"]
+                #create cluster
+                logging.error("HASS-create cluster--create cluster fail")
+                return createCluster_result
+        except:
+            logging.error("HASS-create cluster-except--create cluster fail")
 
     def deleteCluster(self, cluster_uuid):
         result = ClusterManager.deleteCluster(cluster_uuid)
-        return result["code"]+";"+result["message"]
+        return result
     
     def listCluster(self):
         result = ClusterManager.listCluster()
@@ -115,24 +129,36 @@ class Hass (object):
         return result["code"]+";"+result["message"]
         
     def listNode(self, clusterId) :
-        result = ClusterManager.listNode(clusterId)
-        return result
+        try:
+            result = ClusterManager.listNode(clusterId)
+            return result
+        except:
+            logging.error("HAS--List node fail")
 
     def startNode(self, nodeName):
-        result = self.Operator.startNode(nodeName)
-        return result["code"] + ";" + result["message"]
+        try:
+            result = self.Operator.startNode(nodeName)
+            return result["code"] + ";" + result["message"]
+        except:
+            logging.error("HASS--Start node fail")
 
     def shutOffNode(self, nodeName):
-        result = self.Operator.shutOffNode(nodeName)
-        return result["code"] + ";" + result["message"]
+        try:
+            result = self.Operator.shutOffNode(nodeName)
+            return result["code"] + ";" + result["message"]
+        except:
+            logging.error("HASS--Shut off fail")
 
     def rebootNode(self, nodeName):
         result = self.Operator.rebootNode(nodeName)
         return result["code"] + ";" + result["message"]
 
     def getAllInfoOfNode(self, nodeName):
-        result = self.Operator.getAllInfoByNode(nodeName)
-        return result["code"] + ";" + result["info"]
+        try:
+            result = self.Operator.getAllInfoByNode(nodeName)
+            return result["code"] + ";" + result["info"]
+        except:
+            logging.error("HASS--get All Info from node fail")
 
     def getNodeInfoByType(self, nodeName, sensorType):
         result = self.Operator.getNodeInfoByType(nodeName, sensorType)

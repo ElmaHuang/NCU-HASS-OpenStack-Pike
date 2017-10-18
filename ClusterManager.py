@@ -18,34 +18,42 @@ class ClusterManager():
 	@staticmethod
 	def createCluster(cluster_name, cluster_id = None, write_DB = True):
 		if ClusterManager._isNameOverLapping(cluster_name):
-			logging.error("ClusterManager - cluster name overlapping")
-			result = {"code": "1", "clusterId":None, "message":"cluster overlapping abort!"}
+			message = "ClusterManager - cluster name overlapping"
+			logging.error(message)
+			result = {"code": "1", "message": message}
 			return result
 		else:
 			logging.info("ClusterManager - cluster name is not overlapping")
 			result = ClusterManager._addToClusterList(cluster_name , cluster_id)
 
-			if write_DB:
+			if result["code"]== "0" and write_DB:
 				ClusterManager.syncToDatabase()
 			return result
-
+		
 	@staticmethod
 	def deleteCluster(cluster_id , write_DB = True):
 		cluster = ClusterManager.getCluster(cluster_id)
 		if not cluster:
-			logging.error("delete cluster fail. The cluster is not found. (cluster_id = %s)" % cluster_id)
 			message = "delete cluster fail. The cluster is not found. (cluster_id = %s)" % cluster_id
+			logging.error(message)
 			result = {"code": "1", "clusterId":cluster_id, "message":message}
 			return result
 		else:
-			cluster.deleteAllNode()
-			del ClusterManager._cluster_dict[cluster_id]
+			re=cluster.deleteAllNode()
+			if re is True:
+				del ClusterManager._cluster_dict[cluster_id]
+				re = ClusterManager.listCluster()
+				for id in re:
+					if id[0] == cluster_id:
+						raise Exception("Delete cluster fail")
+				print ClusterManager._cluster_dict
+				message = "delete cluster success. The cluster is deleted. (cluster_id = %s)" % cluster_id
+				logging.info(message)
+				result = {"code": "0", "clusterId": cluster_id, "message": message}
 
 			if write_DB:
 				ClusterManager.syncToDatabase()
 			#code = "0"
-			message = "delete cluster success. The cluster is deleted. (cluster_id = %s)" % cluster_id
-			result = {"code": "0", "clusterId":cluster_id, "message":message}
 			return result
 	'''
 	@staticmethod
@@ -157,19 +165,20 @@ class ClusterManager():
 			message = "Add the instance to cluster failed. The cluster is not found. (cluster_id = %s)" % cluster_id
 			result = {"code": "1", "clusterId": cluster_id, "message": message}
 			return result
-		try:
-			if cluster.deleteInstance(instance_id):
+		#try:
+		if cluster.deleteInstance(instance_id):
 			#code = "0"
-				message = "delete instance success. this instance is now deleted (instance_id = %s)" % instance_id
-				logging.info(message)
-				result = {"code": "0", "clusterId": cluster_id, "message": message}
-				return result
-			else: raise Exception
-		except Exception as e:
-			print str(e)
-			code = "1"
+			message = "delete instance success. this instance is now deleted (instance_id = %s)" % instance_id
+			logging.info(message)
+			result = {"code": "0", "clusterId": cluster_id, "message": message}
+			return result
+		else:
+			#raise Exception
+		#except Exception as e:
+		#	print str(e)
+			#code = "1"
 			message = "delete instance failed. this instance is not being protected (instance_id = %s)" % instance_id
-			result = {"code": "1", "clusterId":cluster_id, "message":"ClusterManager--delete Instance fail(instance_id = %s)" % instance_id}
+			result = {"code": "1", "clusterId":cluster_id, "message":message}
 			return result
 	'''
 	@staticmethod
@@ -199,17 +208,23 @@ class ClusterManager():
 			if cluster_id:
 				cluster = Cluster(id = cluster_id , name = cluster_name)
 				ClusterManager._cluster_dict[cluster_id] = cluster
+				message = "ClusterManager -syncofromDB-- createCluster._addToCluster success,cluster id = %s" % cluster_id
+				logging.info(message)
+				result = {"code": "0", "message": message}
+				return result
 			else:
 				#start add to cluster list
 				cluster_id = str(uuid.uuid4())
 				cluster = Cluster(id = cluster_id , name = cluster_name)
 				ClusterManager._cluster_dict[cluster_id] = cluster
-				logging.info("ClusterManager - createCluster._addToClusterList success")
-				result = {"code": "0", "clusterId":cluster_id, "message":"create cluster success"}
+				message = "ClusterManager - createCluster._addToClusterList success,cluster id = %s" % cluster_id
+				logging.info(message)
+				result = {"code": "0", "message":message}
 				return result
 		except:
-			logging.error("ClusterManager - createCluster._addToCluster fail")
-			result = {"code": "1", "clusterId": cluster_id, "message": "create cluster fail"}
+			message = "ClusterManager - createCluster._addToCluster fail,cluster id = &s" % cluster_id
+			logging.error(message)
+			result = {"code": "1", "message": message}
 			return result
 
 	@staticmethod

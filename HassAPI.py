@@ -32,10 +32,10 @@ class HassAPI():
         self.END_color = '\033[0m'
 
     def showResult(self,result):
-        if result[0] == '0':
-            return self.OK_color + "[Success] " + self.END_color + result[1]
+        if result["code"] == "0":
+            return self.OK_color + "[Success] " + self.END_color + result["message"]
         else:
-            return self.ERROR_color + "[Error] " + self.END_color + result[1]
+            return self.ERROR_color + "[Error] " + self.END_color + result["message"]
 
     def showTable(self, result , type):
         # cluster list info
@@ -112,14 +112,17 @@ class HassAPI():
         self.args = self.parser.parse_args()
         if self.args.command == "cluster-create":
             if self.args.nodes != None:
-                self.HASS_result = self.server.createCluster(self.args.name, self.args.nodes.strip().split(",")).split(";")
+                 self.HASS_result = self.server.createCluster(self.args.name, self.args.nodes.strip().split(","))
             else:
-                self.HASS_result = self.server.createCluster(self.args.name, []).split(";")
-            #return createCluster_result["code"]+";"+createCluster_result["message"]
+                self.HASS_result = self.server.createCluster(self.args.name, [])
+                #return createCluster_result["code"]+";"+createCluster_result["message"]
+
             print self.showResult(self.HASS_result)
+            #except Exception as e:
+                #print self.ERROR_color + "[Error] " + self.END_color + str(e)
 
         elif self.args.command == "cluster-delete":
-            self.HASS_result = self.server.deleteCluster(self.args.uuid).split(";")
+            self.HASS_result = self.server.deleteCluster(self.args.uuid)
             #return result["code"] + ";" + result["message"]
             print self.showResult(self.HASS_result)
 

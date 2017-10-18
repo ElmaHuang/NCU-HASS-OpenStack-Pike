@@ -104,7 +104,7 @@ class NovaClient (object):
 	def novaServiceDown(self, node):
 		return NovaClient._helper.services.force_down(node , "nova-compute" , True)
 
-	def evacuate(vm, failNode, target):
+	def evacuate(self,vm, failNode, target):
 		self.novaServiceDown(failNode)
 		NovaClient._helper.servers.evacuate(vm , target , force=True)
 		self.novaServiceUp(failNode)

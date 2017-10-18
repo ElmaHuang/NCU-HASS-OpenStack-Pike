@@ -22,29 +22,38 @@ class Operator(object):
 
 
 	def startNode(self,node_name, default_wait_time = 300):
-		try:
-			if self._checkNode(node_name):
-				message = " node is in compute pool . The node is %s." % node_name
-				self.ipmi_result=self.ipmi_module.startNode(node_name)
-			else	:raise Exception
+		message = ""
+		#code = ""
+		result = None
+		if self._checkNodeIPMI(node_name):
+			#code = "0"
+			message += " IPMIOperator--node is in compute pool . The node is %s." % node_name
+			self.ipmi_result=self.ipmi_module.startNode(node_name)
 
-			if self.ipmi_result["code"]=="0":
-				message+="start node success.The node is %s." %node_name
-				logging.info(message)
-				result = {"code": "0", "node_name": node_name, "message": message}
-			else:raise Exception
-
-			boot_up = self._check_node_boot_success(node_name,default_wait_time)
-			if boot_up:
-				return result
-			else:raise Exception
-
-		except Exception as e:
-
-			message = " start node fail.The node is %s." % node_name
+			if self.ipmi_result["code"] == "0":
+				boot_up = self._check_node_boot_success(node_name, default_wait_time)
+				if boot_up:
+					message += "start node success.The node is %s." % node_name
+					logging.info(message)
+					result = {"code": "0", "node_name": node_name, "message": message}
+			else:
+				message += "IPMIOperator--start node fail.The node is %s." % node_name
+				logging.error(message)
+				result = {"code": "1", "node_name": node_name, "message": message}
+		else	:
+			#code = "1"
+			message += " IPMIOperator--node is not in compute pool or is not a IPMI PC . The node is %s." % node_name
 			logging.error(message)
 			result = {"code": "1", "node_name": node_name, "message": message}
-			return result
+
+		return result
+
+#		except Exception as e:
+
+			#message = " start node fail.The node is %s." % node_name
+			#logging.error(message)
+			#result = {"code": "1", "node_name": node_name, "message": message}
+			#return result
 
 	def shutOffNode(self,node_name):
 		if self._checkNode(node_name):
@@ -65,7 +74,7 @@ class Operator(object):
 	def getNodeInfoByType(self,node_name,sensor_type):
 		pass
 
-	def _checkNode(self,node_name):
+	def _checkNodeIPMI(self,node_name):
 		#is IPMI PC
 		self.ipmistatus = self.ipmi_module._getIPMIStatus(node_name)
 		if not self.ipmistatus:

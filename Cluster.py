@@ -65,7 +65,7 @@ class Cluster(ClusterInterface):
 		for instance in self.instance_list:
 			if instance.id == instance_id:
 				self.instance_list.remove(instance)
-				break
+				#break
 		return True
 
 	#cluster.addInstance
@@ -124,6 +124,8 @@ class Cluster(ClusterInterface):
 	def deleteAllNode(self):
 		for node in self.node_list:
 			self.deleteNode(node.id)
+		if self.node_list ==[]:
+			return True
 	'''
 	def getProtectedInstanceList(self):
 		return self.instance_list
