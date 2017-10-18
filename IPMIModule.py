@@ -22,7 +22,8 @@ class IPMIManager(object):
         message = ""
         base = self._baseCMDGenerate(node_name)
         if base is None:
-            raise Exception("node not found , node_name : %s" % node_name)
+            result = {"code" : 1,"message" : "compute node : %s is not supported" % node_name}
+            return result
         try:
             command = base + IPMIConf.REBOOTNODE
             response = subprocess.check_output(command, shell = True)
@@ -43,7 +44,8 @@ class IPMIManager(object):
         message = ""
         base = self._baseCMDGenerate(node_name)
         if base is None:
-            raise Exception("node not found , node_name : %s" % node_name)
+            result = {"code" : 1,"message" : "compute node : %s is not supported" % node_name}
+            return result
         try:
             command = base + IPMIConf.STARTNODE
             response = subprocess.check_output(command, shell = True)
@@ -64,7 +66,8 @@ class IPMIManager(object):
         message = ""
         base = self._baseCMDGenerate(node_name)
         if base is None:
-            raise Exception("node not found , node_name : %s" % node_name)
+            result = {"code" : 1,"message" : "compute node : %s is not supported" % node_name}
+            return result
         try:
             command = base + IPMIConf.SHUTOFFNODE
             response = subprocess.check_output(command, shell = True)
@@ -84,12 +87,17 @@ class IPMIManager(object):
         code = ""
         message = ""
         dataList = []
-
+        vendor = self.config.get("ipmi","vendor")
         base = self._baseCMDGenerate(node_name)
         if base is None:
-            raise Exception("node not found , node_name : %s" % node_name)
+            result = {"code" : 1}
+            return result
         try:
-            command = base + IPMIConf.NODE_CPU_SENSOR_INFO
+            command = base
+            if vendor == "HP":
+                command += IPMIConf.HP_NODE_CPU_SENSOR_INFO
+            elif vendor == "DELL":
+                command += IPMIConf.DELL_NODE_CPU_SENSOR_INFO
             p = subprocess.Popen(command, stdout = subprocess.PIPE, stderr = subprocess.PIPE, shell=True)
             response, err = p.communicate()
             response = response.split("\n")
@@ -144,7 +152,8 @@ class IPMIManager(object):
         result_list = []
         base = self._baseCMDGenerate(node_name)
         if base is None:
-            raise Exception("node not found , node_name : %s" % node_name)
+            result = {"code" : 1,"message" : "compute node : %s is not supported" % node_name}
+            return result
         for sensor_type in sensor_type_list:
             command = base + IPMIConf.NODEINFO_BY_TYPE % sensor_type
             print command
@@ -173,7 +182,7 @@ class IPMIManager(object):
         status = "OK"
         base = self._baseCMDGenerate(node_name)
         if base is None:
-            result = {"code" : 1}
+            result = {"code" : 1,"message" : "compute node : %s is not supported" % node_name}
             return result
         try:
             command = base + IPMIConf.GET_OS_STATUS
@@ -231,7 +240,7 @@ class IPMIManager(object):
         status = "OK"
         base = self._baseCMDGenerate(node_name)
         if base is None:
-            result = {"code" : 1}
+            result = {"code" : 1,"message" : "compute node : %s is not supported" % node_name}
             return result
         try:
             command = base + IPMIConf.POWER_STATUS
@@ -253,7 +262,14 @@ class IPMIManager(object):
         else:
             return None
 
+    def getIPMIStatus(self, node_name):
+        ip_dict = dict(self.config._sections['ipmi'])
+        return node_name in ip_dict
+
 
 if __name__ == "__main__":
     i = IPMIManager()
-    print i.checkPowerStatus("compute1")
+    #print i.checkPowerStatus("compute1")
+    # print i.getOSStatus("compute3")
+    # print i.getPowerStatus("compute1")
+    print i.getOSStatus("compute3")

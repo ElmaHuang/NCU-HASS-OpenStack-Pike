@@ -57,9 +57,9 @@ class HassAPI():
             print self.cluster_table
         # node list info
         elif type == self.TABLE.NODE:
-            self.node_table = PrettyTable(["name","cluster_id"])
-            for name,cluster_id in self.HASS_result:
-                self.node_table.add_row([name,cluster_id])
+            self.node_table = PrettyTable(["name", "cluster_id", "ipmi_enabled"])
+            for name, cluster_id, ipmi_status in self.HASS_result:
+                self.node_table.add_row([name, cluster_id, ipmi_status])
             print self.node_table
         elif type == self.TABLE.INSTANCE:
             self.instance_table = PrettyTable(["id", "name","host"])

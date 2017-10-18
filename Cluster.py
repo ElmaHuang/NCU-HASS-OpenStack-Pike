@@ -16,10 +16,9 @@ class Cluster(ClusterInterface):
 		# create node list
 		for node_name in node_name_list:
 			if not self._nodeIsIllegal(node_name):
-				ipmi_status = self._getIPMIStatus(node_name)
-				node = Node(name = node_name , cluster_id = self.id , ipmi_status = ipmi_status)
+				node = Node(name = node_name , cluster_id = self.id)
 				self.node_list.append(node)
-				#node.startDetectionThread()
+				node.startDetectionThread()
 			else:
 				fail = True
 		if fail:
@@ -126,6 +125,14 @@ class Cluster(ClusterInterface):
 	def getProtectedInstanceList(self):
 		return self.protected_instance_list
 
+	def getProtectedInstanceListByNode(self, node):
+		ret = []
+		protected_instance_list = self.getProtectedInstanceList()
+		for instance in protected_instance_list:
+			if instance.host == node.name:
+				ret.append(instance)
+		return ret
+
 	def getAllInstanceInfo(self):
 		ret = []
 		instance_list = self.getProtectedInstanceList()
@@ -147,17 +154,10 @@ class Cluster(ClusterInterface):
 				return True
 		return False
 
-	def _getIPMIStatus(self, node_name):
-		config = ConfigParser.RawConfigParser()
-		config.read('hass.conf')
-		ip_dict = dict(config._sections['ipmi'])
-		return node_name in ip_dict
-
 	def findTargetHost(self, fail_node):
 		import random
 		target_list = [node for node in self.node_list if node != fail_node]
 		target_host = random.choice(target_list)
-		print "target_host : " + target_host
 		return target_host
 
 	def evacuate(self, instance, target_host, fail_node):

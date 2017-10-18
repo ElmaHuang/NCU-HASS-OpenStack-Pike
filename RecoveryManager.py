@@ -1,35 +1,139 @@
 from ClusterManager import ClusterManager
 from Schedule import Schedule
 from NovaClient import NovaClient
-
+from Detector import Detector
+import State
 import logging
+import ConfigParser
+import time
+import subprocess
 
-class RecoverManager(object):
+class RecoveryManager(object):
 	def __init__(self):
 		self.nova_client = NovaClient.getInstance()
+		self.config = ConfigParser.RawConfigParser()
+		self.config.read('hass.conf')
 
-	def recoverOSHang(self, cluster_id, fail_node):
-		self.revocerVM(cluster_id, fail_node)
-		result = fail_node.reboot()
-		if result["code"] == "0":
-			logging.info(message + result["message"])
-
-
-		pass
-	def recoverNodeCrash(self):
-		pass
-	def recoverNetworkIsolation(self):
-		pass
-	def recoverSensorCritical(self):
-		pass
-	def recoverServiceFail(self):
-		pass
-
-	def revocerVM(self, cluster_id, fail_node):
+	def recoverOSHanged(self, cluster_id, fail_node_name):
 		cluster = ClusterManager.getCluster(cluster_id)
 		if not cluster:
 			logging.error("RecoverManager : cluster not found")
 			return
+		fail_node = cluster.getNode(fail_node_name)
+		print "fail node is %s" % fail_node.name
+		print "start recovery vm"
+		self.recoverVM(cluster, fail_node)
+		print "end recovery vm"
+		result = fail_node.reboot()
+		print "boot node result : %s" % result
+		message = "Recovery recovery_os_hanged - "
+		if result["code"] == "0":
+			logging.info(message + result["message"])
+			boot_up = self.check_node_boot_success(fail_node)
+			if boot_up:
+				print "Node %s recovery finished." % fail_node.name
+				return True
+			else:
+				logging.error(message + "Can not reboot node %s successfully", fail_node.name)
+				return False
+		else:
+			logging.error(message + result["message"])
+			return False
+		return False
+
+	def recoverNodeCrash(self):
+		pass
+
+	def recoverNetworkIsolation(self, cluster_id, fail_node_name):
+		cluster = ClusterManager.getCluster(cluster_id) 
+		if not cluster:
+			logging.error("RecoverManager : cluster not found")
+			return
+		fail_node = cluster.getNode(fail_node_name)
+
+		second_chance = State.HEALTH
+		try:
+			print "start second_chance..."
+			print "wait 30 seconds and check again"
+			time.sleep(30) # sleep 30 seconds and ping host again
+			response = subprocess.check_output(['timeout', '0.2', 'ping', '-c', '1', fail_node.name], stderr=subprocess.STDOUT, universal_newlines=True)
+		except subprocess.CalledProcessError:
+			print "After 30 senconds, the network status of %s is still unreachable" % fail_node.name
+			second_chance = State.NETWORK_FAIL
+
+		if second_chance == State.HEALTH:
+			print "The network status of %s return to health" % fail_node.name
+			return True
+		else:
+			print "fail node is %s" % fail_node.name
+			print "start recovery vm"
+			self.recoverVM(cluster, fail_node)
+			print "end recovery vm"
+			result = fail_node.reboot()
+			print "boot node result : %s" % result
+			message = "RecoveryManager recover network isolation"
+			if result["code"] == "0":
+				logging.info(message + result["message"])
+				boot_up = self.check_node_boot_success(fail_node)
+				if boot_up:
+					print "Node %s recovery finished." % fail_node.name
+					return True
+				else:
+					logging.error(message + "Can not reboot node %s successfully", fail_node.name)
+					return False
+			else:
+				logging.error(message + result["message"])
+				return False
+			return False
+
+	def recoverSensorCritical(self):
+		pass
+
+	def recoverServiceFail(self, cluster_id, fail_node_name):
+		cluster = ClusterManager.getCluster(cluster_id) 
+		if not cluster:
+			logging.error("RecoverManager : cluster not found")
+			return
+		fail_node = cluster.getNode(fail_node_name)
+
+		port = int(self.config.get("detection","polling_port"))
+		version = int(self.config.get("version","version"))
+		detector = Detector(fail_node, port)
+		fail_services = detector.checkServiceStatus()
+
+		status = True
+		if "agents" in fail_services:
+			status = self.restartDetectionService(fail_node, version)
+		else:
+			status = self.restartServices(fail_node, fail_services, version)
+
+		if not status: # restart service fail
+			print "start recovery"
+			# print "fail node is %s" % fail_node.name
+			# print "start recovery vm"
+			# self.recoverVM(cluster, fail_node)
+			# print "end recovery vm"
+			# result = fail_node.reboot()
+			# print "boot node result : %s" % result
+			# message = "RecoveryManager recover network isolation"
+			# if result["code"] == "0":
+			# 	logging.info(message + result["message"])
+			# 	boot_up = self.check_node_boot_success(fail_node)
+			# 	if boot_up:
+			# 		print "Node %s recovery finished." % fail_node.name
+			# 		return True
+			# 	else:
+			# 		logging.error(message + "Can not reboot node %s successfully", fail_node.name)
+			# 		return False
+			# else:
+			# 	logging.error(message + result["message"])
+			# 	return False
+			# return False
+		return True
+
+
+
+	def recoverVM(self, cluster, fail_node):
 		if len(cluster.getNodeList()) < 2:
 			logging.error("RecoverManager : evacuate fail, cluster only one node")
 			return
@@ -37,47 +141,130 @@ class RecoverManager(object):
 			logging.error("RecoverManager : not found the fail node")
 			return
 
-		protected_instance_list = cluster.getProtectedInstanceList()
+		protected_instance_list = cluster.getProtectedInstanceListByNode(fail_node)
+		print "protected list : %s" % protected_instance_list
 		for instance in protected_instance_list:
-			if instance.host = fail_node.name:
-				target_host = cluster.findTargetHost(fail_node)
-				if not target_host:
-					logging.error("RecoverManager : not found the target_host %s" % target_host)
-					continue
-				try:
-					cluster.evacuate(instance, target_host, fail_node)
-				except Exception as e:
-					print str(e)
-					logging.error("RecoverManager - The instance %s evacuate failed" % instance.id)
-		self._check_vm_status(fail_node, cluster)
+			target_host = cluster.findTargetHost(fail_node)
+			print "target_host : %s" % target_host.name
+			if not target_host:
+				logging.error("RecoverManager : not found the target_host %s" % target_host)
+				continue
+
+			if target_host.InstanceOverlappingInLibvirt(instance):
+				print "instance %s overlapping in %s" % (instance.name, target_host.name)
+				print "start undefine instance in %s" % target_host.name
+				target_host.undefineInstance(instance)
+				print "end undefine instance"
+
+			try:
+				print "start evacuate"
+				cluster.evacuate(instance, target_host, fail_node)
+			except Exception as e:
+				print str(e)
+				logging.error("RecoverManager - The instance %s evacuate failed" % instance.id)
+
+		print "check instance status"
+		status = self._check_instance_status(fail_node, cluster)
+		if status == False:
+			logging.error("RecoverManager : check vm status false")
+
+		print "update instance"
 		cluster.updateInstance()
 
-	def _check_vm_status(self, fail_node, cluster, check_timeout=60):
+	def restartDetectionService(self, fail_node, version):
+		print "Start service failure recovery by starting Detection Agent"
+		agent_path = self.config.get("path", "agent_path")
+		cmd = "cd /home/%s/%s/ ; python DetectionAgent.py" % (fail_node.name, agent_path) # not daemon
+		print cmd
+		# if version = 16:
+		# 	cmd = "systemctl restart DetectionAgent.py" # 16 daemon
+		# elif version = 14:
+		# 	cmd = "service DetectionAgent.py restart" # 14 daemon
+		fail_node.remote_exec(cmd) # restart DetectionAgent service
+		time.sleep(5)
+
+		cmd = "ps aux | grep '[D]etectionAgent.py'"
+		stdin, stdout, stderr = fail_node.remote_exec(cmd)
+		service = stdout.read()
+		print service
+		if "python DetectionAgent.py" in service: # check DetectionAgent
+			return True
+		return False
+
+	def restartServices(self, fail_node, fail_services, version):
+		service_mapping = {"libvirt" : "libvirt-bin", "nova" : "nova-compute", "qemukvm" : "qemu-kvm"}
+		fail_service_list = fail_services.split(":")[-1].split(";")[0:-1]
+
+		for fail_service in fail_service_list:
+			fail_service = service_mapping[fail_service]
+			if version ==14:
+				cmd = "service %s restart" % fail_service
+			elif version == 16:
+				cmd = "systemctl restart %s" % fail_service
+			print cmd
+			stdin, stdout, stderr = fail_node.remote_exec(cmd) # restart service
+
+			if stderr.read():
+				print "The node %s service %s can not restart" % (fail_node.name, fail_service)
+				return False
+			if version == 14:
+				cmd = "service %s status | grep start/running" % fail_service
+			elif version == 16:
+				cmd = "systemctl status %s | grep active" % fail_service
+			stdin, stdout, stderr = fail_node.remote_exec(cmd) # check service active or not
+
+			if not stdout.read():
+				print "The node %s service %s still doesn't work" % (fail_node.name, fail_service)
+				return False
+			else:
+				print "The node %s service %s successfully restart" % (fail_node.name, fail_service)
+		return True # recover all the fail service
+
+	def _check_instance_status(self, fail_node, cluster, check_timeout=60):
 		status = False
-		ret = True
-		instance_list = cluster.getProtectedInstanceList()
-		for instance in instance_list:
-			if instance.host = node.name:
-				openstack_instance = self.nova_client.getVM(instance.id)
-				ip = str(instance.networks['provider'][0])
-				check_timeout = 60
+		protected_instance_list = cluster.getProtectedInstanceListByNode(fail_node)
+		for instance in protected_instance_list:
+			openstack_instance = self.nova_client.getVM(instance.id)
+			try:
+				ip = str(openstack_instance.networks['selfservice'][1])
+				status = self._pingInstance(ip, check_timeout)
+			except Exception as e:
+				print "vm : %s has no provider network, abort ping process!" % instance.name
+				continue
+			if not status:
+				logging.error("vm %s cannot ping %s" % (instance.name, ip))
+		return status
 
-				while check_timeout > 0:
-					try:
-						response = subprocess.check_output(['timeout', '0.2', 'ping', '-c', '1' , ip], stderr=subprocess.STDOUT, universal_newlines=True)
-						status = True
-						break
-					except subprocess.CalledProcessError:
-						status = False
-					finally:
-						time.sleep(1)
-						check_timeout -= 1
+	def _pingInstance(self, ip, check_timeout):
+		status = False
+		while check_timeout > 0:
+			try:
+				print "check vm %s" % ip
+				response = subprocess.check_output(['timeout', '0.2', 'ping', '-c', '1' , ip], stderr=subprocess.STDOUT, universal_newlines=True)
+				status = True
+				break
+			except subprocess.CalledProcessError:
+				status = False
+			finally:
+				time.sleep(1)
+				check_timeout -= 1
+		return status
 
-				if status == False:
-					logging.error("vm %s cannot ping" % instance.name)
-					ret = False
-		return ret
+	def check_node_boot_success(self, node, check_timeout=180):
+		port = int(self.config.get("detection","polling_port"))
+		detector = Detector(node, port)
 
+		while check_timeout > 0:
+			try:
+				if detector.checkServiceStatus() == State.HEALTH:
+					return True
+			except Exception as e:
+				print str(e)
+			finally:
+				time.sleep(1)
+				check_timeout -= 1
+		return False
 
-
-
+if __name__ == "__main__":
+	r = RecoveryManager()
+	l = r.remote_exec("compute3","virsh list --all")

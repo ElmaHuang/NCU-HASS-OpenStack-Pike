@@ -49,7 +49,7 @@ class PollingHandler(asyncore.dispatcher):
         #check nova-compute
         if not self._checkNovaCompute():
             message += "nova;"
-        if not self._checkQEMUKVM():
+        if not self._checkQEMUKnoVM():
             message += "qemukvm;"
         return message
 

@@ -5,6 +5,7 @@ from keystoneauth1.identity import v3
 from keystoneauth1 import session
 from novaclient import client
 import ConfigParser
+import time
 
 class NovaClient (object):
 	_instance = None # class reference
@@ -38,7 +39,7 @@ class NovaClient (object):
 						user_domain_name = self.config.get("openstack", "openstack_user_domain_id"),
 						project_domain_name = self.config.get("openstack", "openstack_project_domain_id"))
 		sess = session.Session(auth = auth)
-		novaClient = client.Client(2.25 , session = sess)
+		novaClient = client.Client(2.29 , session = sess)
 		return novaClient
 
 	def getComputePool(self):
@@ -66,17 +67,25 @@ class NovaClient (object):
 	def getAllInstanceList(self):
 		return NovaClient._helper.servers.list(search_opts={'all_tenants': 1})
 
-	def getInstanceName(self, instanceId):
-		instance = self.getVM(instanceId)
+	def getInstanceName(self, instance_id):
+		instance = self.getVM(instance_id)
 		return getattr(instance, "OS-EXT-SRV-ATTR:instance_name")
 
-	def getInstanceHost(self, instance_id):
-		instance = self.getVM(instance_id)
+	def getInstanceHost(self, instance_id, check_timeout=60):
+		status = None
+		while status != "ACTIVE" and check_timeout > 0:
+			instance = self.getVM(instance_id)
+			status = getattr(instance, "status")
+			print status
+			print getattr(instance, "OS-EXT-SRV-ATTR:host")
+			check_timeout -= 1
+			time.sleep(1)
+		print getattr(instance, "OS-EXT-SRV-ATTR:host")
 		return getattr(instance, "OS-EXT-SRV-ATTR:host")
 
-	def isInstanceExist(self, instanceId):
+	def isInstanceExist(self, instance_id):
 		try:
-			NovaClient._helper.servers.get(instanceId)
+			NovaClient._helper.servers.get(instance_id)
 		except:
 			return False
 		return True
@@ -111,7 +120,6 @@ class NovaClient (object):
 		NovaClient._helper.servers.evacuate(openstack_instance , target_host.name , force=True)
 		self.novaServiceUp(fail_node)
 
-
 if __name__ == "__main__":
 	a = NovaClient.getInstance()
 	print a.getComputePool()
@@ -121,7 +129,15 @@ if __name__ == "__main__":
 	#print a.getAllInstanceList()
 	#print a.getInstanceListByNode("compute1")
 
-	try:
-	 	a.evacuate("021cba2c-aa49-41c6-ba36-88e7b902cb43", "compute1", "compute2")
-	except Exception as e:
-		print "excetpion" , str(e)
+	#try:
+	# 	a.evacuate("021cba2c-aa49-41c6-ba36-88e7b902cb43", "compute1", "compute2")
+	#except Exception as e:
+	#	print "excetpion" , str(e)
+	#print a.getIp("fdbed08c-9f63-4d15-992f-6633d15e947c")
+
+	# b = a.getVM("855269c1-e169-424e-b7af-3caccc9ff622")
+	# print b.networks["selfservice"][1]
+
+	b = a.getInstanceHost("057c9fef-b037-4bc2-be10-69ea9d6b002e")
+	print b
+

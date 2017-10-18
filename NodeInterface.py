@@ -1,14 +1,16 @@
 from NovaClient import NovaClient
 from DetectionThread import DetectionThread
+from IPMIModule import IPMIManager
 import ConfigParser
 
 class NodeInterface(object):
 
-	def __init__(self, name, cluster_id, ipmi_status):
+	def __init__(self, name, cluster_id):
 		self.name = name
 		self.protected_instance_list = []
 		self.cluster_id = cluster_id
-		self.ipmi_status = ipmi_status
+		self.ipmi_module = IPMIManager()
+		self.ipmi_status = self.ipmi_module.getIPMIStatus(self.name)
 		self.nova_client = NovaClient.getInstance()
 		self.detection_thread = None
 		self.initDetectionThread()
@@ -38,17 +40,12 @@ class NodeInterface(object):
 		config = ConfigParser.RawConfigParser()
 		config.read('hass.conf')
 
-		polling_interval = config.get("detection","polling_interval")
-		polling_threshold = config.get("detection","polling_threshold")
 		cluster_id = self.cluster_id
-		node = self.name
+		node = self
 		polling_port = int(config.get("detection","polling_port"))
-		wait_restart_threshold = int(config.get("detection","wait_restart_threshold"))
 		ipmi_status = self.ipmi_status
 
-		self.detection_thread = DetectionThread(polling_interval, polling_threshold, cluster_id, 
-												node, polling_port, wait_restart_threshold, 
-												ipmi_status)
+		self.detection_thread = DetectionThread(cluster_id, node, polling_port)
 
 	def startDetectionThread(self):
 		self.detection_thread.daemon = True
@@ -58,7 +55,7 @@ class NodeInterface(object):
 		self.detection_thread.stop()
 		
 	def getInfo(self):
-		return [self.name , self.cluster_id]
+		return [self.name, self.cluster_id, self.ipmi_status]
 
 if __name__ == "__main__":
 	a = NodeInterface("compute1" , "23" , True)

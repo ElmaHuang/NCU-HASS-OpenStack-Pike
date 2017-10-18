@@ -8,16 +8,18 @@ ipmi_manager = IPMIManager()
 
 class Detector(object):
 	def __init__(self, node, port):
-		self.node = node
-		self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-		self.sock.setblocking(0)
+		self.node = node.name
+		self.ipmi_status = node.ipmi_status
 		self.port = port
+		self.sock = None
 		self.connect()
 
 	def connect(self):
 		#connect to FA
 		try:
 			print "["+self.node+"] create socket connection"
+			self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+			self.sock.setblocking(0)
 			self.sock.settimeout(0.5)
 			self.sock.connect((self.node, self.port))
 			time.sleep(5)
@@ -46,26 +48,33 @@ class Detector(object):
 			elif not data:
 				print "["+self.node+"]no ACK"
 			else:
-				print "["+self.node+"]Receive:"+data   
-				return State.SERVICE_FAIL
+				print "["+self.node+"]Receive:"+data
+			return data
 		except Exception as e:
+			fail_services = "agents"
 			print "["+self.node+"] connection failed"
 			self.sock.connect((self.node, self.port))
-			return State.SERVICE_FAIL
+			return fail_services
 
 	def checkPowerStatus(self):
+		if not self.ipmi_status:
+			return State.HEALTH
 		status = ipmi_manager.getPowerStatus(self.node)
 		if status == "OK":
 			return State.HEALTH
 		return State.POWER_FAIL
 
 	def checkOSStatus(self):
+		if not self.ipmi_status:
+			return State.HEALTH
 		status = ipmi_manager.getOSStatus(self.node)
 		if status == "OK":
 			return State.HEALTH
 		return State.OS_FAIL
 
 	def checkSensorStatus(self):
+		if not self.ipmi_status:
+			return State.HEALTH
 		status = ipmi_manager.getSensorStatus(self.node)
 		if status == "OK":
 			return State.HEALTH
