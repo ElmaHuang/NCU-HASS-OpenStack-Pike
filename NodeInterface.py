@@ -51,7 +51,7 @@ class NodeInterface(object):
 		self.detection_thread.daemon = True
 		self.detection_thread.start()
 	
-	def deleteDetezctionThread(self):
+	def deleteDetectionThread(self):
 		self.detection_thread.stop()
 		
 	def getInfo(self):

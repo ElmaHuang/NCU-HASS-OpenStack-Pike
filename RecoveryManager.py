@@ -276,6 +276,7 @@ class RecoveryManager(object):
 
 	def _pingInstance(self, ip, check_timeout):
 		status = False
+		time.sleep(5)
 		while check_timeout > 0:
 			try:
 				print "check vm %s" % ip

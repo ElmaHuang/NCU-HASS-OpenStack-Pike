@@ -50,13 +50,13 @@ class Cluster(ClusterInterface):
 		node = self.getNode(node_name)
 		if not node:
 			raise Exception("Delete node : Not found the node %s" % node_name)
-		#node.deleteDetectionThread()
+		node.deleteDetectionThread()
 		self.node_list.remove(node)
 
 	def deleteAllNode(self):
 		for node in self.node_list:
-			self.deleteNode(node.name)
-
+			node.deleteDetectionThread()
+		self.node_list = None
 
 	def addInstance(self, instance_id):
 		if not self.checkInstanceExist(instance_id): # check instance is exist
