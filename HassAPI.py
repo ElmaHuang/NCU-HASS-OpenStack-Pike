@@ -198,16 +198,15 @@ class HassAPI():
 
         elif self.args.command == "instance-add":
             try:
-                self.HASS_result = self.server.addInstance(self.args.uuid, self.args.vmid).split(";")
+                self.HASS_result = self.server.addInstance(self.args.uuid, self.args.vmid)
             except Exception as e:
                 print self.ERROR_color + "[Error] " + self.END_color + str(e)
-                return
+                #return
 
             print self.showResult(self.HASS_result)
 
         elif self.args.command == "instance-delete":
-            self.HASS_result = self.server.deleteInstance(self.args.uuid, self.args.vmid).split(";")
-            #return result["code"] + ";" + result["message"]
+            self.HASS_result = self.server.deleteInstance(self.args.uuid, self.args.vmid)
             print self.showResult(self.HASS_result)
 
         elif self.args.command == "instance-list":
@@ -215,7 +214,7 @@ class HassAPI():
                 self.HASS_result = self.server.listInstance(self.args.uuid)
             except Exception as e:
                 print self.ERROR_color + "[Error] " + self.END_color + str(e)
-                return
+                #return
             #return result["code"]+";"+result["instanceList"]
             self.showTable(self.HASS_result, self.TABLE.INSTANCE)
 

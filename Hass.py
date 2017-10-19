@@ -185,7 +185,7 @@ class Hass (object):
     def addInstance(self, clusterId, instanceId):
         try:
             result = ClusterManager.addInstance(clusterId, instanceId)
-            return result["code"] + ";" + result["message"]
+            return result
         except:
             logging.error("HASS--add Instance fail")
 
@@ -193,7 +193,7 @@ class Hass (object):
         try:
             result = ClusterManager.deleteInstance(clusterId, instanceId)
             logging.info("HASS--delete instance success")
-            return result["code"]+";"+result["message"]
+            return result
         except:
             logging.error("HASS--delete instance fail")
 
