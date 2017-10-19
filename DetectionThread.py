@@ -35,12 +35,12 @@ class DetectionThread(threading.Thread):
 
             if state != State.HEALTH:
                 try:
-                    recover_success = self.server.recoverServiceFail(self.cluster_id, self.node.name)
-                    print recover_success
+                    recover_success = self.server.recover(state, self.cluster_id, self.node.name)
                     if recover_success: # recover success
                         print "recover success"
                         self.detector.connect()
                     else: # recover fail
+                        print "recover fail delete node %s from the cluster" % self.node.name
                         self.server.deleteNode(self.cluster_id, self.node.name)
                         self.stop()
                 except Exception as e:

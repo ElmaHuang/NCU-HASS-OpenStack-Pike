@@ -83,6 +83,7 @@ class Cluster(ClusterInterface):
 	def updateInstance(self):
 		for instance in self.protected_instance_list:
 			host = self.nova_client.getInstanceHost(instance.id)
+			print "instance %s update host to %s" % (instance.name, host)
 			instance.host = host
 
 	def isProtected(self, instance_id):

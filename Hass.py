@@ -163,48 +163,52 @@ class Hass (object):
         else: 
             return result["code"] + ";" + result["message"]
 
-    def addInstance(self, clusterId, instanceId):
-        result = ClusterManager.addInstance(clusterId, instanceId)
+    def addInstance(self, cluster_id, instance_id):
+        result = ClusterManager.addInstance(cluster_id, instance_id)
         return result["code"] + ";" + result["message"]
 
-    def deleteInstance(self, clusterId, instanceId):
-        result = ClusterManager.deleteInstance(clusterId, instanceId)
+    def deleteInstance(self, cluster_id, instance_id):
+        result = ClusterManager.deleteInstance(cluster_id, instance_id)
         return result["code"]+";"+result["message"]
     
-    def listInstance(self, clusterId) :
-        result = ClusterManager.listInstance(clusterId)
+    def listInstance(self, cluster_id) :
+        result = ClusterManager.listInstance(cluster_id)
         return result
             
-    def recoverVM(self, clusterId, nodeName):
-        result = recovery.recoverVM(clusterId, nodeName)
+    def recoverVM(self, cluster_id, node_name):
+        result = recovery.recoverVM(cluster_id, node_name)
 
-    def recoveryByShutOffNode(self, cluster_id, node_name):
-        result = recovery.recovery_by_shut_Off_Node(clusterId, nodeName)
+    def recover(self, fail_type, cluster_id, node_name):
+        result = recovery.recover(fail_type, cluster_id, node_name)
         return result
 
-    def recoverServiceFail(self, cluster_id, node_name):
-        result = recovery.recoverServiceFail(cluster_id, node_name)
-        return result
+    # def recoveryByShutOffNode(self, cluster_id, node_name):
+    #     result = recovery.recovery_by_shut_Off_Node(clusterId, nodeName)
+    #     return result
 
-    def recoveryIPMIDaemonFailure(self, cluster_id, node_name):
-        result = recovery.recovery_ipmi_daemon_failure(nodeName)
-        return result
+    # def recoverServiceFail(self, cluster_id, node_name):
+    #     result = recovery.recoverServiceFail(cluster_id, node_name)
+    #     return result
 
-    def recoveryWatchdogDaemonFailure(self, cluster_id, node_name):
-        result = recovery.recovery_watchdog_daemon_failure(nodeName)
-        return result
+    # def recoveryIPMIDaemonFailure(self, cluster_id, node_name):
+    #     result = recovery.recovery_ipmi_daemon_failure(nodeName)
+    #     return result
 
-    def recoverOSHanged(self, cluster_id, node_name):
-        result = recovery.recoverOSHanged(cluster_id, node_name)
-        return result
+    # def recoveryWatchdogDaemonFailure(self, cluster_id, node_name):
+    #     result = recovery.recovery_watchdog_daemon_failure(nodeName)
+    #     return result
 
-    def recoverNetworkIsolation(self, cluster_id, node_name):
-        result = recovery.recoverNetworkIsolation(cluster_id, node_name)
-        return result
+    # def recoverOSHanged(self, cluster_id, node_name):
+    #     result = recovery.recoverOSHanged(cluster_id, node_name)
+    #     return result
 
-    def recoveryPowerOff(self, cluster_id, node_name):
-        result = recovery.recovery_power_off(clusterId, nodeName)
-        return result
+    # def recoverNetworkIsolation(self, cluster_id, node_name):
+    #     result = recovery.recoverNetworkIsolation(cluster_id, node_name)
+    #     return result
+
+    # def recoveryPowerOff(self, cluster_id, node_name):
+    #     result = recovery.recovery_power_off(clusterId, nodeName)
+    #     return result
 
 def main():
     server = SimpleXMLRPCServer(('',int(config.get("rpc", "rpc_bind_port"))), requestHandler=RequestHandler, allow_none = True, logRequests=False)

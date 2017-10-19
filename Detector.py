@@ -22,7 +22,7 @@ class Detector(object):
 			self.sock.setblocking(0)
 			self.sock.settimeout(0.5)
 			self.sock.connect((self.node, self.port))
-			time.sleep(5)
+			#time.sleep(5)
 		except Exception as e:
 			print str(e)
 			print "Init ["+self.node+"] connection failed"
@@ -49,12 +49,12 @@ class Detector(object):
 				print "["+self.node+"]no ACK"
 			else:
 				print "["+self.node+"]Receive:"+data
-			return data
+			return State.SERVICE_FAIL
 		except Exception as e:
 			fail_services = "agents"
 			print "["+self.node+"] connection failed"
 			self.sock.connect((self.node, self.port))
-			return fail_services
+			return State.SERVICE_FAIL
 
 	def checkPowerStatus(self):
 		if not self.ipmi_status:
@@ -79,3 +79,14 @@ class Detector(object):
 		if status == "OK":
 			return State.HEALTH
 		return State.SENSOR_FAIL
+
+	def getFailServices(self):
+		try:
+			line = "polling request"
+			self.sock.sendall(line)
+			data, addr = self.sock.recvfrom(1024)
+			if data != "OK":
+				return data
+		except Exception as e:
+			return "agents"
+

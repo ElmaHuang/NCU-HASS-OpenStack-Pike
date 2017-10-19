@@ -13,6 +13,14 @@ class RecoveryManager(object):
 		self.nova_client = NovaClient.getInstance()
 		self.config = ConfigParser.RawConfigParser()
 		self.config.read('hass.conf')
+		self.recover_function = {State.NETWORK_FAIL : self.recoverNetworkIsolation,
+								 State.SERVICE_FAIL : self.recoverServiceFail,
+								 State.POWER_FAIL : self.recoverPowerOff,
+								 State.SENSOR_FAIL : self.recoverSensorCritical,
+								 State.OS_FAIL : self.recoverOSHanged}
+
+	def recover(self, fail_type, cluster_id, fail_node_name):
+		return self.recover_function[fail_type](cluster_id, fail_node_name)
 
 	def recoverOSHanged(self, cluster_id, fail_node_name):
 		cluster = ClusterManager.getCluster(cluster_id)
@@ -24,25 +32,31 @@ class RecoveryManager(object):
 		print "start recovery vm"
 		self.recoverVM(cluster, fail_node)
 		print "end recovery vm"
-		result = fail_node.reboot()
-		print "boot node result : %s" % result
-		message = "Recovery recovery_os_hanged - "
-		if result["code"] == "0":
-			logging.info(message + result["message"])
-			boot_up = self.check_node_boot_success(fail_node)
-			if boot_up:
-				print "Node %s recovery finished." % fail_node.name
-				return True
-			else:
-				logging.error(message + "Can not reboot node %s successfully", fail_node.name)
-				return False
-		else:
-			logging.error(message + result["message"])
-			return False
-		return False
+		return self.recoverNodeByReboot(fail_node)
 
-	def recoverNodeCrash(self):
-		pass
+	def recoverPowerOff(self, cluster_id, fail_node_name):
+		cluster = ClusterManager.getCluster(cluster_id)
+		if not cluster:
+			logging.error("RecoverManager : cluster not found")
+			return
+		fail_node = cluster.getNode(fail_node_name)
+		print "fail node is %s" % fail_node.name
+		print "start recovery vm"
+		self.recoverVM(cluster, fail_node)
+		print "end recovery vm"
+		return self.recoverNodeByStart(fail_node)
+
+	def recoverNodeCrash(self, cluster_id, fail_node_name):
+		cluster = ClusterManager.getCluster(cluster_id)
+		if not cluster:
+			logging.error("RecoverManager : cluster not found")
+			return
+		fail_node = cluster.getNode(fail_node_name)
+		print "fail node is %s" % fail_node.name
+		print "start recovery vm"
+		self.recoverVM(cluster, fail_node)
+		print "end recovery vm"
+		return self.recoverNodeByShutoff(fail_node)
 
 	def recoverNetworkIsolation(self, cluster_id, fail_node_name):
 		cluster = ClusterManager.getCluster(cluster_id) 
@@ -69,25 +83,19 @@ class RecoveryManager(object):
 			print "start recovery vm"
 			self.recoverVM(cluster, fail_node)
 			print "end recovery vm"
-			result = fail_node.reboot()
-			print "boot node result : %s" % result
-			message = "RecoveryManager recover network isolation"
-			if result["code"] == "0":
-				logging.info(message + result["message"])
-				boot_up = self.check_node_boot_success(fail_node)
-				if boot_up:
-					print "Node %s recovery finished." % fail_node.name
-					return True
-				else:
-					logging.error(message + "Can not reboot node %s successfully", fail_node.name)
-					return False
-			else:
-				logging.error(message + result["message"])
-				return False
-			return False
+			return self.recoverNodeByReboot(fail_node)
 
-	def recoverSensorCritical(self):
-		pass
+	def recoverSensorCritical(self, cluster_id, fail_node_name):
+		cluster = ClusterManager.getCluster(cluster_id)
+		if not cluster:
+			logging.error("RecoverManager : cluster not found")
+			return
+		fail_node = cluster.getNode(fail_node_name)
+		print "fail node is %s" % fail_node.name
+		print "start recovery vm"
+		self.recoverVM(cluster, fail_node)
+		print "end recovery vm"
+		return self.recoverNodeByShutoff(fail_node)
 
 	def recoverServiceFail(self, cluster_id, fail_node_name):
 		cluster = ClusterManager.getCluster(cluster_id) 
@@ -99,7 +107,7 @@ class RecoveryManager(object):
 		port = int(self.config.get("detection","polling_port"))
 		version = int(self.config.get("version","version"))
 		detector = Detector(fail_node, port)
-		fail_services = detector.checkServiceStatus()
+		fail_services = detector.getFailServices()
 
 		status = True
 		if "agents" in fail_services:
@@ -107,31 +115,16 @@ class RecoveryManager(object):
 		else:
 			status = self.restartServices(fail_node, fail_services, version)
 
+		status = False
 		if not status: # restart service fail
 			print "start recovery"
-			# print "fail node is %s" % fail_node.name
-			# print "start recovery vm"
-			# self.recoverVM(cluster, fail_node)
-			# print "end recovery vm"
-			# result = fail_node.reboot()
-			# print "boot node result : %s" % result
-			# message = "RecoveryManager recover network isolation"
-			# if result["code"] == "0":
-			# 	logging.info(message + result["message"])
-			# 	boot_up = self.check_node_boot_success(fail_node)
-			# 	if boot_up:
-			# 		print "Node %s recovery finished." % fail_node.name
-			# 		return True
-			# 	else:
-			# 		logging.error(message + "Can not reboot node %s successfully", fail_node.name)
-			# 		return False
-			# else:
-			# 	logging.error(message + result["message"])
-			# 	return False
-			# return False
-		return True
-
-
+			print "fail node is %s" % fail_node.name
+			print "start recovery vm"
+			self.recoverVM(cluster, fail_node)
+			print "end recovery vm"
+			return self.recoverNodeByReboot(fail_node)
+		else:
+			return stauts # restart service success
 
 	def recoverVM(self, cluster, fail_node):
 		if len(cluster.getNodeList()) < 2:
@@ -170,6 +163,52 @@ class RecoveryManager(object):
 
 		print "update instance"
 		cluster.updateInstance()
+
+	def recoverNodeByReboot(self, fail_node):
+		print "start recover node by reboot"
+		result = fail_node.reboot()
+		print "boot node result : %s" % result
+		message = "RecoveryManager recover network isolation"
+		if result["code"] == "0":
+			logging.info(message + result["message"])
+			boot_up = self.check_node_boot_success(fail_node)
+			if boot_up:
+				print "Node %s recovery finished." % fail_node.name
+				return True
+			else:
+				logging.error(message + "Can not reboot node %s successfully", fail_node.name)
+				return False
+		else:
+			logging.error(message + result["message"])
+			return False
+
+	def recoverNodeByShutoff(self, fail_node):
+		print "start recover node by shutoff"
+		result = fail_node.shutoff()
+		if result["code"] == "0":
+			return True
+		else:
+			logging.error(result["message"])
+			print result["message"]
+			return False
+
+	def recoverNodeByStart(self, fail_node):
+		print "start recover node by reboot"
+		result = fail_node.start()
+		print "boot node result : %s" % result
+		message = "RecoveryManager recover network isolation"
+		if result["code"] == "0":
+			logging.info(message + result["message"])
+			boot_up = self.check_node_boot_success(fail_node)
+			if boot_up:
+				print "Node %s recovery finished." % fail_node.name
+				return True
+			else:
+				logging.error(message + "Can not start node %s successfully", fail_node.name)
+				return False
+		else:
+			logging.error(message + result["message"])
+			return False
 
 	def restartDetectionService(self, fail_node, version):
 		print "Start service failure recovery by starting Detection Agent"
@@ -253,7 +292,9 @@ class RecoveryManager(object):
 	def check_node_boot_success(self, node, check_timeout=180):
 		port = int(self.config.get("detection","polling_port"))
 		detector = Detector(node, port)
-
+		print "waiting node to reboot"
+		time.sleep(5)
+		print "start check node booting"
 		while check_timeout > 0:
 			try:
 				if detector.checkServiceStatus() == State.HEALTH:

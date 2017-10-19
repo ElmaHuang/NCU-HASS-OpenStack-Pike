@@ -24,10 +24,10 @@ class Node (NodeInterface):
 			res.append(instance.getInfo())
 		return res
 
-	def boot(self):
+	def start(self):
 		return self.ipmi_module.startNode(self.name)
 
-	def shutdown(self):
+	def shutoff(self):
 		return self.ipmi_module.shutOffNode(self.name)
 
 	def reboot(self):
