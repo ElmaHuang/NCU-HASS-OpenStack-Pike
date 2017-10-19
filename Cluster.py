@@ -12,33 +12,49 @@ class Cluster(ClusterInterface):
 
 	def addNode(self, node_name_list):
 		# create node list
+		message =""
 		try:
-			#message=""
-			#result=None
 			for node_name in node_name_list:
-				if  not self._nodeIsIllegal(node_name) :
-					#id = str(uuid.uuid4())
-					#ipmi_status = self._getIPMIStatus(node_name)
+				if node_name_list==[]:raise Exception
+				if  self._isInComputePool(node_name) :
+					print node_name_list
 					node = Node(name = node_name , cluster_id = self.id)
 					self.node_list.append(node)
 					#node.startDetection()
-					message = "The node %s is added to cluster." % self.getAllNodeStr()
+					message += "Cluster--The node %s is added to cluster." % self.getAllNodeStr()
 					result = {"code": "0", "clusterId": self.id, "message": message}
+				else:
+					message += "the node %s is illegal.  " %node_name
 			logging.info(message)
 			return result
 
-		except:
-			message = "Cluster add node fail , some node maybe overlapping or not in compute pool please check again! The node list is %s." % (self.getAllNodeStr())
+		except Exception as e:
+			message = "Cluster-- add node fail , some node maybe overlapping or not in compute pool please check again! The node list is %s." % (self.getAllNodeStr())
 			logging.error(message)
 			result = {"code": "1", "clusterId": self.id, "message": message}
 			return result
 
 	def deleteNode(self , node_name):
-		node = self.getNodeByName(node_name)
-		if not node:
-			raise Exception("Delete node -- Not found the node %s" % node_name)
-		#node.deleteDetectionThread()
-		self.node_list.remove(node)
+		try:
+			node = self.getNodeByName(node_name)
+			#stop Thread
+			self.node_list.remove(node)
+			#ret = self.getAllNodeInfo()
+			for node in self.node_list:
+				#print "de1:",self.node_list
+				#print "N.name:",node.name
+				#print node
+				if node.name == node_name:raise Exception
+			message = "Cluster delete node success! node is %s , node list is %s,cluster id is %s." % (node_name, self.getAllNodeStr(),self.id)
+			logging.info(message)
+			result = {"code": "0", "clusterId": self.id, "message": message}
+			return result
+
+		except Exception as e:
+			message = "Cluster delete node fail , node maybe not in compute pool please check again! node is %s  The node list is %s." % (node_name,self.getAllNodeStr())
+			logging.error(message)
+			result = {"code": "1", "clusterId": self.id, "message": message}
+			return result
 
 	def getAllNodeInfo(self):
 		ret = []
@@ -89,17 +105,18 @@ class Cluster(ClusterInterface):
 		ip_dict = dict(config._sections['ipmi'])
 		return node_name in ip_dict
 		
-	'''
-
-	def _isInComputePool(self, unchecked_node_name):
-		return unchecked_node_name in self.nova_client.getComputePool()
-
 	def _nodeIsIllegal(self , unchecked_node_name):
 		if not self._isInComputePool(unchecked_node_name):
 			return True
 		#if self._isNodeDuplicate(unchecked_node_name):
 			#return True
 		return False
+	
+		
+	'''
+
+	def _isInComputePool(self, unchecked_node_name):
+		return unchecked_node_name in self.nova_client.getComputePool()
 
 	#be DB called
 	def getNodeList(self):
@@ -117,15 +134,21 @@ class Cluster(ClusterInterface):
 	def getAllNodeStr(self):
 		ret = ""
 		for node in self.node_list:
-			ret += node.name
+			ret += node.name+" "
 		return ret
 
 	#clustermanager.deletecluster call
 	def deleteAllNode(self):
-		for node in self.node_list:
-			self.deleteNode(node.id)
-		if self.node_list ==[]:
-			return True
+		#print self.node_list
+		for i in range(0,len(self.node_list)):
+			node = self.node_list[0]
+			re= self.deleteNode(node.name)
+			print "node list:",self.node_list
+		#print self.node_list
+		#if self.node_list ==[]:
+			#return True
+		#else:
+			#return False
 	'''
 	def getProtectedInstanceList(self):
 		return self.instance_list

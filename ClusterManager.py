@@ -20,7 +20,7 @@ class ClusterManager():
 		if ClusterManager._isNameOverLapping(cluster_name):
 			message = "ClusterManager - cluster name overlapping"
 			logging.error(message)
-			result = {"code": "1", "message": message}
+			result = {"code": "1","clusterId":cluster_id, "message": message}
 			return result
 		else:
 			logging.info("ClusterManager - cluster name is not overlapping")
@@ -29,7 +29,7 @@ class ClusterManager():
 			if result["code"]== "0" and write_DB:
 				ClusterManager.syncToDatabase()
 			return result
-		
+
 	@staticmethod
 	def deleteCluster(cluster_id , write_DB = True):
 		cluster = ClusterManager.getCluster(cluster_id)
@@ -39,22 +39,24 @@ class ClusterManager():
 			result = {"code": "1", "clusterId":cluster_id, "message":message}
 			return result
 		else:
-			re=cluster.deleteAllNode()
-			if re is True:
+			cluster.deleteAllNode()
+			#print "CM:",cluster.node_list
+			if cluster.node_list == []:
+				#print cluster.node_list
 				del ClusterManager._cluster_dict[cluster_id]
-				re = ClusterManager.listCluster()
-				for id in re:
-					if id[0] == cluster_id:
-						raise Exception("Delete cluster fail")
+				for cluster in ClusterManager._cluster_dict:
+						print "cluster:",cluster
+						#print "id:",cluster.id
+						if cluster == cluster_id:
+							print cluster
+							raise Exception("Delete cluster fail")
 				print ClusterManager._cluster_dict
 				message = "delete cluster success. The cluster is deleted. (cluster_id = %s)" % cluster_id
 				logging.info(message)
 				result = {"code": "0", "clusterId": cluster_id, "message": message}
-
-			if write_DB:
-				ClusterManager.syncToDatabase()
-			#code = "0"
-			return result
+				if write_DB:
+					ClusterManager.syncToDatabase()
+				return result
 	'''
 	@staticmethod
 	def getClusterList():
@@ -78,14 +80,20 @@ class ClusterManager():
 		cluster = ClusterManager.getCluster(cluster_id)
 		if not cluster:
 			#code = "1"
-			message = "Add the node to cluster failed. The cluster is not found. (cluster_id = %s)" % cluster_id
+			message = "ClusterManager--Add the node to cluster failed. The cluster is not found. (cluster_id = %s)" % cluster_id
 			result = {"code": "1", "clusterId":cluster_id, "message":message}
 			return result
 		else:
-			result = cluster.addNode(node_name_list)
-			if write_DB:
-				ClusterManager.syncToDatabase()
-			return result
+			try:
+				result = cluster.addNode(node_name_list)
+				if write_DB:
+					ClusterManager.syncToDatabase()
+				return result
+			except:
+				message = "add node fail. node not found. (node_name = %s)" % node_name_list
+				logging.error(message)
+				result = {"code": "1", "clusterId": cluster_id, "message": message}
+				return result
 
 	@staticmethod
 	def deleteNode(cluster_id, node_name , write_DB=True):
@@ -97,13 +105,10 @@ class ClusterManager():
 			return result
 		else:
 			try:
-				cluster.deleteNode(node_name)
+				result = cluster.deleteNode(node_name)
 				if write_DB:
 					ClusterManager.syncToDatabase()
 				#code = "0"
-				message = "delete the node success. node is deleted. (node_name = %s)" % node_name
-				logging.info(message)
-				result = {"code": "0", "clusterId":cluster_id, "message":message}
 				return result
 
 			except:
@@ -115,11 +120,14 @@ class ClusterManager():
 
 	@staticmethod
 	def listNode(cluster_id):
-		cluster = ClusterManager.getCluster(cluster_id)
-		if not cluster:
-			raise Exception("cluster not found")
-		result = cluster.getAllNodeInfo()
-		return result
+		try:
+			cluster = ClusterManager.getCluster(cluster_id)
+			result = cluster.getAllNodeInfo()
+			logging.info("ClusterManager-listNode--get all node info finish")
+			return result
+		except:
+			logging.error("ClusterManager--listNode-- get all node info fail")
+			return None
 
 	@staticmethod
 	def addInstance(cluster_id, instance_id):
@@ -210,7 +218,7 @@ class ClusterManager():
 				ClusterManager._cluster_dict[cluster_id] = cluster
 				message = "ClusterManager -syncofromDB-- createCluster._addToCluster success,cluster id = %s" % cluster_id
 				logging.info(message)
-				result = {"code": "0", "message": message}
+				result = {"code": "0", "clusterId":cluster_id,"message": message}
 				return result
 			else:
 				#start add to cluster list
@@ -219,12 +227,12 @@ class ClusterManager():
 				ClusterManager._cluster_dict[cluster_id] = cluster
 				message = "ClusterManager - createCluster._addToClusterList success,cluster id = %s" % cluster_id
 				logging.info(message)
-				result = {"code": "0", "message":message}
+				result = {"code": "0","clusterId":cluster_id, "message":message}
 				return result
 		except:
 			message = "ClusterManager - createCluster._addToCluster fail,cluster id = &s" % cluster_id
 			logging.error(message)
-			result = {"code": "1", "message": message}
+			result = {"code": "1","clusterId":cluster_id, "message": message}
 			return result
 
 	@staticmethod
@@ -232,6 +240,7 @@ class ClusterManager():
 		for id,cluster in ClusterManager._cluster_dict.items():
 			for node in cluster.node_list:
 				if node_name==node.name:
+					logging.error("%s already be add into cluster %s" % (node_name,id))
 					return False
 		return True
 
@@ -268,14 +277,20 @@ class ClusterManager():
 		if reset_DB:
 			ClusterManager._db.resetAll()
 		ClusterManager._cluster_dict = {}
+		logging.info("ClusterManager--reset DB ,reset_DB = %s" % reset_DB)
 
 	@staticmethod
 	def syncFromDatabase():
 		ClusterManager.reset()
-		exist_cluster=ClusterManager._db.syncFromDB()
-		for cluster in exist_cluster:
-			ClusterManager.createCluster(cluster["cluster_name"],cluster["cluster_id"],False)
-			ClusterManager.addNode(cluster["cluster_id"],cluster["node_list"],False)
+		try:
+			exist_cluster=ClusterManager._db.syncFromDB()
+			for cluster in exist_cluster:
+				ClusterManager.createCluster(cluster["cluster_name"],cluster["cluster_id"],False)
+				if cluster["node_list"] !=[]:
+					ClusterManager.addNode(cluster["cluster_id"],cluster["node_list"],False)
+			logging.info("ClusterManager--synco from DB finish")
+		except:
+			logging.error("ClusterManagwer--synco from DB fail")
 
 	@staticmethod
 	def syncToDatabase():

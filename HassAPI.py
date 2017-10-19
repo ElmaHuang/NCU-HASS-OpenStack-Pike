@@ -111,40 +111,53 @@ class HassAPI():
     def Input_Command_function(self):
         self.args = self.parser.parse_args()
         if self.args.command == "cluster-create":
-            if self.args.nodes != None:
-                 self.HASS_result = self.server.createCluster(self.args.name, self.args.nodes.strip().split(","))
-            else:
-                self.HASS_result = self.server.createCluster(self.args.name, [])
-                #return createCluster_result["code"]+";"+createCluster_result["message"]
-
-            print self.showResult(self.HASS_result)
-            #except Exception as e:
-                #print self.ERROR_color + "[Error] " + self.END_color + str(e)
+            try:
+                if self.args.nodes != None:
+                    self.HASS_result = self.server.createCluster(self.args.name, self.args.nodes.strip().split(","))
+                else:
+                    self.HASS_result = self.server.createCluster(self.args.name, [])
+                    #return createCluster_result["code"]+";"+createCluster_result["message"]
+                print self.showResult(self.HASS_result)
+            except Exception as e:
+                print self.ERROR_color + "[Error] " + self.END_color + str(e)
 
         elif self.args.command == "cluster-delete":
-            self.HASS_result = self.server.deleteCluster(self.args.uuid)
-            #return result["code"] + ";" + result["message"]
-            print self.showResult(self.HASS_result)
+            try:
+                self.HASS_result = self.server.deleteCluster(self.args.uuid)
+                #return result["code"] + ";" + result["message"]
+                print self.showResult(self.HASS_result)
+            except Exception as e:
+                print self.ERROR_color + "[Error] " + self.END_color + str(e)
 
         elif self.args.command == "cluster-list":
-            self.HASS_result = self.server.listCluster()
-            self.showTable(self.HASS_result , self.TABLE.CLUSTER)
+            try:
+                self.HASS_result = self.server.listCluster()
+                self.showTable(self.HASS_result , self.TABLE.CLUSTER)
+            except Exception as e:
+                print self.ERROR_color + "[Error] " + self.END_color + str(e)
 
         elif self.args.command == "node-add":
-            self.HASS_result= self.server.addNode(self.args.uuid, self.args.nodes.strip().split(",")).split(";")
-            print self.showResult(self.HASS_result)
+            try:
+                self.HASS_result= self.server.addNode(self.args.uuid, self.args.nodes.strip().split(","))
+                print self.showResult(self.HASS_result)
+            except Exception as e:
+                print self.ERROR_color + "[Error] " + self.END_color + str(e)
 
         elif self.args.command == "node-delete":
-            self.HASS_result = self.server.deleteNode(self.args.uuid, self.args.node).split(";")
-            print self.showResult(self.HASS_result)
+            try:
+                self.HASS_result = self.server.deleteNode(self.args.uuid, self.args.node)
+                print self.showResult(self.HASS_result)
+            except Exception as e:
+                print self.ERROR_color + "[Error] " + self.END_color + str(e)
 
         elif self.args.command == "node-list":
             try:
                 self.HASS_result= self.server.listNode(self.args.uuid)
+                self.showTable(self.HASS_result, self.TABLE.NODE)
+
             except Exception as e:
                print self.ERROR_color + "[Error] " + self.END_color + str(e)
-               return
-            self.showTable(self.HASS_result, self.TABLE.NODE)
+               #return
 
         elif self.args.command == "node-start":
             try:

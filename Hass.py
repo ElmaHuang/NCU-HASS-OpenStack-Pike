@@ -99,7 +99,7 @@ class Hass (object):
                         #add node fail
                         message = "The cluster is created.(uuid = " + createCluster_result["clusterId"] + ") But," + addNode_result["message"]
                         logging.error(message)
-                        result ={"code":"1","message":message}
+                        result ={"code":"0","message":message}
                         return result
                 else :#nodelist is None
                     #addNode_result = {"code":"0", "clusterId":createCluster_result["clusterId"], "message":"not add any node."}
@@ -113,21 +113,36 @@ class Hass (object):
             logging.error("HASS-create cluster-except--create cluster fail")
 
     def deleteCluster(self, cluster_uuid):
-        result = ClusterManager.deleteCluster(cluster_uuid)
-        return result
-    
+        try:
+            result = ClusterManager.deleteCluster(cluster_uuid)
+            return result
+        except:
+            logging.error("HASS--delete cluster fail")
+
     def listCluster(self):
-        result = ClusterManager.listCluster()
-        return result
+        try:
+            result = ClusterManager.listCluster()
+            logging.info("HASS--list all cluster success")
+            return result
+        except:
+            logging.error("HASS--list all cluster fail")
 
     def addNode(self, clusterId, nodeList):
-        result = ClusterManager.addNode(clusterId, nodeList)               
-        return result["code"]+";"+result["message"]
+        try:
+            result = ClusterManager.addNode(clusterId, nodeList)
+            logging.info("HASS--add node success")
+            return result
+        except:
+            logging.error("HASS--add node fail")
 
     def deleteNode(self, cluster_id, node_name):
-        result = ClusterManager.deleteNode(cluster_id, node_name)
-        return result["code"]+";"+result["message"]
-        
+        try:
+            result = ClusterManager.deleteNode(cluster_id, node_name)
+            logging.info("HASS--delete node success")
+            return result
+        except:
+            logging.error("HASS--delete node fail")
+
     def listNode(self, clusterId) :
         try:
             result = ClusterManager.listNode(clusterId)
