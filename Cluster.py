@@ -54,9 +54,8 @@ class Cluster(ClusterInterface):
 		self.node_list.remove(node)
 
 	def deleteAllNode(self):
-		for node in self.node_list:
-			node.deleteDetectionThread()
-		self.node_list = None
+		for node in self.node_list[:]:
+			self.deleteNode(node.name)
 
 	def addInstance(self, instance_id):
 		if not self.checkInstanceExist(instance_id): # check instance is exist
