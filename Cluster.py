@@ -41,9 +41,6 @@ class Cluster(ClusterInterface):
 			self.node_list.remove(node)
 			#ret = self.getAllNodeInfo()
 			for node in self.node_list:
-				#print "de1:",self.node_list
-				#print "N.name:",node.name
-				#print node
 				if node.name == node_name:raise Exception
 			message = "Cluster delete node success! node is %s , node list is %s,cluster id is %s." % (node_name, self.getAllNodeStr(),self.id)
 			logging.info(message)
@@ -140,15 +137,11 @@ class Cluster(ClusterInterface):
 	#clustermanager.deletecluster call
 	def deleteAllNode(self):
 		#print self.node_list
-		for i in range(0,len(self.node_list)):
-			node = self.node_list[0]
+		for node in self.node_list[:]:
+			#node = self.node_list[0]
 			re= self.deleteNode(node.name)
 			print "node list:",self.node_list
-		#print self.node_list
-		#if self.node_list ==[]:
-			#return True
-		#else:
-			#return False
+
 	'''
 	def getProtectedInstanceList(self):
 		return self.instance_list
