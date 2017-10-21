@@ -2,9 +2,7 @@ from ClusterInterface import ClusterInterface
 #from DetectionManager import DetectionManager
 from Node import Node
 from Instance import  Instance
-import uuid
 import logging
-import ConfigParser
 
 class Cluster(ClusterInterface):
 	def __init__(self, id , name):
@@ -22,7 +20,7 @@ class Cluster(ClusterInterface):
 					self.node_list.append(node)
 					#node.startDetection()
 					message += "Cluster--The node %s is added to cluster." % self.getAllNodeStr()
-					result = {"code": "0", "clusterId": self.id, "message": message}
+					result = {"code": "0","clusterId": self.id,"node":node_name, "message": message}
 				else:
 					message += "the node %s is illegal.  " %node_name
 			logging.info(message)
@@ -44,13 +42,13 @@ class Cluster(ClusterInterface):
 				if node.name == node_name:raise Exception
 			message = "Cluster delete node success! node is %s , node list is %s,cluster id is %s." % (node_name, self.getAllNodeStr(),self.id)
 			logging.info(message)
-			result = {"code": "0", "clusterId": self.id, "message": message}
+			result = {"code": "0","clusterId": self.id, "node":node_name, "message": message}
 			return result
 
 		except Exception as e:
 			message = "Cluster delete node fail , node maybe not in compute pool please check again! node is %s  The node list is %s." % (node_name,self.getAllNodeStr())
 			logging.error(message)
-			result = {"code": "1", "clusterId": self.id, "message": message}
+			result = {"code": "1", "node":node_name,"clusterId": self.id, "message": message}
 			return result
 
 	def getAllNodeInfo(self):
@@ -60,17 +58,31 @@ class Cluster(ClusterInterface):
 		return ret
 
 	def addInstance(self , instance_id):
-		self.host = None
+		#self.host = None
+		'''
 		if self.isProtected(instance_id): # check instance is already being protected
 			raise Exception("this instance is already being protected!")
+		'''
+		if  not self.checkInstanceExist(instance_id):
+				raise Exception("Not any node have this instance!")
+		elif not self.checkInstanceGetVolume(instance_id):
+				raise Exception("Instance don't have Volume")
 		elif not self.checkInstancePowerOn(instance_id):
 			raise Exception("this instance is power off!")
 		else:
-			#Live migration VM to cluster node
-			self.host = self.nova_client.getInstanceHost(instance_id)
-			instance = Instance(id=instance_id,name=self.nova_client.getInstanceNameById(instance_id),host=self.host)
-			self.instance_list.append(instance)
-			print self.instance_list
+			try:
+				#Live migration VM to cluster node
+				#print "start live migration"
+				self.finial_host=self.LiveMigrateInstance(instance_id)
+				instance = Instance(id=instance_id,name=self.nova_client.getInstanceNameById(instance_id),host=self.finial_host)
+				self.instance_list.append(instance)
+				message = "Cluster--Cluster add instance success ! The instance id is %s." % (instance_id)
+				logging.info(message)
+				result = {"code":"0","cluster id":self.id,"node":self.finial_host,"instance id":instance_id,"message":message}
+				return result
+			except Exception as e:
+				message = "Cluster--Cluster add instance fail ,please check again! The instance id is %s." % (instance_id)
+				logging.error(message)
 
 	def deleteInstance(self , instance_id):
 		if not self.isProtected(instance_id):
@@ -78,8 +90,11 @@ class Cluster(ClusterInterface):
 		for instance in self.instance_list:
 			if instance.id == instance_id:
 				self.instance_list.remove(instance)
-				#break
-		return True
+		#if instance_id !=
+		message = "Cluster--delete instance success. this instance is now deleted (instance_id = %s)" % instance_id
+		logging.info(message)
+		result = {"code": "0", "clusterId": self.id, "instance id": instance_id, "message": message}
+		return result
 
 	#cluster.addInstance
 	def findNodeByInstance(self, instance_id):
@@ -158,31 +173,56 @@ class Cluster(ClusterInterface):
 	def checkInstanceGetVolume(self,instance_id):
 		if not self.nova_client.isInstanceGetVolume(instance_id):
 			message = "this instance not having volume! Instance id is %s " %instance_id
-			logging.error("this instance not having volume! Instance id is %s " %instance_id)
+			logging.error(message)
 			return False
 		return True
 
 	def checkInstancePowerOn(self,instance_id):
 		if not self.nova_client.isInstancePowerOn(instance_id):
 			message = "this instance is not running! Instance id is %s " % instance_id
-			logging.error("this instance not having volume! Instance id is %s " % instance_id)
+			logging.error(message)
 			return False
 		return True
 
-	#clusterManager.
 	def checkInstanceExist(self, instance_id):
-		#node_list = self.getNodeList()
-		print "node list of cluster:",self.node_list
-		for node in self.node_list:
-			if node.containsInstance(instance_id):
+		node_list = self.nova_client.getComputePool()
+		print "node list of cluster:",node_list
+		instance_list=self.nova_client.getAllInstanceList()
+		print instance_list
+		for instance in instance_list:
+			#print node_list
+			if instance.id==instance_id:
+				logging.info("Cluster--addInstance-checkInstanceExist success")
 				return True
 		message = "this instance not exist. Instance id is %s. " % instance_id
 		logging.error(message)
 		return False
-
+	
 	def isProtected(self, instance_id):
-		for instance in self.instance_list:
+		for instance in self.instance_list[:]:
 			if instance.id == instance_id:
 				return True
+		message = "this instance is  already in the cluster. Instance id is %s. cluster id is %s .instance list is %s" % (instance_id,self.id,self.instance_list)
+		logging.error(message)
 		return False
+
+	def findTargetHost(self, fail_node):
+		import random
+		target_list = [node for node in self.node_list if node != fail_node]
+		target_host = random.choice(target_list)
+		return target_host
+
+	def LiveMigrateInstance(self,instance_id):
+		host = self.nova_client.getInstanceHost(instance_id)
+		for node in self.node_list:
+			if host == node.name:
+				#print host ,"==",node.nam,"?"
+				return host
+			else:
+				target_host = self.findTargetHost(host)
+				print "start live migrate vm from ",host,"to ",target_host.name
+				finial_host=self.nova_client.liveMigrateVM(instance_id,target_host.name)
+				print finial_host
+				return finial_host
+
 

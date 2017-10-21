@@ -72,7 +72,7 @@ class ClusterManager():
 	@staticmethod
 	def addNode(cluster_id, node_name_list, write_DB = True):
 		#check overlapping
-		for node_name in node_name_list:
+		for node_name in node_name_list[:]:
 			if not ClusterManager._checkNodeOverlappingForAllCluster(node_name):
 				print "%s is already in a HA cluster. " %node_name
 				node_name_list.remove(node_name)
@@ -86,6 +86,7 @@ class ClusterManager():
 		else:
 			try:
 				result = cluster.addNode(node_name_list)
+				logging.info("ClusterManager--add node success.cluster id is %s ,node is %s " %(cluster_id,node_name))
 				if write_DB:
 					ClusterManager.syncToDatabase()
 				return result
@@ -106,6 +107,7 @@ class ClusterManager():
 		else:
 			try:
 				result = cluster.deleteNode(node_name)
+				logging.info("ClusterManager-- delete node success ,cluster id is %s node is %s"%(cluster_id,node_name))
 				if write_DB:
 					ClusterManager.syncToDatabase()
 				#code = "0"
@@ -127,7 +129,6 @@ class ClusterManager():
 			return result
 		except:
 			logging.error("ClusterManager--listNode-- get all node info fail")
-			return None
 
 	@staticmethod
 	def addInstance(cluster_id, instance_id):
@@ -141,22 +142,12 @@ class ClusterManager():
 			return result
 		else:
 			try:
-				if not cluster.checkInstanceExist(instance_id):
-					raise Exception("Not any node have this instance!")
-				elif not cluster.checkInstanceGetVolume(instance_id):
-					raise Exception("Instance don't have Volume")
-				elif not ClusterManager._checkInstanceNOTOverlappingForAllCluster(instance_id):
+				if not ClusterManager._checkInstanceNOTOverlappingForAllCluster(instance_id):
 					raise Exception("instance already being protected ")
 
-				# node add instance
-				#node = cluster.findNodeByInstance(instance_id)
-				cluster.addInstance(instance_id)
-
-				# log message
+				result=cluster.addInstance(instance_id)
 				#code = "0"
-				message = "ClusterManager--Add instance success , instance_id : %s , cluster_id : %s" % (instance_id , cluster_id)
-				logging.info(message)
-				result = {"code": "0", "clusterId":cluster_id, "message":message}
+				logging.info("ClusterManager--Add instance success , instance_id : %s , cluster_id : %s" % (instance_id , cluster_id))
 				return result
 			except Exception as e:
 				print e
@@ -171,21 +162,16 @@ class ClusterManager():
 		if not cluster:
 			#code = "1"
 			message = "Add the instance to cluster failed. The cluster is not found. (cluster_id = %s)" % cluster_id
-			result = {"code": "1", "clusterId": cluster_id, "message": message}
+			result = {"code": "1", "clusterId": cluster_id,"instance id ": instance_id, "message": message}
 			return result
-		#try:
-		if cluster.deleteInstance(instance_id):
-			#code = "0"
-			message = "delete instance success. this instance is now deleted (instance_id = %s)" % instance_id
-			logging.info(message)
-			result = {"code": "0", "clusterId": cluster_id, "message": message}
+		try:
+			result=cluster.deleteInstance(instance_id)
+			logging.info("ClusterManager--delete instance success")
 			return result
-		else:
-			#raise Exception
-		#except Exception as e:
-		#	print str(e)
-			#code = "1"
-			message = "delete instance failed. this instance is not being protected (instance_id = %s)" % instance_id
+
+		except Exception as e:
+			message = "ClusterManager--delete instance failed. this instance is not being protected (instance_id = %s)" % instance_id
+			logging.error(message)
 			result = {"code": "1", "clusterId":cluster_id, "message":message}
 			return result
 	'''
@@ -238,7 +224,7 @@ class ClusterManager():
 	@staticmethod
 	def _checkNodeOverlappingForAllCluster(node_name):
 		for id,cluster in ClusterManager._cluster_dict.items():
-			for node in cluster.node_list:
+			for node in cluster.node_list[:]:
 				if node_name==node.name:
 					logging.error("%s already be add into cluster %s" % (node_name,id))
 					return False

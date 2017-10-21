@@ -7,6 +7,7 @@ class Instance(object):
 		self.id = id
 		self.name = name
 		self.host = host
+		self.status=None
 		self.nova_client = NovaClient.getInstance()
 
 	def isPowerOn(self):
@@ -21,5 +22,10 @@ class Instance(object):
 			return False
 		return True
 	'''
+	def updateInfo(self):
+		self.host=self.nova_client.getInstanceHost(self.id) #checkinstanceState ??
+		self.status=self.nova_client.getInstanceState(self.id)
+
 	def getInfo(self):
-		return [self.id , self.name , self.host]
+		self.updateInfo()
+		return [self.id , self.name , self.host,self.status]

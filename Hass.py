@@ -185,6 +185,7 @@ class Hass (object):
     def addInstance(self, clusterId, instanceId):
         try:
             result = ClusterManager.addInstance(clusterId, instanceId)
+            logging.info("HASS--add instance success.")
             return result
         except:
             logging.error("HASS--add Instance fail")

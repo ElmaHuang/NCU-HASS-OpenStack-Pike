@@ -51,9 +51,9 @@ class HassAPI():
                 self.node_table.add_row([name,ipmi_status,cluster_id])
             print self.node_table
         elif type == self.TABLE.INSTANCE:
-            self.instance_table = PrettyTable(["id", "name","host"])
-            for id,name,host in self.HASS_result:
-                self.instance_table.add_row([id,name,host])
+            self.instance_table = PrettyTable(["id", "name","host","state"])
+            for id,name,host,state in self.HASS_result:
+                self.instance_table.add_row([id,name,host,state])
             print self.instance_table
 
     def Input_Command(self):
@@ -212,11 +212,11 @@ class HassAPI():
         elif self.args.command == "instance-list":
             try:
                 self.HASS_result = self.server.listInstance(self.args.uuid)
+                self.showTable(self.HASS_result, self.TABLE.INSTANCE)
             except Exception as e:
                 print self.ERROR_color + "[Error] " + self.END_color + str(e)
                 #return
             #return result["code"]+";"+result["instanceList"]
-            self.showTable(self.HASS_result, self.TABLE.INSTANCE)
 
 
 def main():

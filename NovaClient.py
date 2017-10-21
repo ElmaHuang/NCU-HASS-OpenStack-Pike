@@ -5,6 +5,8 @@ from keystoneauth1.identity import v3
 from keystoneauth1 import session
 from novaclient import client
 import ConfigParser
+import time
+
 
 class NovaClient (object):
 	_instance = None # class reference
@@ -63,6 +65,10 @@ class NovaClient (object):
 				ret.append(instance)
 		return ret
 
+	def getInstanceState(self, instanceId):
+		instance = self.getVM(instanceId)
+		return getattr(instance, "status")
+
 	def getAllInstanceList(self):
 		return NovaClient._helper.servers.list(search_opts={'all_tenants': 1})
 
@@ -73,7 +79,6 @@ class NovaClient (object):
 	def getInstanceHost(self, instance_id):
 		instance = self.getVM(instance_id)
 		return getattr(instance, "OS-EXT-SRV-ATTR:host")
-
 
 	def isInstanceExist(self, instanceId):
 		try:
@@ -103,6 +108,15 @@ class NovaClient (object):
 
 	def novaServiceDown(self, node):
 		return NovaClient._helper.services.force_down(node , "nova-compute" , True)
+
+	def liveMigrateVM(self,instanceID,target_host):
+		#print ""
+		instance = self.getVM(instanceID)
+		#print "vm",instance
+		print target_host
+		instance.live_migrate(host = target_host)
+		time.sleep(60)
+		return self.getInstanceHost(instanceID)
 
 	def evacuate(self,vm, failNode, target):
 		self.novaServiceDown(failNode)
