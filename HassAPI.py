@@ -21,6 +21,7 @@ class HassAPI():
         self.bcolors()
 
     def generateSensorTable(self, result):
+        if result == [] : raise Exception("There is no information")
         sensor_table = PrettyTable(["Sensor ID", "Entity ID", "Sensor Type", "Value", "status"])
         for value in result:
             sensor_table.add_row(value)
@@ -182,32 +183,35 @@ class HassAPI():
 
         elif self.args.command == "node-info-show":
             try:
-                code , result = self.server.getAllInfoOfNode(self.args.node)
-                print self.generateSensorTable(result)
+                self.HASS_result = self.server.getAllInfoOfNode(self.args.node)
+                self.generateSensorTable(self.HASS_result["info"])
+                print self.showResult(self.HASS_result)
             except Exception as e:
                 print self.ERROR_color + "[Error] " + self.END_color + str(e)
 
         elif self.args.command == "node-info-get":
             self.type_list = self.args.types.strip().split(",")
             try:
-                code, self.HASS_result = self.server.getNodeInfoByType(self.args.node, self.type_list)
+                self.HASS_result = self.server.getNodeInfoByType(self.args.node, self.type_list)
                 print "Computing Node : " + self.args.node
-                self.generateSensorTable(self.HASS_result)
+                self.generateSensorTable(self.HASS_result["info"])
+                print self.showResult(self.HASS_result)
             except Exception as e:
                 print self.ERROR_color + "[Error] " + self.END_color + str(e) 
 
         elif self.args.command == "instance-add":
             try:
                 self.HASS_result = self.server.addInstance(self.args.uuid, self.args.vmid)
+                print self.showResult(self.HASS_result)
             except Exception as e:
                 print self.ERROR_color + "[Error] " + self.END_color + str(e)
-                #return
-
-            print self.showResult(self.HASS_result)
 
         elif self.args.command == "instance-delete":
-            self.HASS_result = self.server.deleteInstance(self.args.uuid, self.args.vmid)
-            print self.showResult(self.HASS_result)
+            try:
+                self.HASS_result = self.server.deleteInstance(self.args.uuid, self.args.vmid)
+                print self.showResult(self.HASS_result)
+            except Exception as e:
+                print self.ERROR_color + "[Error] " + self.END_color + str(e)
 
         elif self.args.command == "instance-list":
             try:

@@ -171,16 +171,18 @@ class Hass (object):
     def getAllInfoOfNode(self, nodeName):
         try:
             result = self.Operator.getAllInfoByNode(nodeName)
-            return result["code"] + ";" + result["info"]
+            logging.error("HASS--get All Info from %s finish" %nodeName)
+            return result
         except:
-            logging.error("HASS--get All Info from node fail")
+            logging.error("HASS--get All Info from %s fail"%nodeName)
 
     def getNodeInfoByType(self, nodeName, sensorType):
-        result = self.Operator.getNodeInfoByType(nodeName, sensorType)
-        if result["code"] == "0":
-            return result["code"], result["info"]
-        else: 
-            return result["code"] + ";" + result["message"]
+        try:
+            result = self.Operator.getNodeInfoByType(nodeName, sensorType)
+            logging.info("HASS--get %s info from %s success"%(sensorType,nodeName))
+            return result
+        except:
+            logging.error("HASS--get %s info from %s fail" %(sensorType,nodeName))
 
     def addInstance(self, clusterId, instanceId):
         try:

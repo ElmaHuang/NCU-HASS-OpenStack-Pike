@@ -95,9 +95,8 @@ class IPMIManager(object):
             dataList = self.dataClean(response , "temperature")
             return int(dataList[2]) # temperature
         except Exception as e:
-            code = "1"
             message = "Error! Unable to get computing node : %s's hardware information." % node_name
-            logging.error("IpmiModule getNodeInfo - " + err)
+            logging.error("IpmiModule getNodeInfo - %s, %s"% (message,e))
 
     def dataClean(self, raw_data, type=None):
         if type == "temperature":
@@ -161,10 +160,19 @@ class IPMIManager(object):
                 message = message + "Error! Unable to get computing node : %s's %s information." % (node_name, sensor_type_list)
                 logging.error("IpmiModule getNodeInfo - %s" % e)
                 code = "1"
-                break
+                #break
         print result_list
-        result = {"code":code, "info":result_list, "message":message}
+        result = {"code":code, "info":result_list,"message":message}
         return result
+
+    def getAllInfoByNode(self,node_name):
+        AllTemp=["Temp","Inlet Temp","Fan1","Fan2"]
+        try:
+            result=self.getNodeInfoByType(node_name,AllTemp)
+            logging.info("IPMIModule--getAllInfoMoudle finish %s" %result["message"])
+            return result
+        except:
+            logging.error("IPMIModule--getAllInfoNode fail")
 
     def getOSStatus(self, node_name):
         initial = 0

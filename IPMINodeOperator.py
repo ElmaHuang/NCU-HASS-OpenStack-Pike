@@ -53,10 +53,11 @@ class Operator(object):
 
 	def shutOffNode(self,node_name):
 		message = ""
-		result =None
+		#result =None
 		if self._checkNodeIPMI(node_name) and self._checkNodeNotInCluster(node_name):
 			try:
 				self.ipmi_result=self.ipmi_module.shutOffNode(node_name)
+				#check power status in IPMIModule
 				if self.ipmi_result["code"]== "0":
 					message += "sthut off node success.The node is %s." % node_name
 					logging.info(message)
@@ -74,16 +75,34 @@ class Operator(object):
 		return result
 
 	def rebootNode(self,node_name):
+		message = ""
 		if self._checkNodeIPMI(node_name) and  self._checkNodeNotInCluster(node_name):
+			try:
 				self.ipmi_module.rebootNode(node_name)
+				if self.ipmi_result["code"] == "0":
+					message += "reboot node success.The node is %s." % node_name
+					logging.info(message)
+					result = {"code": "0", "node_name": node_name, "message": message}
+				else:
+					raise Exception("IpmiModule reboot node fail")
+			except Exception as e:
+				# shut off fail
+				message += "IPMIOperator--reboot node fail.The node is %s.%s" % (node_name, e)
+				logging.error(message)
+				result = {"code": "1", "node_name": node_name, "message": message}
 		else:
-			pass
+			message += " IPMIOperator--node is not in compute pool or is not a IPMI PC or is already be protected. The node is %s." % node_name
+			logging.error(message)
+			result = {"code": "1", "node_name": node_name, "message": message}
+		return result
 
 	def getAllInfoByNode(self,node_name):
-		pass
+		data = self.ipmi_module.getAllInfoByNode(node_name)
+		return data
 
 	def getNodeInfoByType(self,node_name,sensor_type):
-		pass
+		data=self.ipmi_module.getNodeInfoByType(node_name,sensor_type)
+		return data
 
 	def _checkNodeIPMI(self,node_name):
 		#is IPMI PC
@@ -110,6 +129,8 @@ class Operator(object):
 
 	def _check_node_boot_success(self, nodeName, check_timeout, timeout=1):
 		#not be protect(not connect socket)
+		#check power statue in IPMIModule
+		#check detection agent
 		status = False
 		data = ""
 		sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -119,20 +140,12 @@ class Operator(object):
 			try:
 				sock.sendto("polling request", (nodeName, int(self.port)))
 				data, addr = sock.recvfrom(2048)
-				if "OK" in data:
-					status = True
-				sock.close()
 			except Exception as e:
 				print e
-			finally:
+			if "OK" in data:
+				status = True
+				sock.close()
+			else:
 				time.sleep(1)
 				check_timeout -= 1
 		return status
-
-
-def main():
-	pass
-
-
-if __name__ == '__main__':
-	main()
