@@ -113,7 +113,7 @@ class NovaClient (object):
 		#print ""
 		instance = self.getVM(instanceID)
 		#print "vm",instance
-		print target_host
+		#print target_host
 		instance.live_migrate(host = target_host)
 		time.sleep(60)
 		return self.getInstanceHost(instanceID)

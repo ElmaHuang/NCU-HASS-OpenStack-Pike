@@ -172,7 +172,7 @@ class IPMIManager(object):
         status = "OK"
         base = self._baseCMDGenerate(node_name)
         if base is None:
-            result = {"code" : 1}
+            result = {"code" : "1"}
             return result
         try:
             command = base + IPMIConf.GET_OS_STATUS
@@ -230,18 +230,19 @@ class IPMIManager(object):
         status = "OK"
         base = self._baseCMDGenerate(node_name)
         if base is None:
-            result = {"code" : 1}
+            result = {"code" : "1"}
             return result
         try:
             command = base + IPMIConf.POWER_STATUS
             response = subprocess.check_output(command, shell = True)
             if IPMIConf.POWER_STATUS_SUCCESS_MSG not in response:
                 status = "Error"
-            return status
+            #return status
         except Exception as e:
-            logging.error("IpmiModule getPowerStatus - The Compute Node %s's IPMI session can not be established." % node_name )
+            logging.error("IpmiModule getPowerStatus - The Compute Node %s's IPMI session can not be established. %s" % (node_name,e) )
             status = "IPMI_disable"
-        return status
+        finally:
+            return status
 
     def _baseCMDGenerate(self, node_name):
         if node_name in self.user_dict:
@@ -260,4 +261,4 @@ class IPMIManager(object):
 
 if __name__ == "__main__":
     i = IPMIManager()
-    print i.checkPowerStatus("compute1")
+    print i.getPowerStatus("compute1")

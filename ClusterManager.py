@@ -45,10 +45,10 @@ class ClusterManager():
 				#print cluster.node_list
 				del ClusterManager._cluster_dict[cluster_id]
 				for cluster in ClusterManager._cluster_dict:
-						print "cluster:",cluster
+						#print "cluster:",cluster
 						#print "id:",cluster.id
 						if cluster == cluster_id:
-							print cluster
+							#print cluster
 							raise Exception("Delete cluster fail")
 				print ClusterManager._cluster_dict
 				message = "delete cluster success. The cluster is deleted. (cluster_id = %s)" % cluster_id
@@ -57,11 +57,10 @@ class ClusterManager():
 				if write_DB:
 					ClusterManager.syncToDatabase()
 				return result
-	'''
 	@staticmethod
 	def getClusterList():
 		return ClusterManager._cluster_dict
-	'''
+
 	@staticmethod
 	def listCluster():
 		res = []

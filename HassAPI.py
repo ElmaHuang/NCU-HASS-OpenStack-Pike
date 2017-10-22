@@ -161,21 +161,21 @@ class HassAPI():
 
         elif self.args.command == "node-start":
             try:
-                self.HASS_result = self.server.startNode(self.args.node).split(";")
+                self.HASS_result = self.server.startNode(self.args.node)
                 print self.showResult(self.HASS_result)
             except Exception as e:
                 print self.ERROR_color + "[Error] " + self.END_color + str(e)
 
         elif self.args.command == "node-shutOff":
             try:
-                self.HASS_result = self.server.shutOffNode(self.args.node).split(";")
+                self.HASS_result = self.server.shutOffNode(self.args.node)
                 print self.showResult(self.HASS_result)
             except Exception as e:
                 print self.ERROR_color + "[Error] " + self.END_color + str(e)
 
         elif self.args.command == "node-reboot":
             try:
-                self.HASS_result = self.server.rebootNode(self.args.node).split(";")
+                self.HASS_result = self.server.rebootNode(self.args.node)
                 print self.showResult(self.HASS_result)
             except Exception as e:
                 print self.ERROR_color + "[Error] " + self.END_color + str(e)

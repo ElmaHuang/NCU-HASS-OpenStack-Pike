@@ -122,7 +122,6 @@ class Hass (object):
     def listCluster(self):
         try:
             result = ClusterManager.listCluster()
-            logging.info("HASS--list all cluster success")
             return result
         except:
             logging.error("HASS--list all cluster fail")
@@ -130,7 +129,6 @@ class Hass (object):
     def addNode(self, clusterId, nodeList):
         try:
             result = ClusterManager.addNode(clusterId, nodeList)
-            logging.info("HASS--add node success")
             return result
         except:
             logging.error("HASS--add node fail")
@@ -138,7 +136,6 @@ class Hass (object):
     def deleteNode(self, cluster_id, node_name):
         try:
             result = ClusterManager.deleteNode(cluster_id, node_name)
-            logging.info("HASS--delete node success")
             return result
         except:
             logging.error("HASS--delete node fail")
@@ -153,20 +150,23 @@ class Hass (object):
     def startNode(self, nodeName):
         try:
             result = self.Operator.startNode(nodeName)
-            return result["code"] + ";" + result["message"]
+            return result
         except:
             logging.error("HASS--Start node fail")
 
     def shutOffNode(self, nodeName):
         try:
             result = self.Operator.shutOffNode(nodeName)
-            return result["code"] + ";" + result["message"]
+            return result
         except:
             logging.error("HASS--Shut off fail")
 
     def rebootNode(self, nodeName):
-        result = self.Operator.rebootNode(nodeName)
-        return result["code"] + ";" + result["message"]
+        try:
+            result = self.Operator.rebootNode(nodeName)
+            return result
+        except:
+            logging.error("HASS--reboot node fail")
 
     def getAllInfoOfNode(self, nodeName):
         try:

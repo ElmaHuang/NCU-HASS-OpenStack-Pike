@@ -1,11 +1,10 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from keystoneauth1.identity import v3
-from keystoneauth1 import session
 from NovaClient import NovaClient
 from IPMIModule import IPMIManager
 import time
+from ClusterManager import ClusterManager
 import ConfigParser
 import logging
 import socket
@@ -16,6 +15,7 @@ class Operator(object):
 		# self.clusterList =
 		self.nova_client = NovaClient.getInstance()
 		self.ipmi_module=IPMIManager()
+		self.cluster_list=ClusterManager.getClusterList()
 		config = ConfigParser.RawConfigParser()
 		config.read('hass.conf')
 		self.port = int(config.get("detection","polling_port"))
@@ -28,16 +28,20 @@ class Operator(object):
 		if self._checkNodeIPMI(node_name):
 			#code = "0"
 			message += " IPMIOperator--node is in compute pool . The node is %s." % node_name
-			self.ipmi_result=self.ipmi_module.startNode(node_name)
+			try:
+				self.ipmi_result=self.ipmi_module.startNode(node_name)
 
-			if self.ipmi_result["code"] == "0":
-				boot_up = self._check_node_boot_success(node_name, default_wait_time)
-				if boot_up:
-					message += "start node success.The node is %s." % node_name
-					logging.info(message)
-					result = {"code": "0", "node_name": node_name, "message": message}
-			else:
-				message += "IPMIOperator--start node fail.The node is %s." % node_name
+				if self.ipmi_result["code"] == "0":
+					boot_up = self._check_node_boot_success(node_name, default_wait_time)
+					if boot_up:
+						message += "start node success.The node is %s." % node_name
+						logging.info(message)
+						result = {"code": "0", "node_name": node_name, "message": message}
+					else: raise Exception("check node boot fail")
+				else :raise Exception("IpmiModule start node fail")
+			except Exception as e:
+			#start fail
+				message += "IPMIOperator--start node fail.The node is %s.%s" % (node_name,e)
 				logging.error(message)
 				result = {"code": "1", "node_name": node_name, "message": message}
 		else	:
@@ -45,26 +49,33 @@ class Operator(object):
 			message += " IPMIOperator--node is not in compute pool or is not a IPMI PC . The node is %s." % node_name
 			logging.error(message)
 			result = {"code": "1", "node_name": node_name, "message": message}
-
 		return result
 
-#		except Exception as e:
-
-			#message = " start node fail.The node is %s." % node_name
-			#logging.error(message)
-			#result = {"code": "1", "node_name": node_name, "message": message}
-			#return result
-
 	def shutOffNode(self,node_name):
-		if self._checkNode(node_name):
-			self.ipmi_module.shutOffNode(node_name)
+		message = ""
+		result =None
+		if self._checkNodeIPMI(node_name) and self._checkNodeNotInCluster(node_name):
+			try:
+				self.ipmi_result=self.ipmi_module.shutOffNode(node_name)
+				if self.ipmi_result["code"]== "0":
+					message += "sthut off node success.The node is %s." % node_name
+					logging.info(message)
+					result = {"code": "0", "node_name": node_name, "message": message}
+				else:raise Exception("IpmiModule shut off node fail")
+			except Exception as e:
+				# shut off fail
+				message += "IPMIOperator--shut off node fail.The node is %s.%s" % (node_name, e)
+				logging.error(message)
+				result = {"code": "1", "node_name": node_name, "message": message}
 		else:
-			pass
-
+			message += " IPMIOperator--node is not in compute pool or is not a IPMI PC or is already be protected. The node is %s." % node_name
+			logging.error(message)
+			result = {"code": "1", "node_name": node_name, "message": message}
+		return result
 
 	def rebootNode(self,node_name):
-		if self._checkNode(node_name):
-			self.ipmi_module.rebootNode(node_name)
+		if self._checkNodeIPMI(node_name) and  self._checkNodeNotInCluster(node_name):
+				self.ipmi_module.rebootNode(node_name)
 		else:
 			pass
 
@@ -79,7 +90,6 @@ class Operator(object):
 		self.ipmistatus = self.ipmi_module._getIPMIStatus(node_name)
 		if not self.ipmistatus:
 			return False
-
 		#is in computing pool
 		if node_name in self.nova_client.getComputePool():
 			message = " node is in compute pool . The node is %s." % node_name
@@ -90,7 +100,16 @@ class Operator(object):
 			logging.error(message)
 			return False
 
+	def _checkNodeNotInCluster(self,node_name):
+		for cluster_id in self.cluster_list:
+			cluster=ClusterManager.getCluster(cluster_id)
+			node_list = cluster.getAllNodeStr()
+			if node_name in node_list:
+					return False
+		return True
+
 	def _check_node_boot_success(self, nodeName, check_timeout, timeout=1):
+		#not be protect(not connect socket)
 		status = False
 		data = ""
 		sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
