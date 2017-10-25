@@ -5,8 +5,6 @@ import sys
 
 
 class DatabaseManager(object):
-
-
     def __init__(self):
         self.config = ConfigParser.RawConfigParser()
         self.config.read('hass.conf')
@@ -19,7 +17,6 @@ class DatabaseManager(object):
             print "MySQL Error: %s" % str(e)
             sys.exit(1)
 
-
     def connect(self):
         self.db_conn = MySQLdb.connect(  host = self.config.get("mysql", "mysql_ip"),
                                          user = self.config.get("mysql", "mysql_username"),
@@ -27,7 +24,6 @@ class DatabaseManager(object):
                                         db = "hass",
                                     )
         self.db = self.db_conn.cursor(cursorclass = MySQLdb.cursors.DictCursor)
-
 
     def createTable(self):
         try:
@@ -43,10 +39,9 @@ class DatabaseManager(object):
             self.db.execute("""
                             CREATE TABLE IF NOT EXISTS ha_node 
                             (
-                            node_id MEDIUMINT NOT NULL AUTO_INCREMENT,
                             node_name char(18),
                             below_cluster char(36),
-                            PRIMARY KEY(node_id),
+                            PRIMARY KEY(node_name),
                             FOREIGN KEY(below_cluster)
                             REFERENCES ha_cluster(cluster_uuid)
                             ON DELETE CASCADE
@@ -57,7 +52,6 @@ class DatabaseManager(object):
             logging.error("Hass AccessDB - Create Table failed (MySQL Error: %s)", str(e))
             print "MySQL Error: %s" % str(e)
             sys.exit(1)
-
 
     def syncFromDB(self):
         try:
@@ -71,7 +65,6 @@ class DatabaseManager(object):
 
                 for node in ha_node_date:
                     node_list.append(node["node_name"])
-
                 #cluster_id = cluster["cluster_uuid"][:8]+"-"+cluster["cluster_uuid"][8:12]+"-"+cluster["cluster_uuid"][12:16]+"-"+cluster["cluster_uuid"][16:20]+"-"+cluster["cluster_uuid"][20:]
                 cluster_id = cluster["cluster_uuid"]
                 cluster_name = cluster["cluster_name"]
@@ -86,7 +79,6 @@ class DatabaseManager(object):
             logging.error("Hass AccessDB - Read data failed (MySQL Error: %s)", str(e))
             print "MySQL Error: %s" % str(e)
             sys.exit(1)
-
 
     def syncToDB(self, cluster_list):
         self.resetAll()
@@ -107,7 +99,6 @@ class DatabaseManager(object):
             print "MySQL Error: %s" % str(e)
             sys.exit(1)
 
-
     def writeDB(self , dbName , data):
         if dbName == "ha_cluster":
             format = "INSERT INTO ha_cluster (cluster_uuid,cluster_name) VALUES (%(cluster_uuid)s, %(cluster_name)s);"
@@ -121,7 +112,6 @@ class DatabaseManager(object):
             print "MySQL Error: %s" % str(e)
             raise
 
-
     def _getAllTable(self):
         table_list = []
         cmd = "show tables"
@@ -132,12 +122,10 @@ class DatabaseManager(object):
             table_list.append(table["Tables_in_hass"])
         return table_list
 
-
     def resetAll(self):
         table_list = self._getAllTable()
         for table in table_list:
             self._resetTable(table)
-
 
     def _resetTable(self, table_name):
         cmd = " DELETE FROM  `%s` WHERE true" % table_name
