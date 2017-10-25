@@ -7,7 +7,6 @@ from novaclient import client
 import ConfigParser
 import time
 
-
 class NovaClient (object):
 	_instance = None # class reference
 	_helper = None # novaclient reference
@@ -72,12 +71,17 @@ class NovaClient (object):
 	def getAllInstanceList(self):
 		return NovaClient._helper.servers.list(search_opts={'all_tenants': 1})
 
-	def getInstanceNameById(self , instanceId):
+	def getInstanceName(self , instanceId):
 		instance = self.getVM(instanceId)
 		return getattr(instance, "OS-EXT-SRV-ATTR:instance_name")
 
-	def getInstanceHost(self, instance_id):
-		instance = self.getVM(instance_id)
+	def getInstanceHost(self, instance_id, check_timeout=60):
+		status = None
+		while status != "ACTIVE" and check_timeout > 0:
+			instance = self.getVM(instance_id)
+			status = getattr(instance, "status")
+			check_timeout -= 1
+			time.sleep(1)
 		return getattr(instance, "OS-EXT-SRV-ATTR:host")
 
 	def isInstanceExist(self, instanceId):
@@ -118,10 +122,11 @@ class NovaClient (object):
 		time.sleep(60)
 		return self.getInstanceHost(instanceID)
 
-	def evacuate(self,vm, failNode, target):
-		self.novaServiceDown(failNode)
-		NovaClient._helper.servers.evacuate(vm , target , force=True)
-		self.novaServiceUp(failNode)
+	def evacuate(self, instance, target_host, fail_node):
+		self.novaServiceDown(fail_node)
+		openstack_instance = self.getVM(instance.id)
+		NovaClient._helper.servers.evacuate(openstack_instance , target_host.name , force=True)
+		self.novaServiceUp(fail_node)
 
 
 
@@ -133,3 +138,4 @@ if __name__ == "__main__":
 	#print a.getInstanceList()[0].isIllegal()
 	print a.getAllInstanceList()
 	print a.getInstanceListByNode("compute1")
+

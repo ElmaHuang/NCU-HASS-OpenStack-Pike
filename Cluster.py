@@ -220,7 +220,6 @@ class Cluster(ClusterInterface):
 			print "instance %s update host to %s" % (instance.name, instance.host)
 			#instance.host = host
 
-
 	def LiveMigrateInstance(self,instance_id):
 		host = self.nova_client.getInstanceHost(instance_id)
 		for node in self.node_list:
@@ -236,5 +235,16 @@ class Cluster(ClusterInterface):
 
 	def evacuate(self, instance, target_host, fail_node):
 		self.nova_client.evacuate(instance, target_host, fail_node)
+
+	def getProtectedInstanceList(self):
+			return self.protected_instance_list
+
+	def getProtectedInstanceListByNode(self, node):
+			ret = []
+			protected_instance_list = self.getProtectedInstanceList()
+			for instance in protected_instance_list:
+				if instance.host == node.name:
+					ret.append(instance)
+			return ret
 
 

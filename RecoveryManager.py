@@ -132,16 +132,14 @@ class RecoveryManager(object):
 		if not fail_node:
 			logging.error("RecoverManager : not found the fail node")
 			return
+		target_host = cluster.findTargetHost(fail_node)
+		print "target_host : %s" % target_host.name
+		if not target_host:
+			logging.error("RecoverManager : not found the target_host %s" % target_host)
 
 		protected_instance_list = cluster.getProtectedInstanceListByNode(fail_node)
 		print "protected list : %s" % protected_instance_list
 		for instance in protected_instance_list:
-			target_host = cluster.findTargetHost(fail_node)
-			print "target_host : %s" % target_host.name
-			if not target_host:
-				logging.error("RecoverManager : not found the target_host %s" % target_host)
-				continue
-
 			if target_host.InstanceOverlappingInLibvirt(instance):
 				print "instance %s overlapping in %s" % (instance.name, target_host.name)
 				print "start undefine instance in %s" % target_host.name

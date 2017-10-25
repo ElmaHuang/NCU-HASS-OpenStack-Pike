@@ -6,16 +6,14 @@ import ConfigParser
 class NodeInterface(object):
 
 	def __init__(self ,name, cluster_id):
-		#self.id = id
 		self.name = name
 		#self.protected_instance_list = []
 		self.cluster_id = cluster_id
 		self.ipmi=IPMIManager()
 		self.ipmi_status = self.ipmi._getIPMIStatus(self.name)
-
 		self.nova_client = NovaClient.getInstance()
 		self.detection_thread = None
-		#self.initDetectionThread()
+		self.initDetectionThread()
 
 	def setNodeName(self, name):
 		self.name = name
@@ -28,41 +26,37 @@ class NodeInterface(object):
 
 	def getClusterId(self, cluster_id):
 		return self.cluster_id 
+	'''
+	def addInstance(self, instance):
+		self.protected.instance_list.append(instance)
 
-	#def addInstance(self, instance):
-		#self.protected_instance_list.append(instance)
+	def removeInstance(self, instance):
+		self.instance_list.remove(instance)
 
-	#def removeInstance(self, instance):
-		#self.instance_list.remove(instance)
-
-	#def initInstanceList(self):
-		#self.instance_list = []
-
+	def initInstanceList(self):
+		self.instance_list = []
+	'''
 	def initDetectionThread(self):
 		config = ConfigParser.RawConfigParser()
 		config.read('hass.conf')
 
-		polling_interval = config.get("detection","polling_interval")
-		polling_threshold = config.get("detection","polling_threshold")
 		cluster_id = self.cluster_id
-		node = self.name
+		node = self
 		polling_port = int(config.get("detection","polling_port"))
-		wait_restart_threshold = int(config.get("detection","wait_restart_threshold"))
 		ipmi_status = self.ipmi_status
+		polling_interval = config.get("detection","polling_interval")
 
-		self.detection_thread = DetectionThread(polling_interval, polling_threshold, cluster_id, 
-												node, polling_port, wait_restart_threshold, 
-												ipmi_status)
+		self.detection_thread = DetectionThread(cluster_id, node, polling_port, polling_interval)
 
 	def startDetectionThread(self):
 		self.detection_thread.daemon = True
 		self.detection_thread.start()
-	
-	def deleteDetezctionThread(self):
+
+	def deleteDetectionThread(self):
 		self.detection_thread.stop()
 		
 	def getInfo(self):
-		return [self.name ,self.ipmi_status, self.cluster_id]
+		return [self.name, self.cluster_id, self.ipmi_status]
 
 if __name__ == "__main__":
 	a = NodeInterface("compute1" , "23" , True)
