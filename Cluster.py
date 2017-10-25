@@ -1,8 +1,10 @@
 from ClusterInterface import ClusterInterface
 #from DetectionManager import DetectionManager
 from Node import Node
-from Instance import  Instance
+from Instance import Instance
+import uuid
 import logging
+import ConfigParser
 
 class Cluster(ClusterInterface):
 	def __init__(self, id , name):
@@ -15,10 +17,11 @@ class Cluster(ClusterInterface):
 		try:
 			for node_name in node_name_list:
 				if  self._isInComputePool(node_name) :
-					print node_name_list
+					#print node_name_list
 					node = Node(name = node_name , cluster_id = self.id)
 					self.node_list.append(node)
 					#node.startDetection()
+					node.startDetectionThread()
 					message = "Cluster--The node %s is added to cluster." % self.getAllNodeStr()
 					logging.info(message)
 					result = {"code": "0","clusterId": self.id,"node":node_name, "message": message}
@@ -36,6 +39,7 @@ class Cluster(ClusterInterface):
 		try:
 			node = self.getNodeByName(node_name)
 			#stop Thread
+			node.deleteDetectionThread()
 			self.node_list.remove(node)
 			#ret = self.getAllNodeInfo()
 			for node in self.node_list:
@@ -91,7 +95,7 @@ class Cluster(ClusterInterface):
 		for instance in self.instance_list:
 			if instance.id == instance_id:
 				self.instance_list.remove(instance)
-		#[for instance id if instance_id not in self.instance]
+		#if instanceid not in self.instacne_list:
 		message = "Cluster--delete instance success. this instance is now deleted (instance_id = %s)" % instance_id
 		logging.info(message)
 		result = {"code": "0", "clusterId": self.id, "instance id": instance_id, "message": message}
@@ -134,9 +138,7 @@ class Cluster(ClusterInterface):
 			return True
 		#if self._isNodeDuplicate(unchecked_node_name):
 			#return True
-		return False
-	
-		
+		return False		
 	'''
 
 	def _isInComputePool(self, unchecked_node_name):
@@ -163,16 +165,12 @@ class Cluster(ClusterInterface):
 
 	#clustermanager.deletecluster call
 	def deleteAllNode(self):
-		#print self.node_list
 		for node in self.node_list[:]:
-			#node = self.node_list[0]
-			re= self.deleteNode(node.name)
-			print "node list:",self.node_list
+			self.deleteNode(node.name)
+			#print "node list:",self.node_list
 
-	'''
-	def getProtectedInstanceList(self):
-		return self.instance_list
-	'''
+	def getInfo(self):
+		return [self.id, self.name]
 
 	def checkInstanceGetVolume(self,instance_id):
 		if not self.nova_client.isInstanceGetVolume(instance_id):
@@ -216,6 +214,13 @@ class Cluster(ClusterInterface):
 		target_host = random.choice(target_list)
 		return target_host
 
+	def updateInstance(self):
+		for instance in self.instance_list:
+			instance.updateInfo()
+			print "instance %s update host to %s" % (instance.name, instance.host)
+			#instance.host = host
+
+
 	def LiveMigrateInstance(self,instance_id):
 		host = self.nova_client.getInstanceHost(instance_id)
 		for node in self.node_list:
@@ -228,5 +233,8 @@ class Cluster(ClusterInterface):
 				finial_host=self.nova_client.liveMigrateVM(instance_id,target_host.name)
 				#print finial_host
 				return finial_host
+
+	def evacuate(self, instance, target_host, fail_node):
+		self.nova_client.evacuate(instance, target_host, fail_node)
 
 
