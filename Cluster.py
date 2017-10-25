@@ -76,7 +76,7 @@ class Cluster(ClusterInterface):
 				#Live migration VM to cluster node
 				#print "start live migration"
 				self.finial_host=self.LiveMigrateInstance(instance_id)
-				instance = Instance(id=instance_id,name=self.nova_client.getInstanceNameById(instance_id),host=self.finial_host)
+				instance = Instance(id=instance_id,name=self.nova_client.getInstanceName(instance_id),host=self.finial_host)
 				self.instance_list.append(instance)
 				message = "Cluster--Cluster add instance success ! The instance id is %s." % (instance_id)
 				logging.info(message)

@@ -77,8 +77,8 @@ class NovaClient (object):
 
 	def getInstanceHost(self, instance_id, check_timeout=60):
 		status = None
+		instance = self.getVM(instance_id)
 		while status != "ACTIVE" and check_timeout > 0:
-			instance = self.getVM(instance_id)
 			status = getattr(instance, "status")
 			check_timeout -= 1
 			time.sleep(1)
