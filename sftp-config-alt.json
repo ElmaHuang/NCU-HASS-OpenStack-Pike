@@ -17,7 +17,7 @@
     "host": "140.115.59.204",
     "user": "localadmin",
     "password": "openstack",
-    "port": "5557",
+    "port": "5555",
     
     "remote_path": "/home/localadmin/hass",
     "ignore_regexes": [

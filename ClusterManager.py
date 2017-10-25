@@ -204,7 +204,6 @@ class ClusterManager():
 			ClusterManager._db.resetAll()
 		ClusterManager._cluster_dict = {}
 
-
 	@staticmethod
 	def syncFromDatabase():
 		ClusterManager._db.syncFromDB(ClusterManager)
@@ -218,4 +217,3 @@ class ClusterManager():
 if __name__ == "__main__":
 	ClusterManager.init()
 	ClusterManager.deleteCluster("8c46ecee-9bd6-4c82-b7c8-6b6d20dc09d7")
-
