@@ -171,7 +171,7 @@ class Hass (object):
     def getAllInfoOfNode(self, nodeName):
         try:
             result = self.Operator.getAllInfoByNode(nodeName)
-            logging.error("HASS--get All Info from %s finish" %nodeName)
+            logging.info("HASS--get All Info from %s finish" %nodeName)
             return result
         except:
             logging.error("HASS--get All Info from %s fail"%nodeName)
