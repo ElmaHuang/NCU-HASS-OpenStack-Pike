@@ -263,7 +263,7 @@ class IPMIManager(object):
         else:
             return None
 
-    def getIPMIStatus(self, node_name):
+    def _getIPMIStatus(self, node_name):
         ip_dict = dict(self.config._sections['ipmi'])
         return node_name in ip_dict
 if __name__ == "__main__":

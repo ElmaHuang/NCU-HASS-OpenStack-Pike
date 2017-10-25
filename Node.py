@@ -1,4 +1,5 @@
 from NodeInterface import NodeInterface
+import logging
 import paramiko
 from Instance import Instance
 

@@ -20,7 +20,6 @@ class Cluster(ClusterInterface):
 					#print node_name_list
 					node = Node(name = node_name , cluster_id = self.id)
 					self.node_list.append(node)
-					#node.startDetection()
 					node.startDetectionThread()
 					message = "Cluster--The node %s is added to cluster." % self.getAllNodeStr()
 					logging.info(message)
@@ -188,7 +187,7 @@ class Cluster(ClusterInterface):
 
 	def checkInstanceExist(self, instance_id):
 		node_list = self.nova_client.getComputePool()
-		print "node list of cluster:",node_list
+		print "node list of all compute node:",node_list
 		instance_list=self.nova_client.getAllInstanceList()
 		print instance_list
 		for instance in instance_list:
@@ -196,7 +195,7 @@ class Cluster(ClusterInterface):
 			if instance.id==instance_id:
 				logging.info("Cluster--addInstance-checkInstanceExist success")
 				return True
-		message = "this instance not exist. Instance id is %s. " % instance_id
+		message = "this instance is not exist. Instance id is %s. " % instance_id
 		logging.error(message)
 		return False
 
