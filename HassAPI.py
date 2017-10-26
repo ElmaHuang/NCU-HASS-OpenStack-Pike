@@ -42,18 +42,18 @@ class HassAPI():
         # cluster list info
         if type == self.TABLE.CLUSTER:
             self.cluster_table = PrettyTable(['UUID', 'Name'])
-            for (uuid, name) in self.HASS_result :
+            for (uuid, name) in result :
                 self.cluster_table.add_row([uuid, name])
             print self.cluster_table
         # node list info
         elif type == self.TABLE.NODE:
             self.node_table = PrettyTable(["name", "cluster_id", "ipmi_enabled"])
-            for name, cluster_id, ipmi_status in self.HASS_result:
+            for name, cluster_id, ipmi_status in result:
                 self.node_table.add_row([name, cluster_id, ipmi_status])
             print self.node_table
         elif type == self.TABLE.INSTANCE:
             self.instance_table = PrettyTable(["id", "name","host","state"])
-            for id,name,host,state in self.HASS_result:
+            for id,name,host,state in result:
                 self.instance_table.add_row([id,name,host,state])
             print self.instance_table
 
@@ -153,9 +153,9 @@ class HassAPI():
 
         elif self.args.command == "node-list":
             try:
-                self.HASS_result= self.server.listNode(self.args.uuid)
+                self.HASS_result = self.server.listNode(self.args.uuid)
                 if self.HASS_result["code"] == "0":
-                    self.showTable(self.HASS_result["nodelist"], self.TABLE.NODE)
+                    self.showTable(self.HASS_result["nodeList"], self.TABLE.NODE)
                 else:
                     raise Exception
             except Exception as e:
