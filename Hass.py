@@ -145,7 +145,7 @@ class Hass (object):
             result = ClusterManager.listNode(clusterId)
             return result
         except:
-            logging.error("HAS--List node fail")
+            logging.error("HASS--List node fail")
 
     def startNode(self, nodeName):
         try:
