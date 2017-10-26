@@ -115,6 +115,7 @@ class ClusterManager():
 
 	@staticmethod
 	def listNode(cluster_id):
+		nodelist=[]
 		try:
 			cluster = ClusterManager.getCluster(cluster_id)
 			nodelist = cluster.getAllNodeInfo()

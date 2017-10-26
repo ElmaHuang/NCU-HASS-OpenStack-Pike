@@ -154,7 +154,7 @@ class HassAPI():
         elif self.args.command == "node-list":
             try:
                 self.HASS_result= self.server.listNode(self.args.uuid)
-                if self.HASS_result["code"]=="0":
+                if self.HASS_result["code"] == "0":
                     self.showTable(self.HASS_result["nodelist"], self.TABLE.NODE)
                 else:
                     raise Exception
