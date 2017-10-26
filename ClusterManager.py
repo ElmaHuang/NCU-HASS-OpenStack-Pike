@@ -231,7 +231,6 @@ class ClusterManager():
 	def getCluster(cluster_id):
 		if not ClusterManager._isCluster(cluster_id):
 			logging.error("cluster not found id %s" % cluster_id)
-
 			return None
 		return ClusterManager._cluster_dict[cluster_id]
 
