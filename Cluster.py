@@ -39,6 +39,7 @@ class Cluster(ClusterInterface):
 			node = self.getNodeByName(node_name)
 			#stop Thread
 			node.deleteDetectionThread()
+			self.deleteInstanceByNode(node)
 			self.node_list.remove(node)
 			#ret = self.getAllNodeInfo()
 			for node in self.node_list:
@@ -99,6 +100,10 @@ class Cluster(ClusterInterface):
 		logging.info(message)
 		result = {"code": "0", "clusterId": self.id, "instance id": instance_id, "message": message}
 		return result
+	def deleteInstanceByNode(self, node):
+		protected_instance_list = self.getProtectedInstanceListByNode(node)
+		for instance in protected_instance_list:
+			self.deleteInstance(instance.id)
 	#list Instance
 	def getAllInstanceInfo(self):
 		ret = []
