@@ -71,14 +71,18 @@ class IndexView(tables.DataTableView):
         server = xmlrpclib.ServerProxy(authUrl)
         clusters = server.listCluster()
         instances = []
-        for (uuid,name) in clusters:
+        for clusrer in clusters:
+            uuid = clusrer[0]
+            name = clusrer[1]
             _cluster_instances = server.listInstance(uuid)
-            result,cluster_instances = _cluster_instances.split(";")
+            #result,cluster_instances = _cluster_instances.split(";")
+            result = _cluster_instances["code"]
+            cluster_instances = _cluster_instances["instanceList"]
             if result == '0':
                 if cluster_instances != "":
-                    cluster_instances = cluster_instances.split(",")
-                    for _instance_id in cluster_instances:
-                        instance_id = _instance_id.split(":")[0]
+                    #cluster_instances = cluster_instances.split(",")
+                    for _instance in cluster_instances:
+                        instance_id = _instance[0]
                         try:
                             instance = api.nova.server_get(self.request, instance_id)
                             instance.cluster_name = name
@@ -153,8 +157,13 @@ class IndexView(tables.DataTableView):
                 inst.tenant_name = getattr(tenant, "name", None)
 
                 cluster_id = inst.cluster_id
-                result, node_list = server.listNode(cluster_id).split(";")
-                cluster_nodes = node_list.split(",")
+                #result, node_list = server.listNode(cluster_id).split(";")
+                cluster_node = server.listNode(cluster_id)
+                result = cluster_node["code"]
+                node_list = cluster_node["nodeList"]
+                cluster_nodes = []
+                for node in node_list:
+                    cluster_nodes.append(node_list[0])
                 if len(cluster_nodes) == 1:
                     inst.protection = "Incomplete Protected"
                 else:

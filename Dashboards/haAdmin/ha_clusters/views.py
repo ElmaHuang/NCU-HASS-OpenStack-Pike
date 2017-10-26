@@ -49,10 +49,10 @@ class IndexView(tables.DataTableView):
 			name = cluster[1]
 			node_number = 0
 			instance_number = 0
-			node_info = server.listNode(uuid)
+			node_info = server.listNode(uuid)["nodeList"]
 			if (node_info != "" ):
 				node_number = len(node_info)
-			instance_info = server.listInstance(uuid)
+			instance_info = server.listInstance(uuid)["instanceList"]
 			if (instance_info != ""):
 				instance_number = len(instance_info)
 			clusters.append(Cluster(name, uuid, node_number, instance_number))
@@ -67,16 +67,13 @@ class DetailView(tables.DataTableView):
 		authUrl = "http://user:0928759204@127.0.0.1:61209"
 		server = xmlrpclib.ServerProxy(authUrl)
 		result = server.listNode(self.kwargs["cluster_id"])
-		if result != None : # Success
+		if result["code"] == "0": # Success
 			computing_nodes = []
-			#result = result.split(";")[1] # filter success code
-			nodelist = []
-			for node in result:
-				nodelist.append(node[0])
-			if nodelist != []:
-				#result = result.split(",")  # split computing nodes
-				instance_id = 0
-				for name in nodelist:
+			result = result["nodeList"] [:]# filter success code
+			if result != "":
+				for node in result:
+					name = node[0]
+					instance_id = 0
 					full_instance_information = server.listInstance(self.kwargs["cluster_id"])
 					instance_number  = self.get_instance_number(name, full_instance_information)
 					computing_nodes.append(ComputingNode(instance_id, name, instance_number))
@@ -89,15 +86,13 @@ class DetailView(tables.DataTableView):
 
 	def get_instance_number(self, node_name, data):
 		#result, instance_list = data.split(";")
+		instance_list = data["instanceList"]
+		result = data["code"]
 		instance_number = 0
-		instance_host_list = []
-		#if result == '0' and instance_list != "":
-		if data !="":
-			for instance in data:
-				instance_host_list.append(instance[2])
-			#instances = instance_list.split(",")
-			for instance_host in instance_host_list:
-				if node_name == instance_host:
+		#instance_host_list = []
+		if result == '0' and instance_list != "":
+			for instance in instance_list:
+				if node_name == instance[2]:
 					instance_number = instance_number + 1
 		return instance_number
 
