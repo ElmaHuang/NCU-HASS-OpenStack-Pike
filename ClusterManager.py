@@ -65,10 +65,11 @@ class ClusterManager():
 
 	@staticmethod
 	def addNode(cluster_id, node_name_list, write_DB = True):
-		#check overlapping
+		message = ""
 		for node_name in node_name_list[:]:
 			if not ClusterManager._checkNodeOverlappingForAllCluster(node_name):
 				print "%s is already in a HA cluster. " %node_name
+				message+="%s is overlapping node" %node_name
 				node_name_list.remove(node_name)
 		cluster = ClusterManager.getCluster(cluster_id)
 		if not cluster:
