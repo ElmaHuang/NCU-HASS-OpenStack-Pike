@@ -154,8 +154,10 @@ class HassAPI():
         elif self.args.command == "node-list":
             try:
                 self.HASS_result= self.server.listNode(self.args.uuid)
-                self.showTable(self.HASS_result, self.TABLE.NODE)
-
+                if self.HASS_result["code"]=="0":
+                    self.showTable(self.HASS_result["nodelist"], self.TABLE.NODE)
+                else:
+                    raise Exception
             except Exception as e:
                print self.ERROR_color + "[Error] " + self.END_color + str(e)
                #return
@@ -216,7 +218,10 @@ class HassAPI():
         elif self.args.command == "instance-list":
             try:
                 self.HASS_result = self.server.listInstance(self.args.uuid)
-                self.showTable(self.HASS_result, self.TABLE.INSTANCE)
+                if self.HASS_result["code"] == "0":
+                    self.showTable(self.HASS_result["instanceList"], self.TABLE.INSTANCE)
+                else:
+                    raise Exception
             except Exception as e:
                 print self.ERROR_color + "[Error] " + self.END_color + str(e)
                 #return

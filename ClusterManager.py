@@ -116,8 +116,9 @@ class ClusterManager():
 	def listNode(cluster_id):
 		try:
 			cluster = ClusterManager.getCluster(cluster_id)
-			result = cluster.getAllNodeInfo()
+			nodelist = cluster.getAllNodeInfo()
 			logging.info("ClusterManager-listNode--get all node info finish")
+			result = {"code":"0","nodeList":nodelist}
 			return result
 		except:
 			logging.error("ClusterManager--listNode-- get all node info fail")
@@ -180,7 +181,8 @@ class ClusterManager():
 			instance_list= cluster.getAllInstanceInfo()
 		#if not instance_list:
 			logging.info("ClusterManager--listInstance,getInstanceList success,instanceList is %s" % instance_list)
-			return instance_list
+			result = {"code":"0","instanceList":instance_list}
+			return result
 		except:
 			logging.error("ClusterManager--listInstance,getInstanceList fail")
 
