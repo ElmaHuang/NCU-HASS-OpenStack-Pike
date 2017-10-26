@@ -48,6 +48,7 @@ class Cluster(ClusterInterface):
 			logging.info(message)
 			result = {"code": "0","clusterId": self.id, "node":node_name, "message": message}
 		except Exception as e:
+			print str(e)
 			message = "Cluster delete node fail , node maybe not in compute pool please check again! node is %s  The node list is %s." % (node_name,self.getAllNodeStr())
 			logging.error(message)
 			result = {"code": "1", "node":node_name,"clusterId": self.id, "message": message}
@@ -241,7 +242,7 @@ class Cluster(ClusterInterface):
 		self.nova_client.evacuate(instance, target_host, fail_node)
 
 	def getProtectedInstanceList(self):
-			return self.protected_instance_list
+			return self.instance_list
 
 	def getProtectedInstanceListByNode(self, node):
 			ret = []
