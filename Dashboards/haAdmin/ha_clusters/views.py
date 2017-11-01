@@ -71,14 +71,14 @@ class DetailView(tables.DataTableView):
 			computing_nodes = []
 			result = result["nodeList"] [:]# filter success code
 			if result != "":
+				instance_id = 0
 				for node in result:
 					name = node[0]
-					instance_id = 0
 					full_instance_information = server.listInstance(self.kwargs["cluster_id"])
 					instance_number  = self.get_instance_number(name, full_instance_information)
 					computing_nodes.append(ComputingNode(instance_id, name, instance_number))
 					instance_id = instance_id + 1
-					return computing_nodes
+				return computing_nodes
 			else:
 				return []
 		else:

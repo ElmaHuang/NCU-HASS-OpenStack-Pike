@@ -163,7 +163,7 @@ class IndexView(tables.DataTableView):
                 node_list = cluster_node["nodeList"]
                 cluster_nodes = []
                 for node in node_list:
-                    cluster_nodes.append(node_list[0])
+                    cluster_nodes.append(node[0])
                 if len(cluster_nodes) == 1:
                     inst.protection = "Incomplete Protected"
                 else:

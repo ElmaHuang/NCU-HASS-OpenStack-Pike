@@ -102,7 +102,7 @@ class AddNodesToHAClusterAction(workflows.MembershipAction):
                 host_names.append(host.host_name)
         host_names.sort()
 
-        self.fields[field_name].choices =[(host_name, host_name) for host_name in host_names]
+        self.fields[field_name].choices = [(host_name, host_name) for host_name in host_names]
 
     class Meta(object):
         name = _("Computing Nodes")
@@ -160,8 +160,8 @@ class CreateHAClusterWorkflow(workflows.Workflow):
             node_list.append(node)
         result = server.createCluster(name, node_list)
 
-        if 'overlapping node' in result[1]:
-            self.failure_message = result[1]
+        if 'overlapping node' in result["message"]:
+            self.failure_message = result["message"]
             return False
         self.success_message = _('Created new HA cluster "%s".'  % name)
         return True
@@ -182,12 +182,12 @@ class AddComputingNodeWorkflow(workflows.Workflow):
         node_list = []
         for node in context_computing_nodes:
             node_list.append(node)
-            cluster_id = self.get_cluster_id(self.get_absolute_url())
+        cluster_id = self.get_cluster_id(self.get_absolute_url())
         result = server.addNode(cluster_id,node_list).split(";")
         self.success_url = urlresolvers.reverse(self.success_url, args=[cluster_id])
 
-        if result[0] == '1': # error
-            self.failure_message = result[1]
+        if result["code"] == '1': # error
+            self.failure_message = result["message"]
             return False
         self.success_message = _('Add new Computing Node %s to HA Cluster.' % (",".join(node_list)))
         messages.success(request, self.success_message )

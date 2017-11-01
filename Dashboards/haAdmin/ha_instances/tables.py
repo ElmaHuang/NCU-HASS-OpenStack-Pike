@@ -41,30 +41,26 @@ class EditInstanceProtectionAction(tables.LinkAction):
     icon = "pencil"
      
 
-    def get_ips(instance):
-        template_name = 'haAdmin/ha_instances/_instance_ips.html'
-        ip_groups = {}
+def get_ips(instance):
+    template_name = 'haAdmin/ha_instances/_instance_ips.html'
+    ip_groups = {}
+    for ip_group, addresses in instance.addresses.iteritems():
+        ip_groups[ip_group] = {}
+        ip_groups[ip_group]["floating"] = []
+        ip_groups[ip_group]["non_floating"] = []
+        for address in addresses:
+            if ('OS-EXT-IPS:type' in address and address['OS-EXT-IPS:type'] == "floating"):
+                ip_groups[ip_group]["floating"].append(address)
+            else:
+                ip_groups[ip_group]["non_floating"].append(address)
 
-        for ip_group, addresses in instance.addresses.iteritems():
-            ip_groups[ip_group] = {}
-            ip_groups[ip_group]["floating"] = []
-            ip_groups[ip_group]["non_floating"] = []
+    context = {"ip_groups": ip_groups, }
+    return template.loader.render_to_string(template_name, context)
 
-            for address in addresses:
-                if ('OS-EXT-IPS:type' in address and address['OS-EXT-IPS:type'] == "floating"):
-                    ip_groups[ip_group]["floating"].append(address)
-                else:
-                    ip_groups[ip_group]["non_floating"].append(address)
+def get_power_state(instance):
+    return POWER_STATES.get(getattr(instance, "OS-EXT-STS:power_state", 0), '')
 
-        context = {
-            "ip_groups": ip_groups,
-        }
-        return template.loader.render_to_string(template_name, context)
-
-    def get_power_state(instance):
-        return POWER_STATES.get(getattr(instance, "OS-EXT-STS:power_state", 0), '')
-
-    POWER_DISPLAY_CHOICES = (
+POWER_DISPLAY_CHOICES = (
         ("NO STATE", pgettext_lazy("Power state of an Instance", u"No State")),
         ("RUNNING", pgettext_lazy("Power state of an Instance", u"Running")),
         ("BLOCKED", pgettext_lazy("Power state of an Instance", u"Blocked")),
@@ -75,7 +71,7 @@ class EditInstanceProtectionAction(tables.LinkAction):
         ("SUSPENDED", pgettext_lazy("Power state of an Instance", u"Suspended")),
         ("FAILED", pgettext_lazy("Power state of an Instance", u"Failed")),
         ("BUILDING", pgettext_lazy("Power state of an Instance", u"Building")),
-    )
+)
 
 class InstancesTable(tables.DataTable):
     number = tables.Column("number", verbose_name=_("#"))
