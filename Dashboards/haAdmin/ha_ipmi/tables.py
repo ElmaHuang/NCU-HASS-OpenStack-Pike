@@ -110,7 +110,7 @@ class ShutOffNodeAction(tables.BatchAction):
         server = xmlrpclib.ServerProxy(authUrl)
         result = server.shutOffNode(obj_id)
         if result[0] == "1":
-            err_msg = ersult.split(";")[1]
+            err_msg = result.split(";")[1]
             messages.error(request, err_msg)
 
 
