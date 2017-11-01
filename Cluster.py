@@ -86,6 +86,7 @@ class Cluster(ClusterInterface):
 				logging.info(message)
 				result = {"code":"0","cluster id":self.id,"node":final_host,"instance id":instance_id,"message":message}
 			except Exception as e:
+				print str(e)
 				message = "Cluster--Cluster add instance fail ,please check again! The instance id is %s." % (instance_id)
 				logging.error(message)
 				result = {"code":"1","cluster id":self.id,"instance id":instance_id,"message":message}
@@ -108,14 +109,17 @@ class Cluster(ClusterInterface):
 		protected_instance_list = self.getProtectedInstanceListByNode(node)
 		for instance in protected_instance_list:
 			self.deleteInstance(instance.id)
+
 	#list Instance
 	def getAllInstanceInfo(self):
 		ret = []
 		#instance_list = self.getProtectedInstanceList()
 		for instance in self.instance_list[:]:
 			info = instance.getInfo()
+			print 111
 			#for status in info[]:
 			if "SHUTOFF" in info:
+				print 222
 				self.deleteInstance(info[0])
 			else:
 				ret.append(info)

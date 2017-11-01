@@ -28,4 +28,4 @@ class Instance(object):
 
 	def getInfo(self):
 		self.updateInfo()
-		return [self.id , self.name , self.host,self.status]
+		return [self.id, self.name, self.host, self.status]

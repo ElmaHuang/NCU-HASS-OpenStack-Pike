@@ -14,6 +14,7 @@ class NovaClient (object):
 	def __init__(self):
 		self.config = ConfigParser.RawConfigParser()
 		self.config.read('hass.conf')
+		self.version = self.config.get("version","version")
 		if NovaClient._instance != None:
 			raise Exception("This class is a singleton! , cannot initialize twice")
 		else:
@@ -39,7 +40,10 @@ class NovaClient (object):
 						user_domain_name = self.config.get("openstack", "openstack_user_domain_id"),
 						project_domain_name = self.config.get("openstack", "openstack_project_domain_id"))
 		sess = session.Session(auth = auth)
-		novaClient = client.Client(2.29 , session = sess)
+		if self.version == "16":
+			novaClient = client.Client(2.29 , session = sess)
+		else:
+			novaClient = client.Client(2.25 , session = sess)
 		return novaClient
 
 	def getComputePool(self):
@@ -77,9 +81,9 @@ class NovaClient (object):
 
 	def getInstanceHost(self, instance_id, check_timeout=60):
 		status = None
-		instance = self.getVM(instance_id)
 		while status != "ACTIVE" and check_timeout > 0:
-			print status
+			instance = self.getVM(instance_id)
+			print "%s , %s" % (status , getattr(instance, "name"))
 			status = getattr(instance, "status")
 			check_timeout -= 1
 			time.sleep(1)
@@ -126,7 +130,10 @@ class NovaClient (object):
 	def evacuate(self, instance, target_host, fail_node):
 		self.novaServiceDown(fail_node)
 		openstack_instance = self.getVM(instance.id)
-		NovaClient._helper.servers.evacuate(openstack_instance , target_host.name , force=True)
+		if self.version == "16":
+			NovaClient._helper.servers.evacuate(openstack_instance , target_host.name , force=True)
+		else:
+			NovaClient._helper.servers.evacuate(openstack_instance , target_host.name)
 		self.novaServiceUp(fail_node)
 
 

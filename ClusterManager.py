@@ -6,7 +6,7 @@ import logging
 class ClusterManager():
 	_cluster_dict = None
 	_db = None
-	_RESET_DB = False
+	_RESET_DB = True
 
 	@staticmethod
 	def init():
@@ -179,6 +179,7 @@ class ClusterManager():
 		#if not instance_list:
 			logging.info("ClusterManager--listInstance,getInstanceList success,instanceList is %s" % instance_list)
 			result = {"code":"0","instanceList":instance_list}
+			print result
 			return result
 		except:
 			logging.error("ClusterManager--listInstance,getInstanceList fail")

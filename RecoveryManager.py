@@ -265,7 +265,7 @@ class RecoveryManager(object):
 				ip = str(openstack_instance.networks['selfservice'][1])
 				status = self._pingInstance(ip, check_timeout)
 			except Exception as e:
-				print "vm : %s has no provider network, abort ping process!" % instance.name
+				print "vm : %s has no floating network, abort ping process!" % instance.name
 				continue
 			if not status:
 				logging.error("vm %s cannot ping %s" % (instance.name, ip))
