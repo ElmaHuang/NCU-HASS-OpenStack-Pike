@@ -16,22 +16,16 @@ class Node (NodeInterface):
 			if id == instance_id:
 				return True
 		return False
-	'''
-	def getInstanceInfo(self):
-		res = []
-		for instance in self.protected_instance_list:
-			res.append(instance.getInfo())
-		return res
 
 	def start(self):
-		return self.ipmi_module.startNode(self.name)
+		return self.ipmi.startNode(self.name)
 
 	def shutoff(self):
-		return self.ipmi_module.shutOffNode(self.name)
+		return self.ipmi.shutOffNode(self.name)
 
 	def reboot(self):
-		return self.ipmi_module.rebootNode(self.name)
-	'''
+		return self.ipmi.rebootNode(self.name)
+
 	def InstanceOverlappingInLibvirt(self, instance):
 		return instance.name in self._get_virsh_list()
 

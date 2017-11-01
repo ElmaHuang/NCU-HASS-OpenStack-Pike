@@ -77,14 +77,14 @@ class Cluster(ClusterInterface):
 			try:
 				#Live migration VM to cluster node
 				#print "start live migration"
-				finial_host = self.checkInstanceHost(instance_id)
-				if finial_host == None:
-					finial_host=self.liveMigrateInstance(instance_id)
-				instance = Instance(id=instance_id,name=self.nova_client.getInstanceName(instance_id),host=finial_host)
+				final_host = self.checkInstanceHost(instance_id)
+				if final_host == None:
+					final_host=self.liveMigrateInstance(instance_id)
+				instance = Instance(id=instance_id,name=self.nova_client.getInstanceName(instance_id),host=final_host)
 				self.instance_list.append(instance)
 				message = "Cluster--Cluster add instance success ! The instance id is %s." % (instance_id)
 				logging.info(message)
-				result = {"code":"0","cluster id":self.id,"node":finial_host,"instance id":instance_id,"message":message}
+				result = {"code":"0","cluster id":self.id,"node":final_host,"instance id":instance_id,"message":message}
 			except Exception as e:
 				message = "Cluster--Cluster add instance fail ,please check again! The instance id is %s." % (instance_id)
 				logging.error(message)
@@ -242,9 +242,9 @@ class Cluster(ClusterInterface):
 		#return host
 		target_host = self.findTargetHost(host)
 		print "start live migrate vm from ",host,"to ",target_host.name
-		finial_host=self.nova_client.liveMigrateVM(instance_id,target_host.name)
-		#print finial_host
-		return finial_host
+		final_host=self.nova_client.liveMigrateVM(instance_id,target_host.name)
+		#print final_host
+		return final_host
 
 	def evacuate(self, instance, target_host, fail_node):
 		self.nova_client.evacuate(instance, target_host, fail_node)

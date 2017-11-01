@@ -21,7 +21,7 @@ class DatabaseManager(object):
         self.db_conn = MySQLdb.connect(  host = self.config.get("mysql", "mysql_ip"),
                                          user = self.config.get("mysql", "mysql_username"),
                                         passwd = self.config.get("mysql", "mysql_password"),
-                                        db = "hass",
+                                        db = self.config.get("mysql", "mysql_db"),
                                     )
         self.db = self.db_conn.cursor(cursorclass = MySQLdb.cursors.DictCursor)
 
@@ -117,9 +117,9 @@ class DatabaseManager(object):
         cmd = "show tables"
         self.db.execute(cmd)
         res = self.db.fetchall() #({'Tables_in_hass': 'talbe1'}, {'Tables_in_hass': 'table2'})
-
+        index = "Tables_in_%s" % self.config.get("mysql", "mysql_db")
         for table in res:
-            table_list.append(table["Tables_in_hass"])
+            table_list.append(table[index])
         return table_list
 
     def resetAll(self):

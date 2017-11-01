@@ -39,7 +39,7 @@ class NovaClient (object):
 						user_domain_name = self.config.get("openstack", "openstack_user_domain_id"),
 						project_domain_name = self.config.get("openstack", "openstack_project_domain_id"))
 		sess = session.Session(auth = auth)
-		novaClient = client.Client(2.25 , session = sess)
+		novaClient = client.Client(2.29 , session = sess)
 		return novaClient
 
 	def getComputePool(self):
@@ -79,6 +79,7 @@ class NovaClient (object):
 		status = None
 		instance = self.getVM(instance_id)
 		while status != "ACTIVE" and check_timeout > 0:
+			print status
 			status = getattr(instance, "status")
 			check_timeout -= 1
 			time.sleep(1)
@@ -108,10 +109,10 @@ class NovaClient (object):
 		return True
 		
 	def novaServiceUp(self,node):
-		return NovaClient._helper.services.force_down(node , "nova-compute" , False)
+		return NovaClient._helper.services.force_down(node.name , "nova-compute" , False)
 
 	def novaServiceDown(self, node):
-		return NovaClient._helper.services.force_down(node , "nova-compute" , True)
+		return NovaClient._helper.services.force_down(node.name , "nova-compute" , True)
 
 	def liveMigrateVM(self,instanceID,target_host):
 		#print ""

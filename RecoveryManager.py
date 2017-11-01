@@ -26,7 +26,7 @@ class RecoveryManager(object):
 		if not cluster:
 			logging.error("RecoverManager : cluster not found")
 			return
-		fail_node = cluster.getNode(fail_node_name)
+		fail_node = cluster.getNodeByName(fail_node_name)
 		print "fail node is %s" % fail_node.name
 		print "start recovery vm"
 		self.recoverVM(cluster, fail_node)
@@ -38,7 +38,7 @@ class RecoveryManager(object):
 		if not cluster:
 			logging.error("RecoverManager : cluster not found")
 			return
-		fail_node = cluster.getNode(fail_node_name)
+		fail_node = cluster.getNodeByName(fail_node_name)
 		print "fail node is %s" % fail_node.name
 		print "start recovery vm"
 		self.recoverVM(cluster, fail_node)
@@ -50,7 +50,7 @@ class RecoveryManager(object):
 		if not cluster:
 			logging.error("RecoverManager : cluster not found")
 			return
-		fail_node = cluster.getNode(fail_node_name)
+		fail_node = cluster.getNodeByName(fail_node_name)
 		print "fail node is %s" % fail_node.name
 		print "start recovery vm"
 		self.recoverVM(cluster, fail_node)
@@ -62,7 +62,7 @@ class RecoveryManager(object):
 		if not cluster:
 			logging.error("RecoverManager : cluster not found")
 			return
-		fail_node = cluster.getNode(fail_node_name)
+		fail_node = cluster.getNodeByName(fail_node_name)
 
 		second_chance = State.HEALTH
 		try:
@@ -89,7 +89,7 @@ class RecoveryManager(object):
 		if not cluster:
 			logging.error("RecoverManager : cluster not found")
 			return
-		fail_node = cluster.getNode(fail_node_name)
+		fail_node = cluster.getNodeByName(fail_node_name)
 		print "fail node is %s" % fail_node.name
 		print "start recovery vm"
 		self.recoverVM(cluster, fail_node)
@@ -101,7 +101,7 @@ class RecoveryManager(object):
 		if not cluster:
 			logging.error("RecoverManager : cluster not found")
 			return
-		fail_node = cluster.getNode(fail_node_name)
+		fail_node = cluster.getNodeByName(fail_node_name)
 
 		port = int(self.config.get("detection","polling_port"))
 		version = int(self.config.get("version","version"))

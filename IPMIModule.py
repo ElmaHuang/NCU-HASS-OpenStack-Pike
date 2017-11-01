@@ -22,7 +22,7 @@ class IPMIManager(object):
         message = ""
         base = self._baseCMDGenerate(node_name)
         if base is None:
-            raise Exception("node not found , node_name : %s" % node_name)
+            raise Exception("ipmi node not found , node_name : %s" % node_name)
         try:
             command = base + IPMIConf.REBOOTNODE
             response = subprocess.check_output(command, shell = True)
@@ -43,7 +43,7 @@ class IPMIManager(object):
         message = ""
         base = self._baseCMDGenerate(node_name)
         if base is None:
-            raise Exception("node not found , node_name : %s" % node_name)
+            raise Exception("ipmi node not found , node_name : %s" % node_name)
         try:
             command = base + IPMIConf.STARTNODE
             response = subprocess.check_output(command, shell = True)
@@ -64,7 +64,7 @@ class IPMIManager(object):
         message = ""
         base = self._baseCMDGenerate(node_name)
         if base is None:
-            raise Exception("node not found , node_name : %s" % node_name)
+            raise Exception("ipmi node not found , node_name : %s" % node_name)
         try:
             command = base + IPMIConf.SHUTOFFNODE
             response = subprocess.check_output(command, shell = True)
@@ -87,7 +87,7 @@ class IPMIManager(object):
         vendor = self.config.get("ipmi","vendor")
         base = self._baseCMDGenerate(node_name)
         if base is None:
-            raise Exception("node not found , node_name : %s" % node_name)
+            raise Exception("ipmi node not found , node_name : %s" % node_name)
         try:
             command = base
             if vendor == "HP":
@@ -147,7 +147,7 @@ class IPMIManager(object):
         result_list = []
         base = self._baseCMDGenerate(node_name)
         if base is None:
-            raise Exception("node not found , node_name : %s" % node_name)
+            raise Exception("ipmi node not found , node_name : %s" % node_name)
         for sensor_type in sensor_type_list:
             command = base + IPMIConf.NODEINFO_BY_TYPE % sensor_type
             print command
@@ -184,7 +184,7 @@ class IPMIManager(object):
         status = "OK"
         base = self._baseCMDGenerate(node_name)
         if base is None:
-            raise Exception("node not found , node_name : %s" % node_name)
+            raise Exception("ipmi node not found , node_name : %s" % node_name)
         try:
             command = base + IPMIConf.GET_OS_STATUS
             p = subprocess.Popen(command, stdout = subprocess.PIPE, stderr = subprocess.PIPE, shell=True)

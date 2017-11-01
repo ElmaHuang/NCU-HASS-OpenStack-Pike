@@ -207,41 +207,14 @@ class Hass (object):
             return result
         except :
             logging.error("HASS--list instance fail")
-    '''
-    def recoveryVM(self, clusterId, nodeName):
-        result = self.Recovery.recoveryVM(clusterId, nodeName)
-
-    def removeNodeFromCluster(self, clusterId, nodeName):
-        result = self.Recovery.remove_node_from_cluster(clusterId, nodeName)
-    '''
-
-    def recoveryByShutOffNode(self, clusterId, nodeName, option):
-        result = self.Recovery.recoveryByShutOffNode(clusterId, nodeName)
-        return result
-
-    def recoveryServiceFailure(self, clusterId, nodeName, service_list):
-        result = self.Recovery.recoveryServiceFailure(clusterId, nodeName, service_list)
-        return result
-
-    def recoveryIPMIDaemonFailure(self, clusterId, nodeName, option):
-        result = self.Recovery.recoveryIpmiDaemonFailure(nodeName)
-        return result
-
-    def recoveryWatchdogDaemonFailure(self, clusterId, nodeName, option):
-        result = self.Recovery.recoveryWatchdogDaemonFailure(nodeName)
-        return result
-
-    def recoveryOSHanged(self, clusterId, nodeName, option):
-        result = self.Recovery.recoveryOsHanged(clusterId, nodeName)
-        return result
-
-    def recoveryNetworkFailure(self, clusterId, nodeName, option):
-        result = self.Recovery.recoveryNetworkFailure(clusterId, nodeName)
-        return result
-
-    def recoveryPowerOff(self, clusterId, nodeName, option):
-        result = self.Recovery.recoveryPowerOff(clusterId, nodeName)
-        return result
+    
+    def recover(self, fail_type, cluster_id, node_name):
+        try:
+            result = self.Recovery.recover(fail_type, cluster_id, node_name)
+            return result
+        except Exception as e:
+            print str(e)
+            logging.error("HASS--recover node %s fail" % node_name)
 
 def main():
     config = ConfigParser.RawConfigParser()
