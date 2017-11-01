@@ -82,12 +82,11 @@ class ClusterManager():
 				logging.info("ClusterManager--add node success.cluster id is %s ,node is %s " %(cluster_id,node_name))
 				if write_DB:
 					ClusterManager.syncToDatabase()
-				#return result
+				return result
 			except:
 				message = "add node fail. node not found. (node_name = %s)" % node_name_list
 				logging.error(message)
 				result = {"code": "1", "clusterId": cluster_id, "message": message}
-			finally:
 				return result
 
 	@staticmethod
@@ -103,14 +102,12 @@ class ClusterManager():
 				logging.info("ClusterManager-- delete node success ,cluster id is %s node is %s"%(cluster_id,node_name))
 				if write_DB:
 					ClusterManager.syncToDatabase()
-				#code = "0"
-				#return result
+				return result
 			except:
 				#code = "1"
 				message = "delete node fail. node not found. (node_name = %s)" % node_name
 				logging.error(message)
 				result = {"code": "1", "clusterId":cluster_id, "message":message}
-			finally:
 				return result
 
 	@staticmethod
@@ -139,13 +136,12 @@ class ClusterManager():
 					raise Exception("instance already being protected ")
 				result=cluster.addInstance(instance_id)
 				logging.info("ClusterManager--Add instance success , instance_id : %s , cluster_id : %s" % (instance_id , cluster_id))
-				#return result
+				return result
 			except Exception as e:
 				print e
 				message = "ClusterManager --add the instacne fail.instance_id : %s , cluster_id : %s" % (instance_id , cluster_id)
 				logging.error(message)
 				result = {"code": "1", "clusterId": cluster_id, "message": message}
-			finally:
 				return result
 
 	@staticmethod
@@ -159,12 +155,11 @@ class ClusterManager():
 			try:
 				result=cluster.deleteInstance(instance_id)
 				logging.info("ClusterManager--delete instance success")
-				#return result
+				return result
 			except Exception as e:
 				message = "ClusterManager--delete instance failed. this instance is not being protected (instance_id = %s)" % instance_id
 				logging.error(message)
 				result = {"code": "1", "clusterId":cluster_id, "message":message}
-			finally:
 				return result
 	'''
 	@staticmethod

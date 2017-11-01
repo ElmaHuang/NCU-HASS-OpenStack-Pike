@@ -101,6 +101,7 @@ class Cluster(ClusterInterface):
 		logging.info(message)
 		result = {"code": "0", "clusterId": self.id, "instance id": instance_id, "message": message}
 		return result
+
 	def deleteInstanceByNode(self, node):
 		protected_instance_list = self.getProtectedInstanceListByNode(node)
 		for instance in protected_instance_list:
