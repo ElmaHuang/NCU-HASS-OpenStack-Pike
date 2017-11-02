@@ -78,7 +78,7 @@ class Operator(object):
 		message = ""
 		if self._checkNodeIPMI(node_name) and  self._checkNodeNotInCluster(node_name):
 			try:
-				self.ipmi_module.rebootNode(node_name)
+				self.ipmi_result = self.ipmi_module.rebootNode(node_name)
 				if self.ipmi_result["code"] == "0":
 					message += "reboot node success.The node is %s." % node_name
 					logging.info(message)
