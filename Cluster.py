@@ -116,10 +116,10 @@ class Cluster(ClusterInterface):
 		#instance_list = self.getProtectedInstanceList()
 		for instance in self.instance_list[:]:
 			info = instance.getInfo()
-			print 111
 			#for status in info[]:
 			if "SHUTOFF" in info:
-				print 222
+				self.deleteInstance(info[0])
+			elif info[2] not in self.getAllNodeStr():
 				self.deleteInstance(info[0])
 			else:
 				ret.append(info)
