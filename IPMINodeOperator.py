@@ -29,9 +29,8 @@ class Operator(object):
 			#code = "0"
 			message += " IPMIOperator--node is in compute pool . The node is %s." % node_name
 			try:
-				self.ipmi_result=self.ipmi_module.startNode(node_name)
-
-				if self.ipmi_result["code"] == "0":
+				ipmi_result=self.ipmi_module.startNode(node_name)
+				if ipmi_result["code"] == "0":
 					boot_up = self._check_node_boot_success(node_name, default_wait_time)
 					if boot_up:
 						message += "start node success.The node is %s." % node_name
@@ -56,9 +55,9 @@ class Operator(object):
 		#result =None
 		if self._checkNodeIPMI(node_name) and self._checkNodeNotInCluster(node_name):
 			try:
-				self.ipmi_result=self.ipmi_module.shutOffNode(node_name)
+				ipmi_result=self.ipmi_module.shutOffNode(node_name)
 				#check power status in IPMIModule
-				if self.ipmi_result["code"]== "0":
+				if ipmi_result["code"]== "0":
 					message += "sthut off node success.The node is %s." % node_name
 					logging.info(message)
 					result = {"code": "0", "node_name": node_name, "message": message}
@@ -78,8 +77,8 @@ class Operator(object):
 		message = ""
 		if self._checkNodeIPMI(node_name) and  self._checkNodeNotInCluster(node_name):
 			try:
-				self.ipmi_result = self.ipmi_module.rebootNode(node_name)
-				if self.ipmi_result["code"] == "0":
+				ipmi_result = self.ipmi_module.rebootNode(node_name)
+				if ipmi_result["code"] == "0":
 					message += "reboot node success.The node is %s." % node_name
 					logging.info(message)
 					result = {"code": "0", "node_name": node_name, "message": message}
@@ -106,8 +105,8 @@ class Operator(object):
 
 	def _checkNodeIPMI(self,node_name):
 		#is IPMI PC
-		self.ipmistatus = self.ipmi_module._getIPMIStatus(node_name)
-		if not self.ipmistatus:
+		ipmistatus = self.ipmi_module._getIPMIStatus(node_name)
+		if not ipmistatus:
 			return False
 		#is in computing pool
 		if node_name in self.nova_client.getComputePool():
