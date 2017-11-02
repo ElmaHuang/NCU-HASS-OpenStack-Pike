@@ -22,7 +22,7 @@ class HassAPI():
 
     def generateSensorTable(self, result):
         if result == [] : raise Exception("There is no information")
-        sensor_table = PrettyTable(["Sensor ID", "Entity ID", "Sensor Type", "Value", "status"])
+        sensor_table = PrettyTable(["Sensor ID", "Entity ID", "Sensor Type", "Value", "status","lower_critical","lower","upper","upper_critical"])
         for value in result:
             sensor_table.add_row(value)
         print sensor_table

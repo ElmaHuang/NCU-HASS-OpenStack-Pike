@@ -109,10 +109,19 @@ class IPMIManager(object):
 
         sensor_id = raw_data[1].split(":")[1].strip()
         device = raw_data[2].split(":")[1].strip()
+        if device == "7.1":
+            device = "System Board"
+        elif device == "3.1":
+            device = "Processor"
         sensor_type = raw_data[3].split(":")[1].strip()
         value = raw_data[4].split(":")[1].strip()
         status = raw_data[5].split(":")[1].strip()
-        return [sensor_id, device, sensor_type, value, status]
+        lower_critical = raw_data[7].split(":")[1].strip()
+        lower = raw_data[8].split(":")[1].strip()
+        upper = raw_data[9].split(":")[1].strip()
+        upper_critical = raw_data[10].split(":")[1].strip()
+
+        return [sensor_id, device, sensor_type, value, status, lower_critical, lower, upper, upper_critical]
 
     def _tempDataClean(self , raw_data):
 
