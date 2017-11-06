@@ -114,16 +114,16 @@ class RecoveryManager(object):
 		else:
 			status = self.restartServices(fail_node, fail_services, version)
 
-		# status = False
-		# if not status: # restart service fail
-		# 	print "start recovery"
-		# 	print "fail node is %s" % fail_node.name
-		# 	print "start recovery vm"
-		# 	self.recoverVM(cluster, fail_node)
-		# 	print "end recovery vm"
-		# 	return self.recoverNodeByReboot(fail_node)
-		# else:
-		# 	return status # restart service success
+		status = False
+		if not status: # restart service fail
+			print "start recovery"
+			print "fail node is %s" % fail_node.name
+			print "start recovery vm"
+			self.recoverVM(cluster, fail_node)
+			print "end recovery vm"
+			return self.recoverNodeByReboot(fail_node)
+		else:
+			return status # restart service success
 
 	def recoverVM(self, cluster, fail_node):
 		if len(cluster.getNodeList()) < 2:
