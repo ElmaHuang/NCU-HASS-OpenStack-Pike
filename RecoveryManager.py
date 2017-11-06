@@ -114,16 +114,16 @@ class RecoveryManager(object):
 		else:
 			status = self.restartServices(fail_node, fail_services, version)
 
-		status = False
-		if not status: # restart service fail
-			print "start recovery"
-			print "fail node is %s" % fail_node.name
-			print "start recovery vm"
-			self.recoverVM(cluster, fail_node)
-			print "end recovery vm"
-			return self.recoverNodeByReboot(fail_node)
-		else:
-			return status # restart service success
+		# status = False
+		# if not status: # restart service fail
+		# 	print "start recovery"
+		# 	print "fail node is %s" % fail_node.name
+		# 	print "start recovery vm"
+		# 	self.recoverVM(cluster, fail_node)
+		# 	print "end recovery vm"
+		# 	return self.recoverNodeByReboot(fail_node)
+		# else:
+		# 	return status # restart service success
 
 	def recoverVM(self, cluster, fail_node):
 		if len(cluster.getNodeList()) < 2:
@@ -234,15 +234,12 @@ class RecoveryManager(object):
 		for fail_service in fail_service_list:
 			fail_service = service_mapping[fail_service]
 			if version ==14:
-				cmd = "service %s restart" % fail_service
+				cmd = "sudo service %s restart" % fail_service
 			elif version == 16:
 				cmd = "systemctl restart %s" % fail_service
 			print cmd
 			stdin, stdout, stderr = fail_node.remote_exec(cmd) # restart service
-
-			if stderr.read():
-				print "The node %s service %s can not restart" % (fail_node.name, fail_service)
-				return False
+			
 			if version == 14:
 				cmd = "service %s status | grep start/running" % fail_service
 			elif version == 16:
