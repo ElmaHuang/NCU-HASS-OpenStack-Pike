@@ -227,7 +227,7 @@ class RecoveryManager(object):
 			return True
 		return False
 
-	def restartServices(self, fail_node, fail_services, version):
+	def restartServices(self, fail_node, fail_services, version, check_timeout=60):
 		service_mapping = {"libvirt" : "libvirt-bin", "nova" : "nova-compute", "qemukvm" : "qemu-kvm"}
 		fail_service_list = fail_services.split(":")[-1].split(";")[0:-1]
 
@@ -239,19 +239,22 @@ class RecoveryManager(object):
 				cmd = "systemctl restart %s" % fail_service
 			print cmd
 			stdin, stdout, stderr = fail_node.remote_exec(cmd) # restart service
-			
-			if version == 14:
-				cmd = "service %s status | grep start/running" % fail_service
-			elif version == 16:
-				cmd = "systemctl status %s | grep active" % fail_service
-			stdin, stdout, stderr = fail_node.remote_exec(cmd) # check service active or not
 
-			if not stdout.read():
-				print "The node %s service %s still doesn't work" % (fail_node.name, fail_service)
-				return False
-			else:
-				print "The node %s service %s successfully restart" % (fail_node.name, fail_service)
-		return True # recover all the fail service
+			while check_timeout > 0:
+				if version == 14:
+					cmd = "service %s status" % fail_service
+				elif version == 16:
+					cmd = "systemctl status %s | grep active" % fail_service
+				stdin, stdout, stderr = fail_node.remote_exec(cmd) # check service active or not
+
+				if not stdout.read():
+					print "The node %s service %s still doesn't work" % (fail_node.name, fail_service)
+				else:
+					print "The node %s service %s successfully restart" % (fail_node.name, fail_service)
+					return True # recover all the fail service
+				time.sleep(1)
+				check_timeout -= 1
+			return False
 
 	def _check_instance_status(self, fail_node, cluster, check_timeout=60):
 		status = False
