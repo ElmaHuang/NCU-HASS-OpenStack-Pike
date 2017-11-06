@@ -121,7 +121,7 @@ class RecoveryManager(object):
 			print "start recovery vm"
 			self.recoverVM(cluster, fail_node)
 			print "end recovery vm"
-			#return self.recoverNodeByReboot(fail_node)
+			return self.recoverNodeByReboot(fail_node)
 		else:
 			return status # restart service success
 
