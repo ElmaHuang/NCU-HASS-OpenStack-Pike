@@ -46,7 +46,7 @@ class ClusterManager():
 				message = "delete cluster success. The cluster is deleted. (cluster_id = %s)" % cluster_id
 				logging.info(message)
 				result = {"code": "0", "clusterId": cluster_id, "message": message}
-				if write_DB:
+				if result["code"]== "0" and write_DB:
 					ClusterManager.syncToDatabase()
 				return result
 			else :
@@ -73,7 +73,7 @@ class ClusterManager():
 				node_name_list.remove(node_name)
 		cluster = ClusterManager.getCluster(cluster_id)
 		if not cluster:
-			message = "ClusterManager--Add the node to cluster failed. The cluster is not found. (cluster_id = %s)" % cluster_id
+			message += "ClusterManager--Add the node to cluster failed. The cluster is not found. (cluster_id = %s)" % cluster_id
 			result = {"code": "1", "clusterId":cluster_id, "message":message}
 			return result
 		else:
@@ -84,7 +84,7 @@ class ClusterManager():
 					ClusterManager.syncToDatabase()
 				return result
 			except:
-				message = "add node fail. node not found. (node_name = %s)" % node_name_list
+				message += "add node fail. node not found. (node_name = %s)" % node_name_list
 				logging.error(message)
 				result = {"code": "1", "clusterId": cluster_id, "message": message}
 				return result
@@ -204,7 +204,7 @@ class ClusterManager():
 				result = {"code": "0","clusterId":cluster_id, "message":message}
 				return result
 		except:
-			message = "ClusterManager - createCluster._addToCluster fail,cluster id = &s" %cluster_id
+			message = "ClusterManager - createCluster._addToCluster fail,cluster id = &s" % cluster_id
 			logging.error(message)
 			result = {"code": "1","clusterId":cluster_id, "message": message}
 			return result
