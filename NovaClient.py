@@ -36,7 +36,7 @@ class NovaClient (object):
 		auth = v3.Password(auth_url = 'http://controller:5000/v3',
 						username = self.config.get("openstack", "openstack_admin_account"),
 						password = self.config.get("openstack", "openstack_admin_password"),
-						project_name = self.config.get("openstack", "openstack_admin_account"),
+						project_name = self.config.get("openstack", "openstack_project_name"),
 						user_domain_name = self.config.get("openstack", "openstack_user_domain_id"),
 						project_domain_name = self.config.get("openstack", "openstack_project_domain_id"))
 		sess = session.Session(auth = auth)
@@ -68,15 +68,15 @@ class NovaClient (object):
 				ret.append(instance)
 		return ret
 
-	def getInstanceState(self, instanceId):
-		instance = self.getVM(instanceId)
+	def getInstanceState(self, instance_id):
+		instance = self.getVM(instance_id)
 		return getattr(instance, "status")
 
 	def getAllInstanceList(self):
 		return NovaClient._helper.servers.list(search_opts={'all_tenants': 1})
 
-	def getInstanceName(self , instanceId):
-		instance = self.getVM(instanceId)
+	def getInstanceName(self , instance_id):
+		instance = self.getVM(instance_id)
 		return getattr(instance, "OS-EXT-SRV-ATTR:instance_name")
 
 	def getInstanceHost(self, instance_id, check_timeout=60):
@@ -89,9 +89,9 @@ class NovaClient (object):
 			time.sleep(1)
 		return getattr(instance, "OS-EXT-SRV-ATTR:host")
 
-	def isInstanceExist(self, instanceId):
+	def isInstanceExist(self, instance_id):
 		try:
-			NovaClient._helper.servers.get(instanceId)
+			NovaClient._helper.servers.get(instance_id)
 		except:
 			return False
 		return True
@@ -118,14 +118,18 @@ class NovaClient (object):
 	def novaServiceDown(self, node):
 		return NovaClient._helper.services.force_down(node.name , "nova-compute" , True)
 
-	def liveMigrateVM(self,instanceID,target_host):
+	def liveMigrateVM(self, instance_id, target_host, check_timeout=60):
 		#print ""
-		instance = self.getVM(instanceID)
-		#print "vm",instance
-		#print target_host
+		instance = self.getVM(instance_id)
 		instance.live_migrate(host = target_host)
-		time.sleep(60)
-		return self.getInstanceHost(instanceID)
+		while check_timeout > 0:
+			state = self.getInstanceState(instance_id)
+			if state == "ACTIVE":
+				return self.getInstanceHost(instance_id)
+			else:
+				time.sleep(1)
+				check_timeout -= 1
+		raise Exception("live migration fail")
 
 	def evacuate(self, instance, target_host, fail_node):
 		self.novaServiceDown(fail_node)
@@ -140,10 +144,10 @@ class NovaClient (object):
 
 if __name__ == "__main__":
 	a = NovaClient.getInstance()
-	#print NovaClient().getHypervisorsList()
+	print NovaClient().getComputePool()
 	#print a.getVM("4df5a97d-9cf2-4d47-99a2-cf68e107acf6")
 	#print a.isInstanceExist("4df5a97d-9cf2-4d47-99a2-cf68e107acf6")
 	#print a.getInstanceList()[0].isIllegal()
-	print a.getAllInstanceList()
-	print a.getInstanceListByNode("compute1")
+	#print a.getAllInstanceList()
+	#print a.getInstanceListByNode("compute1")
 
