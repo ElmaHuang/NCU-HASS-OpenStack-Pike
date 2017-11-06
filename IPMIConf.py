@@ -18,6 +18,8 @@ HP_NODE_CPU_SENSOR_INFO = "sensor get '%s' " % "02-CPU 1"
 DELL_NODE_CPU_SENSOR_INFO = "sensor get '%s' " % "Temp"
 
 GET_OS_STATUS = "mc watchdog get"
+OS_TYPE_INITIAL = "Initial Countdown"
+OS_TYPE_PRESENT = "Present Countdown"
 
 WATCHDOG_THRESHOLD = 4
 
