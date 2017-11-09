@@ -71,6 +71,7 @@ class ClusterManager():
 				print "%s is already in a HA cluster. " %node_name
 				message+="%s is overlapping node" %node_name
 				node_name_list.remove(node_name)
+		if node_name_list == [] :raise Exception("all node in node list are(is) illegal")
 		cluster = ClusterManager.getCluster(cluster_id)
 		if not cluster:
 			message += "ClusterManager--Add the node to cluster failed. The cluster is not found. (cluster_id = %s)" % cluster_id
@@ -80,7 +81,7 @@ class ClusterManager():
 			try:
 				result = cluster.addNode(node_name_list)
 				logging.info("ClusterManager--add node success.cluster id is %s ,node is %s " %(cluster_id,node_name))
-				if write_DB:
+				if result["code"]=="0" and write_DB:
 					ClusterManager.syncToDatabase()
 				return result
 			except:
@@ -112,7 +113,7 @@ class ClusterManager():
 
 	@staticmethod
 	def listNode(cluster_id):
-		nodelist=[]
+		#nodelist=[]
 		try:
 			cluster = ClusterManager.getCluster(cluster_id)
 			nodelist = cluster.getAllNodeInfo()
