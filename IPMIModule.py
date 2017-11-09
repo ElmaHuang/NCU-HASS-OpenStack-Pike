@@ -182,42 +182,43 @@ class IPMIManager(object):
         AllTemp=["Temp","Inlet Temp","Fan1","Fan2"]
         try:
             result=self.getNodeInfoByType(node_name,AllTemp)
-            logging.info("IPMIModule--getAllInfoMoudle finish %s" %result["message"])
+            logging.info("IPMIModule--getAllInfoMoudle finish %s" % result["message"])
             return result
         except:
             logging.error("IPMIModule--getAllInfoNode fail")
 
     def getOSStatus(self, node_name):
-        initial = 0
-        present = 0
         status = "OK"
-        base = self._baseCMDGenerate(node_name)
-        if base is None:
-            raise Exception("ipmi node not found , node_name : %s" % node_name)
+        time.sleep(float(IPMIConf.WATCHDOG_THRESHOLD)) # wait watchdog countdown
         try:
-            command = base + IPMIConf.GET_OS_STATUS
-            p = subprocess.Popen(command, stdout = subprocess.PIPE, stderr = subprocess.PIPE, shell=True)
-            response = p.wait()
-            if response != 0:
-                raise Exception("Error! The subprocess's command is invalid.")
-            while True:
-                info = p.stdout.readline()
-                if not info:
-                    break
-                if 'Initial Countdown' in info:
-                    initial = int(re.findall("[0-9]+", info)[0]) # find value
-                if 'Present Countdown' in info:
-                    present = int(re.findall("[0-9]+", info)[0]) # find value
-            if (initial - present) > IPMIConf.WATCHDOG_THRESHOLD:
-                #print initial - present
-                status = "Error"
-                return status
-            else:
-                return status
+            initial = self._getOSValue(node_name, IPMIConf.OS_TYPE_INITIAL)
+            present = self._getOSValue(node_name, IPMIConf.OS_TYPE_PRESENT)
         except Exception as e:
             logging.error("IpmiModule detectOSstatus - %s" % e)
             status = "IPMI_disable"
             return status
+        if (initial - present) > IPMIConf.WATCHDOG_THRESHOLD:
+            #print initial - present
+            status = "Error"
+            return status
+        else:
+            return status
+
+    def _getOSValue(self, node_name, value_type):
+        base = self._baseCMDGenerate(node_name)
+        if base is None:
+            raise Exception("ipmi node not found , node_name : %s" % node_name)
+        command = base + IPMIConf.GET_OS_STATUS
+        p = subprocess.Popen(command, stdout = subprocess.PIPE, stderr = subprocess.PIPE, shell=True)
+        response = p.wait()
+        if response != 0:
+            raise Exception("Error! The subprocess's command is invalid.")
+        while True:
+            info = p.stdout.readline()
+            if not info:
+                break
+            if value_type in info:
+                return int(re.findall("[0-9]+", info)[0]) # find value
 
     def getSensorStatus(self, node_name):
         temperature = self.getTempInfoByNode(node_name)
@@ -273,8 +274,7 @@ class IPMIManager(object):
             return None
 
     def _getIPMIStatus(self, node_name):
-        ip_dict = dict(self.config._sections['ipmi'])
-        return node_name in ip_dict
+        return node_name in self.ip_dict
 if __name__ == "__main__":
     i = IPMIManager()
-    print i.getPowerStatus("compute1")
+    print i.getOSStatus("compute2")
