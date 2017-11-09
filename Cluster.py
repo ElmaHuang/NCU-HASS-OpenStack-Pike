@@ -69,8 +69,8 @@ class Cluster(ClusterInterface):
 		'''
 		if  not self.checkInstanceExist(instance_id):
 				raise Exception("Not any node have this instance!")
-		# elif not self.checkInstanceGetVolume(instance_id):
-		# 		raise Exception("Instance don't have Volume")
+		elif not self.checkInstanceGetVolume(instance_id):
+				raise Exception("Instance don't have Volume")
 		elif not self.checkInstancePowerOn(instance_id):
 			raise Exception("this instance is power off!")
 		else:
