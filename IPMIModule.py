@@ -274,8 +274,7 @@ class IPMIManager(object):
             return None
 
     def _getIPMIStatus(self, node_name):
-        ip_dict = dict(self.config._sections['ipmi'])
-        return node_name in ip_dict
+        return node_name in self.ip_dict
 if __name__ == "__main__":
     i = IPMIManager()
     print i.getOSStatus("compute2")

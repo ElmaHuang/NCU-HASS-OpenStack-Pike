@@ -287,7 +287,7 @@ class RecoveryManager(object):
 				check_timeout -= 1
 		return status
 
-	def check_node_boot_success(self, node, check_timeout=180):
+	def check_node_boot_success(self, node, check_timeout=300):
 		port = int(self.config.get("detection","polling_port"))
 		detector = Detector(node, port)
 		print "waiting node to reboot"
