@@ -4,12 +4,11 @@ import State
 import time
 from IPMIModule import IPMIManager
 
-ipmi_manager = IPMIManager()
-
 class Detector(object):
 	def __init__(self, node, port):
 		self.node = node.name
 		self.ipmi_status = node.ipmi_status
+		self.ipmi_manager = IPMIManager()
 		self.port = port
 		self.sock = None
 		self.connect()
@@ -59,7 +58,7 @@ class Detector(object):
 	def checkPowerStatus(self):
 		if not self.ipmi_status:
 			return State.HEALTH
-		status = ipmi_manager.getPowerStatus(self.node)
+		status = self.ipmi_manager.getPowerStatus(self.node)
 		if status == "OK":
 			return State.HEALTH
 		return State.POWER_FAIL
@@ -67,7 +66,7 @@ class Detector(object):
 	def checkOSStatus(self):
 		if not self.ipmi_status:
 			return State.HEALTH
-		status = ipmi_manager.getOSStatus(self.node)
+		status = self.ipmi_manager.getOSStatus(self.node)
 		if status == "OK":
 			return State.HEALTH
 		return State.OS_FAIL
@@ -75,7 +74,7 @@ class Detector(object):
 	def checkSensorStatus(self):
 		if not self.ipmi_status:
 			return State.HEALTH
-		status = ipmi_manager.getSensorStatus(self.node)
+		status = self.ipmi_manager.getSensorStatus(self.node)
 		if status == "OK":
 			return State.HEALTH
 		return State.SENSOR_FAIL
