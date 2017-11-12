@@ -66,7 +66,7 @@ class Detector(object):
 	def checkOSStatus(self):
 		if not self.ipmi_status:
 			return State.HEALTH
-		status = self.ipmi_manager.getOSStatus(self.node)
+		status = self.ipmi_manager.getOSStatus_new(self.node)
 		if status == "OK":
 			return State.HEALTH
 		return State.OS_FAIL

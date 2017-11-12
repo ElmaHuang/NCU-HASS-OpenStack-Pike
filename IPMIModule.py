@@ -204,6 +204,42 @@ class IPMIManager(object):
         else:
             return status
 
+
+    def getOSStatus_new(self, node_name):
+        print "enter"
+        status = "OK"
+        interval = (IPMIConf.WATCHDOG_THRESHOLD / 2)
+        print interval
+        prev_initial = None
+        prev_present = None
+        for _ in range(3):
+            initial = self._getOSValue(node_name, IPMIConf.OS_TYPE_INITIAL)
+            present = self._getOSValue(node_name, IPMIConf.OS_TYPE_PRESENT)
+
+            print "prev initial " + str(prev_initial)
+            print "prev present " + str(prev_present)
+
+            if (initial - present) > IPMIConf.WATCHDOG_THRESHOLD:
+                print "3 initial " + str(initial)
+                print "3 present " + str(present)
+                print "3"
+                return "Error"
+            if prev_initial != initial:
+                prev_initial = initial
+                prev_present = present
+                print "continue"
+                time.sleep(float(interval))
+                continue
+            if (prev_present - present) < interval:
+                print "prev " + str(prev_present)
+                print "present" + str(present)
+                print "2"
+                return "OK"
+            prev_present = present
+            time.sleep(float(interval))
+        print "1"
+        return "Error"
+
     def _getOSValue(self, node_name, value_type):
         base = self._baseCMDGenerate(node_name)
         if base is None:
@@ -277,4 +313,4 @@ class IPMIManager(object):
         return node_name in self.ip_dict
 if __name__ == "__main__":
     i = IPMIManager()
-    print i.getOSStatus("compute2")
+    print i.getOSStatus_new("compute2")
