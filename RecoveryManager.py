@@ -258,6 +258,7 @@ class RecoveryManager(object):
 
 	def _check_instance_status(self, fail_node, cluster, check_timeout=60):
 		status = False
+		fail = False
 		protected_instance_list = cluster.getProtectedInstanceListByNode(fail_node)
 		for instance in protected_instance_list:
 			openstack_instance = self.nova_client.getVM(instance.id)
@@ -268,8 +269,9 @@ class RecoveryManager(object):
 				print "vm : %s has no floating network, abort ping process!" % instance.name
 				continue
 			if not status:
+				fail = True
 				logging.error("vm %s cannot ping %s" % (instance.name, ip))
-		return status
+		return fail
 
 	def _pingInstance(self, ip, check_timeout):
 		status = False

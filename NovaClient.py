@@ -83,8 +83,8 @@ class NovaClient (object):
 		status = None
 		while status != "ACTIVE" and check_timeout > 0:
 			instance = self.getVM(instance_id)
+			status = self.getInstanceState(instance_id)
 			print "%s , %s" % (status , getattr(instance, "name"))
-			status = getattr(instance, "status")
 			check_timeout -= 1
 			time.sleep(1)
 		instance = self.getVM(instance_id)
