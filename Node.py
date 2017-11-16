@@ -9,12 +9,12 @@ class Node (NodeInterface):
 		self.client = self._create_ssh_client()
 		
 	def containsInstance(self, instance_id):
-		node_instance_list = self.nova_client.getInstanceListByNode(self.name)
-		for instance in node_instance_list:
-			id = getattr(instance , "id")
-			print id
-			if id == instance_id:
-				return True
+		#node_instance_list = self.nova_client.getInstanceListByNode(self.name)
+		host = self.nova_client.getInstanceHost(instance_id)
+		#print host
+		#print self.name
+		if host == self.name:
+			return True
 		return False
 
 	def start(self):

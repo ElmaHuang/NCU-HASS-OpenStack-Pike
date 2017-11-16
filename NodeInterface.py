@@ -43,7 +43,7 @@ class NodeInterface(object):
 		cluster_id = self.cluster_id
 		node = self
 		polling_port = int(config.get("detection","polling_port"))
-		ipmi_status = self.ipmi_status
+		#ipmi_status = self.ipmi_status
 		polling_interval = float(config.get("detection","polling_interval"))
 
 		self.detection_thread = DetectionThread(cluster_id, node, polling_port, polling_interval)

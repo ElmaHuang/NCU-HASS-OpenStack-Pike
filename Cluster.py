@@ -264,4 +264,11 @@ class Cluster(ClusterInterface):
 					ret.append(instance)
 			return ret
 
+if __name__ == "__main__":
+	a = Cluster("123","name")
+	list = ["compute3"]
+	a.addNode(list)
+	host = a.findNodeByInstance("0e0ce568-4ae3-4ade-b072-74edeb3ae58c")
+	#print "h:",host
+
 

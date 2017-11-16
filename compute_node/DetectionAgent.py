@@ -36,14 +36,22 @@ class PollingHandler(asyncore.dispatcher):
     def handle_read(self):
         data, addr = self.recvfrom(2048)
         # print 'request from: ', addr
-        check_result = self.check_host()
         print data
-        if data == "polling request":
+        if "host polling request" in data:
+            check_result = self.check_host()
             if check_result == "":
                 self.sendto("OK", addr)
             else:
                 check_result = "error:" + check_result
                 self.sendto(check_result, addr)
+        if "instacne polling request" in data:
+            check_result = self.check_instance(data[1])
+            if check_result == "":
+                self.sendto("OK", addr)
+            else:
+                check_result = "error:" + check_result
+                self.sendto(check_result, addr)
+
     '''
     def check_services(self):
         message = ""
@@ -91,7 +99,7 @@ class PollingHandler(asyncore.dispatcher):
         result = self.host_detection.check_services(self.version)
         return result
 
-    def check_instance(self):
+    def check_instance(self,instance):
         result = self.instance_detection.check_instance()
         return result
 
