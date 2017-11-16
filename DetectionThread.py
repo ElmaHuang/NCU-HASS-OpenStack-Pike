@@ -31,7 +31,7 @@ class DetectionThread(threading.Thread):
         failure_detection_time = 0
         while not self.exit:
             state = self.detect()
-            print "["+ self.node.name + "] " + state
+            print "host : ["+ self.node.name + "] "+state
 
             if state != State.HEALTH:
                 try:

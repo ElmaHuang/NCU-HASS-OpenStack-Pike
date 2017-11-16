@@ -3,8 +3,10 @@ import asyncore
 import socket
 import sys
 import ConfigParser
-import libvirt
-import subprocess
+#import libvirt
+#import subprocess
+from HostFailures import  HostFailure
+from InstanceFailures import InstanceFailure
 
 class DetectionAgent():
     def __init__(self):
@@ -25,14 +27,16 @@ class PollingHandler(asyncore.dispatcher):
         self.create_socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.set_reuse_addr()
         self.bind((host, port))
-        self.libvirt_uri = "qemu:///system"
+        #self.libvirt_uri = "qemu:///system"
         self.version = version
+        self.host_detection = HostFailure()
+        self.instance_detection = InstanceFailure()
         print port
         
     def handle_read(self):
         data, addr = self.recvfrom(2048)
         # print 'request from: ', addr
-        check_result = self.check_services()
+        check_result = self.check_host()
         print data
         if data == "polling request":
             if check_result == "":
@@ -40,7 +44,7 @@ class PollingHandler(asyncore.dispatcher):
             else:
                 check_result = "error:" + check_result
                 self.sendto(check_result, addr)
-    
+    '''
     def check_services(self):
         message = ""
         #check libvirt
@@ -82,6 +86,15 @@ class PollingHandler(asyncore.dispatcher):
             print str(e)
             return False
         return True
+    '''
+    def check_host(self):
+        result = self.host_detection.check_services(self.version)
+        return result
+
+    def check_instance(self):
+        result = self.instance_detection.check_instance()
+        return result
+
 def main():
     agent = DetectionAgent()
     agent.startListen()
