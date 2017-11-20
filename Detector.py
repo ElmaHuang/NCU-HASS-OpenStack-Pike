@@ -27,10 +27,10 @@ class Detector(object):
 			print "Init ["+self.node+"] connection failed"
 
 	def checkNetworkStatus(self):
-		try:
-			response = subprocess.check_output(['timeout', '0.2', 'ping', '-c', '1', self.node], stderr=subprocess.STDOUT, universal_newlines=True)
-		except subprocess.CalledProcessError:
-			return State.NETWORK_FAIL
+		# try:
+		# 	response = subprocess.check_output(['timeout', '0.2', 'ping', '-c', '1', self.node], stderr=subprocess.STDOUT, universal_newlines=True)
+		# except subprocess.CalledProcessError:
+		# 	return State.NETWORK_FAIL
 		return State.HEALTH
 
 	def checkServiceStatus(self):

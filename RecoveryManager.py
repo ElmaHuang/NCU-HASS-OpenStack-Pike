@@ -121,7 +121,7 @@ class RecoveryManager(object):
 			print "start recovery vm"
 			self.recoverVM(cluster, fail_node)
 			print "end recovery vm"
-			return self.recoverNodeByReboot(fail_node)
+			#return self.recoverNodeByReboot(fail_node)
 		else:
 			return status # restart service success
 
@@ -216,44 +216,52 @@ class RecoveryManager(object):
 		# 	cmd = "systemctl restart DetectionAgent.py" # 16 daemon
 		# elif version = 14:
 		# 	cmd = "service DetectionAgent.py restart" # 14 daemon
-		fail_node.remote_exec(cmd) # restart DetectionAgent service
-		time.sleep(5)
+		try:
+			fail_node.remote_exec(cmd) # restart DetectionAgent service
+			time.sleep(5)
 
-		cmd = "ps aux | grep '[D]etectionAgent.py'"
-		stdin, stdout, stderr = fail_node.remote_exec(cmd)
-		service = stdout.read()
-		print service
-		if "python DetectionAgent.py" in service: # check DetectionAgent
-			return True
-		return False
+			cmd = "ps aux | grep '[D]etectionAgent.py'"
+			stdin, stdout, stderr = fail_node.remote_exec(cmd)
+			service = stdout.read()
+			print service
+			if "python DetectionAgent.py" in service: # check DetectionAgent
+				return True
+			return False
+		except Exception as e:
+			print str(e)
+			return False
 
 	def restartServices(self, fail_node, fail_services, version, check_timeout=60):
 		service_mapping = {"libvirt" : "libvirt-bin", "nova" : "nova-compute", "qemukvm" : "qemu-kvm"}
 		fail_service_list = fail_services.split(":")[-1].split(";")[0:-1]
 
-		for fail_service in fail_service_list:
-			fail_service = service_mapping[fail_service]
-			if version ==14:
-				cmd = "sudo service %s restart" % fail_service
-			elif version == 16:
-				cmd = "systemctl restart %s" % fail_service
-			print cmd
-			stdin, stdout, stderr = fail_node.remote_exec(cmd) # restart service
-
-			while check_timeout > 0:
-				if version == 14:
-					cmd = "service %s status" % fail_service
+		try:
+			for fail_service in fail_service_list:
+				fail_service = service_mapping[fail_service]
+				if version ==14:
+					cmd = "sudo service %s restart" % fail_service
 				elif version == 16:
-					cmd = "systemctl status %s | grep active" % fail_service
-				stdin, stdout, stderr = fail_node.remote_exec(cmd) # check service active or not
+					cmd = "systemctl restart %s" % fail_service
+				print cmd
+				stdin, stdout, stderr = fail_node.remote_exec(cmd) # restart service
 
-				if not stdout.read():
-					print "The node %s service %s still doesn't work" % (fail_node.name, fail_service)
-				else:
-					print "The node %s service %s successfully restart" % (fail_node.name, fail_service)
-					return True # recover all the fail service
-				time.sleep(1)
-				check_timeout -= 1
+				while check_timeout > 0:
+					if version == 14:
+						cmd = "service %s status" % fail_service
+					elif version == 16:
+						cmd = "systemctl status %s | grep active" % fail_service
+					stdin, stdout, stderr = fail_node.remote_exec(cmd) # check service active or not
+
+					if not stdout.read():
+						print "The node %s service %s still doesn't work" % (fail_node.name, fail_service)
+					else:
+						print "The node %s service %s successfully restart" % (fail_node.name, fail_service)
+						return True # recover all the fail service
+					time.sleep(1)
+					check_timeout -= 1
+				return False
+		except Exception as e:
+			print str(e)
 			return False
 
 	def _check_instance_status(self, fail_node, cluster, check_timeout=60):
