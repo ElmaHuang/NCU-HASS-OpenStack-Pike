@@ -43,7 +43,7 @@ class Node (NodeInterface):
 		if not self.client:
 			logging.error("RecoveryManager : cannot create ssh connection")
 			return
-		stdin, stdout, stderr = self.client.exec_command(cmd)
+		stdin, stdout, stderr = self.client.exec_command(cmd, timeout = 5)
 		return stdin, stdout, stderr
 
 	def _create_ssh_client(self, default_timeout=1):

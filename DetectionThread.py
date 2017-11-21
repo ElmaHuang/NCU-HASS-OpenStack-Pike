@@ -52,10 +52,12 @@ class DetectionThread(threading.Thread):
         self.exit = True
 
     def detect(self):
-        for _ in self.function_map:
-            state = self.verify(_)
+        service_check = self.function_map[-1]
+
+        if service_check() != State.HEALTH:
+            state = self.verify(service_check)
             if state == State.HEALTH:
-                continue
+                return State.HEALTH
             else:
                 return state
         return State.HEALTH
