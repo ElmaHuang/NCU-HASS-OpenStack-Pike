@@ -39,8 +39,8 @@ class Detector(object):
 			self.sock.sendall(line)
 			data, addr = self.sock.recvfrom(1024)
 			if data == "OK":
+				print "["+self.node+"] OK"
 				return State.HEALTH
-				print "["+self.node+"] OK" 
 			elif "error" in data :
 				print data
 				print "["+self.node+"]service Failed"
