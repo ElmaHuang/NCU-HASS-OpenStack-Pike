@@ -220,6 +220,10 @@ def main():
     config = ConfigParser.RawConfigParser()
     config.read('hass.conf')
 
+    if len(sys.argv) >= 2:
+        if sys.argv[1] == "reset":
+            ClusterManager._RESET_DB = True
+
     log_level = logging.getLevelName(config.get("log", "level"))
     logFilename = config.get("log", "location")
     dir = os.path.dirname(logFilename)

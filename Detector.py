@@ -39,7 +39,6 @@ class Detector(object):
 			self.sock.sendall(line)
 			data, addr = self.sock.recvfrom(1024)
 			if data == "OK":
-				print "["+self.node+"] OK"
 				return State.HEALTH
 			elif "error" in data :
 				print data
