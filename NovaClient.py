@@ -84,11 +84,16 @@ class NovaClient (object):
 		while status != "ACTIVE" and check_timeout > 0:
 			instance = self.getVM(instance_id)
 			status = self.getInstanceState(instance_id)
-			print "%s , %s" % (status , getattr(instance, "name"))
+			print "getInstanceHost in nova-client : %s , %s" % (status , getattr(instance, "name"))
 			check_timeout -= 1
 			time.sleep(1)
 		instance = self.getVM(instance_id)
 		return getattr(instance, "OS-EXT-SRV-ATTR:host")
+
+	def getInstanceNetwork(self,instance_id):
+		instance = self.getVM(instance_id)
+		network = getattr(instance, "networks")
+		return network
 
 	def isInstanceExist(self, instance_id):
 		try:
@@ -145,7 +150,6 @@ class NovaClient (object):
 
 if __name__ == "__main__":
 	a = NovaClient.getInstance()
-	print NovaClient().getComputePool()
 	#print a.getVM("4df5a97d-9cf2-4d47-99a2-cf68e107acf6")
 	#print a.isInstanceExist("4df5a97d-9cf2-4d47-99a2-cf68e107acf6")
 	#print a.getInstanceList()[0].isIllegal()

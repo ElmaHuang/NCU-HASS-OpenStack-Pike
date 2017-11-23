@@ -52,9 +52,9 @@ class HassAPI():
                 self.node_table.add_row([name, cluster_id, ipmi_status])
             print self.node_table
         elif type == self.TABLE.INSTANCE:
-            self.instance_table = PrettyTable(["id", "name","host","state"])
-            for id,name,host,state in result:
-                self.instance_table.add_row([id,name,host,state])
+            self.instance_table = PrettyTable(["id", "name","host","state","network"])
+            for id,name,host,state,network in result:
+                self.instance_table.add_row([id,name,host,state,network])
             print self.instance_table
 
     def Input_Command(self):

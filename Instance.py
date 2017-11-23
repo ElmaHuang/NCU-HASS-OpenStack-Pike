@@ -7,6 +7,7 @@ class Instance(object):
 		self.id = id
 		self.name = name
 		self.host = host
+		self.network = None
 		self.status=None
 		self.nova_client = NovaClient.getInstance()
 
@@ -23,9 +24,10 @@ class Instance(object):
 		return True
 	'''
 	def updateInfo(self):
-		self.host=self.nova_client.getInstanceHost(self.id) #checkinstanceState ??
-		self.status=self.nova_client.getInstanceState(self.id)
+		self.host = self.nova_client.getInstanceHost(self.id) #checkinstanceState ??
+		self.status = self.nova_client.getInstanceState(self.id)
+		self.network = self.nova_client.getInstanceNetwork(self.id)
 
 	def getInfo(self):
 		self.updateInfo()
-		return [self.id, self.name, self.host, self.status]
+		return [self.id, self.name, self.host, self.status,self.network]
