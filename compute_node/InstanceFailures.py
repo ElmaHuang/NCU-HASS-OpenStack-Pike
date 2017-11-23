@@ -1,21 +1,23 @@
 import libvirt
+import socket
 import threading
 import time
-
-import libvirt
-
 # import ConfigParser
-from compute_node import InstanceEvent
+import InstanceEvent
+from recvIP import recvIPThread
 
-
-class InstanceFailure():
-    def __init__(self):
-        #self.config = ConfigParser.RawConfigParser()
-        #self.config.read('hass_node.conf')
+class InstanceFailure(threading.Thread):
+    def __init__(self,host):
+        threading.Thread.__init__(self)
+        self.host = host
         self.clearlog()
+        self.recv = recvIPThread()
+        self.recv.start()
+        '''
         while True:
             self._startDetection()
             time.sleep(2)
+        '''
     '''
     def run(self):
         #all instance
@@ -30,8 +32,23 @@ class InstanceFailure():
         while True:
             libvirt.virEventRunDefaultImpl()
 
-    def _startDetection(self):
-        #eventLoopThread = None
+    def run(self):
+        self.createDetectionThread()
+        connect = libvirt.openReadOnly('qemu:///system')
+        if connect == None:
+            print "failed to open connection to qemu:///system"
+        #while True:
+        try:
+            connect.domainEventRegister(self._checkVMState,None)
+            connect.domainEventRegisterAny(None,libvirt.VIR_DOMAIN_EVENT_ID_WATCHDOG,self._checkVMWatchdog,None)
+        except Exception as e:
+            print "failed to run startDetection method in VMDetector, please check libvirt is alive.exception :",str(e)
+        finally:
+            #self.close()
+            #connect.close()
+            time.sleep(5)
+
+    def createDetectionThread(self):
         try:
             # set event loop thread
             libvirt.virEventRegisterDefaultImpl()
@@ -39,31 +56,24 @@ class InstanceFailure():
             eventLoopThread.setDaemon(True)
             eventLoopThread.start()
             # open the connection to self qemu
-            connect = libvirt.openReadOnly('qemu:///system')
-            if connect == None:
-                return "failed to open connection to qemu:///system"
-        except:
-            return "failed to open connection to qemu:///system"
-        try:
-            connect.domainEventRegister(self._checkVMState,None)
-            connect.domainEventRegisterAny(None,libvirt.VIR_DOMAIN_EVENT_ID_WATCHDOG,self._checkVMWatchdog,None)
-            while True:
-                if not connect.isAlive():
-                    return
-                time.sleep(2)
         except Exception as e:
-            print "failed to run startDetection method in VMDetector, please check libvirt is alive.exception :",str(e)
-        finally:
-            connect.close()
+            return str(e)
 
     def _checkVMState(self, connect, domain, event, detail, opaque):
         #event:cloume,detail:row
         print "domain name :",domain.name()," domain id :",domain.ID(),"event:",event,"detail:",detail
-        failedString = InstanceEvent.Event_failed
         event_string = self.transformDetailToString(event,detail)
+        failedString = InstanceEvent.Event_failed
         if event_string in failedString:
             self.writelog(domain.name())
         #return True
+
+    def _checkNetwork(self):
+        pass
+        #for instance in self.instance_list:
+            #print instance
+        #if vm network isolation:
+            #self.writelog(domain.name())
 
     def _checkVMWatchdog(self, connect,domain, action, opaque):
         print "domain:",domain.name()," ",domain.ID(),"action:",action
@@ -71,16 +81,9 @@ class InstanceFailure():
         #if action in watchdogString:
             #self.writelog(domain.name())
 
-    def _checkNetwork(self):
-        pass
-        #if vm network isolation:
-            #self.writelog(domain.name())
-
-
     def transformDetailToString(self,event,detail):
         stateString = InstanceEvent.Event_string
         return stateString[event][detail]
-
 
     def clearlog(self):
         with open('./instance_fail.log', 'w'): pass
@@ -90,6 +93,7 @@ class InstanceFailure():
         with open('./instance_fail.log', 'a') as f:
             f.write(str)
             f.close()
+
 if __name__ == '__main__':
     a = InstanceFailure()
-    #a._startDetection()
+    a.start()

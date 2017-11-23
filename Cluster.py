@@ -2,6 +2,7 @@ from ClusterInterface import ClusterInterface
 #from DetectionManager import DetectionManager
 from Node import Node
 from Instance import Instance
+import socket
 import uuid
 import logging
 import ConfigParser
@@ -81,6 +82,7 @@ class Cluster(ClusterInterface):
 				if final_host == None:
 					final_host=self.liveMigrateInstance(instance_id)
 				instance = Instance(id=instance_id,name=self.nova_client.getInstanceName(instance_id),host=final_host)
+				instance.sendCreateIP()
 				self.instance_list.append(instance)
 				message = "Cluster--Cluster add instance success ! The instance id is %s." % (instance_id)
 				logging.info(message)
@@ -98,6 +100,7 @@ class Cluster(ClusterInterface):
 			raise Exception("this instance is not being protected")
 		for instance in self.instance_list:
 			if instance.id == instance_id:
+				instance.sendDeleteIP()
 				self.instance_list.remove(instance)
 		#if instanceid not in self.instacne_list:
 		message = "Cluster--delete instance success. this instance is now deleted (instance_id = %s)" % instance_id
@@ -263,6 +266,23 @@ class Cluster(ClusterInterface):
 				if instance.host == node.name:
 					ret.append(instance)
 			return ret
+	'''
+	def sendToLocal(self,ip):
+		s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+		s.bind(('192.168.0.112', 5001))
+		s.listen(5)
+		# s.settimeout(5)
+		while True:
+			cs, addr = s.accept()
+			print "addr:", addr
+			cs.send(ip)
+			d = cs.recv(1024)
+			# print d
+			if d == "get":
+				cs.close()
+			else:
+				continue
+	'''
 
 if __name__ == "__main__":
 	a = Cluster("123","name")

@@ -1,5 +1,6 @@
 from NovaClient import NovaClient
 import logging
+import socket
 
 class Instance(object):
 
@@ -7,9 +8,12 @@ class Instance(object):
 		self.id = id
 		self.name = name
 		self.host = host
+		self.port = 7878
 		self.network = None
 		self.status=None
 		self.nova_client = NovaClient.getInstance()
+		self.updateInfo()
+		#self.sendIP()
 
 	def isPowerOn(self):
 		return self.nova_client.isInstancePowerOn(self.id)
@@ -31,3 +35,30 @@ class Instance(object):
 	def getInfo(self):
 		self.updateInfo()
 		return [self.id, self.name, self.host, self.status,self.network]
+
+	def sendCreateIP(self):
+		so = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+		so.connect((self.host ,5001))
+		#ip = so.recv(1024)
+		so.send(str(self.network)+"Add")
+		#print ip
+		so.close()
+		'''
+		while True:
+			cs, addr = s.accept()
+			print "addr:", addr
+			cs.send(self.network)
+			d = cs.recv(1024)
+			#print d
+			if d == "get":
+				cs.close()
+			else:
+				continue
+		'''
+	def sendDeleteIP(self):
+		so = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+		so.connect((self.host, 5001))
+		# ip = so.recv(1024)
+		so.send(str(self.network)+"Remove")
+		# print ip
+		so.close()

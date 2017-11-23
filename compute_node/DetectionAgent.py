@@ -4,6 +4,7 @@ import socket
 import sys
 import ConfigParser
 import xmlrpclib
+import time
 #import libvirt
 #import subprocess
 from HostFailures import  HostFailure
@@ -31,10 +32,11 @@ class PollingHandler(asyncore.dispatcher):
         self.bind((host, port))
         #self.libvirt_uri = "qemu:///system"
         self.version = version
+        self.host = host
         self.recover = RecoveryInstance()
         self.host_detection = HostFailure(self.version)
         self.host_detection.start()
-        self.instance_detection = InstanceFailure()
+        self.instance_detection = InstanceFailure(self.host)
         self.instance_detection.start()
         self.authUrl = "http://user:0928759204@192.168.0.112:61209"
         self.server = xmlrpclib.ServerProxy(self.authUrl)
@@ -53,14 +55,15 @@ class PollingHandler(asyncore.dispatcher):
                 check_result = "error:" + check_result
                 self.sendto(check_result, addr)
 
-        check_result = self.check_instance()
-        cluster_list = self.server.listCluster()
-        for cluster in cluster_list:
-            clusterId = cluster[0]
-            instance_list = self.server.listInstance(clusterId)["instanceList"]
-            if instance_list != []:
-                for fail_instance in check_result:
-                    if fail_instance not in instance_list:
+        #instancelist = self.getHAInstance()
+        '''
+        if instancelist != []:
+            #instance_detection = InstanceFailure(instancelist)
+            time.sleep(5)
+            check_result = self.check_instance()
+            for fail_instance in check_result:
+                for instance in instancelist:
+                    if instance[1] not in instance:
                         #self.sendto("OK", addr)
                         continue
                     else:
@@ -69,8 +72,8 @@ class PollingHandler(asyncore.dispatcher):
                         if recovery_result == False:
                             recovery_result = self.recover.rebuildInstance(fail_instance)
                             if recovery_result == False:
-                                self.server.deleteInstacne(fail_instance)
-
+                             self.server.deleteInstacne(fail_instance)
+        '''
     '''
     def check_services(self):
         message = ""
@@ -123,12 +126,24 @@ class PollingHandler(asyncore.dispatcher):
         return result
 
     def check_instance(self):
-        result = ""
+        result = []
         with open('./instance_fail.log', 'r') as f:
             for line in f:
-                result += line
+                #line: instance-00000333:watchdog fail
+                result.append(line)
         f.close()
         return result
+
+    def getHAInstance(self):
+        host_instance = []
+        cluster_list = self.server.listCluster()
+        for cluster in cluster_list:
+            clusterId = cluster[0]
+            instance_list = self.server.listInstance(clusterId)["instanceList"]
+            for instance in instance_list:
+                if instance[2] == self.host:
+                    host_instance.append(instance)
+        return host_instance
 
 def main():
     agent = DetectionAgent()
