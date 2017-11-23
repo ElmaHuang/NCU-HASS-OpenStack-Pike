@@ -248,11 +248,11 @@ class ClusterManager():
 		return False
 
 	@staticmethod
-	def reset(reset_DB=_RESET_DB):
-		if reset_DB:
+	def reset():
+		if ClusterManager._RESET_DB:
 			ClusterManager._db.resetAll()
 		ClusterManager._cluster_dict = {}
-		logging.info("ClusterManager--reset DB ,reset_DB = %s" % reset_DB)
+		logging.info("ClusterManager--reset DB ,reset_DB = %s" % ClusterManager._RESET_DB)
 
 	@staticmethod
 	def syncFromDatabase():
