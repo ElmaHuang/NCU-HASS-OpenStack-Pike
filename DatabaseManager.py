@@ -47,6 +47,20 @@ class DatabaseManager(object):
                             ON DELETE CASCADE
                             );
                             """)
+            self.db.execute("""
+                            CREATE TABLE IF NOT EXISTS ha_instance 
+                            (
+                            instance_id char(36),
+                            below_cluster char(36),
+                            host          char(18),
+                            status        char(18),
+                            network       char(36),
+                            PRIMARY KEY(instance_id),
+                            FOREIGN KEY(below_cluster)
+                            REFERENCES ha_cluster(cluster_uuid)
+                            ON DELETE CASCADE
+                            );
+                            """)
         except MySQLdb.Error, e:
             self.closeDB()
             logging.error("Hass AccessDB - Create Table failed (MySQL Error: %s)", str(e))
@@ -60,15 +74,20 @@ class DatabaseManager(object):
             exist_cluster = []
             for cluster in ha_cluster_date:
                 node_list = []
+                instance_list = []
                 self.db.execute("SELECT * FROM ha_node WHERE below_cluster = '%s'" % cluster["cluster_uuid"])
                 ha_node_date = self.db.fetchall()
+                self.db.execute("SELECT * FROM ha_instance WHERE below_cluster = '%s'" % cluster["cluster_uuid"])
+                ha_instance_date = self.db.fetchall()
 
                 for node in ha_node_date:
                     node_list.append(node["node_name"])
+                for instance in ha_instance_date:
+                    instance_list.append(instance["instance_id"])
                 #cluster_id = cluster["cluster_uuid"][:8]+"-"+cluster["cluster_uuid"][8:12]+"-"+cluster["cluster_uuid"][12:16]+"-"+cluster["cluster_uuid"][16:20]+"-"+cluster["cluster_uuid"][20:]
                 cluster_id = cluster["cluster_uuid"]
                 cluster_name = cluster["cluster_name"]
-                exist_cluster.append({"cluster_id": cluster_id, "cluster_name": cluster_name, "node_list": node_list})
+                exist_cluster.append({"cluster_id": cluster_id, "cluster_name": cluster_name, "node_list": node_list, "instance_list": instance_list})
                 #cluster_manager.createCluster(cluster_name = name , cluster_id = cluster_id)
                 #cluster_manager.addNode(cluster_id, node_list)
             logging.info("Hass AccessDB - Read data success")
@@ -93,6 +112,11 @@ class DatabaseManager(object):
                 for node in node_list:
                     data = {"node_name": node.name,"below_cluster":node.cluster_id}
                     self.writeDB("ha_node", data)
+                #sync instance
+                instance_list = cluster.getProtectedInstanceList()
+                for instance in instance_list:
+                    data = {"instance_id": instance.id, "below_cluster": cluster_id, "host": instance.host, "status": instance.status, "network": str(instance.network)}
+                    self.writeDB("ha_instance", data)
         except MySQLdb.Error, e:
             self.closeDB()
             logging.error("Hass database manager - sync data failed (MySQL Error: %s)", str(e))
@@ -102,8 +126,10 @@ class DatabaseManager(object):
     def writeDB(self , dbName , data):
         if dbName == "ha_cluster":
             format = "INSERT INTO ha_cluster (cluster_uuid,cluster_name) VALUES (%(cluster_uuid)s, %(cluster_name)s);"
-        else:
+        elif dbName == "ha_node":
             format = "INSERT INTO ha_node (node_name,below_cluster) VALUES (%(node_name)s, %(below_cluster)s);"
+        elif dbName == "ha_instance":
+            format = "INSERT INTO ha_instance (instance_id, below_cluster, host, status, network) VALUES (%(instance_id)s, %(below_cluster)s, %(host)s, %(status)s, %(network)s);"
         try:
             self.db.execute(format, data)
             self.db_conn.commit()

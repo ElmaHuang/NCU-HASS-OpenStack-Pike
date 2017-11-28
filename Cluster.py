@@ -81,8 +81,12 @@ class Cluster(ClusterInterface):
 				final_host = self.checkInstanceHost(instance_id)
 				if final_host == None:
 					final_host=self.liveMigrateInstance(instance_id)
-				instance = Instance(id=instance_id,name=self.nova_client.getInstanceName(instance_id),host=final_host)
-				self.sendUpdateInstance(final_host)
+				instance = Instance(id=instance_id,
+									name=self.nova_client.getInstanceName(instance_id),
+									host=final_host,
+									status=self.nova_client.getInstanceState(instance_id),
+									network=self.nova_client.getInstanceNetwork(instance_id))
+				#self.sendUpdateInstance(final_host)
 				self.instance_list.append(instance)
 				message = "Cluster--Cluster add instance success ! The instance id is %s." % (instance_id)
 				logging.info(message)
@@ -102,7 +106,7 @@ class Cluster(ClusterInterface):
 			host = instance.host
 			if instance.id == instance_id:
 				self.instance_list.remove(instance)
-				self.sendUpdateInstance(host)
+				#self.sendUpdateInstance(host)
 		#if instanceid not in self.instacne_list:
 		message = "Cluster--delete instance success. this instance is now deleted (instance_id = %s)" % instance_id
 		logging.info(message)
@@ -127,8 +131,9 @@ class Cluster(ClusterInterface):
 				self.deleteInstance(info[0])
 			else:
 				ret.append(info)
-			self.sendUpdateInstance(instance.host)
+			#self.sendUpdateInstance(instance.host)
 		return ret
+
 	#cluster.addInstance
 	def findNodeByInstance(self, instance_id):
 		for node in self.node_list:
