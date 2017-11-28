@@ -2,6 +2,7 @@ from NovaClient import NovaClient
 from DetectionThread import DetectionThread
 from IPMIModule import IPMIManager
 import ConfigParser
+import  socket
 
 class NodeInterface(object):
 
@@ -57,6 +58,14 @@ class NodeInterface(object):
 		
 	def getInfo(self):
 		return [self.name, self.cluster_id, self.ipmi_status]
+
+	def sendUpdateInstance(self):
+		so = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+		so.connect((self.name ,5001))
+		#ip = so.recv(1024)
+		so.send("upadte instance")
+		#print ip
+		so.close()
 
 if __name__ == "__main__":
 	a = NodeInterface("compute1" , "23" , True)

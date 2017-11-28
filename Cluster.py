@@ -82,7 +82,7 @@ class Cluster(ClusterInterface):
 				if final_host == None:
 					final_host=self.liveMigrateInstance(instance_id)
 				instance = Instance(id=instance_id,name=self.nova_client.getInstanceName(instance_id),host=final_host)
-				instance.sendCreateIP()
+				self.sendUpdateInstance(final_host)
 				self.instance_list.append(instance)
 				message = "Cluster--Cluster add instance success ! The instance id is %s." % (instance_id)
 				logging.info(message)
@@ -99,9 +99,10 @@ class Cluster(ClusterInterface):
 		if not self.isProtected(instance_id):
 			raise Exception("this instance is not being protected")
 		for instance in self.instance_list:
+			host = instance.host
 			if instance.id == instance_id:
-				instance.sendDeleteIP()
 				self.instance_list.remove(instance)
+				self.sendUpdateInstance(host)
 		#if instanceid not in self.instacne_list:
 		message = "Cluster--delete instance success. this instance is now deleted (instance_id = %s)" % instance_id
 		logging.info(message)
@@ -126,6 +127,7 @@ class Cluster(ClusterInterface):
 				self.deleteInstance(info[0])
 			else:
 				ret.append(info)
+			self.sendUpdateInstance(instance.host)
 		return ret
 	#cluster.addInstance
 	def findNodeByInstance(self, instance_id):
@@ -162,6 +164,10 @@ class Cluster(ClusterInterface):
 	#be DB called
 	def getNodeList(self):
 		return self.node_list
+
+	def sendUpdateInstance(self,host_name):
+		host = self.getNodeByName(host_name)
+		host.sendUpdateInstance()
 
 	#be deleteNode called
 	def getNodeByName(self, name):

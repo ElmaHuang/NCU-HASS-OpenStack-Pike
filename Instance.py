@@ -35,30 +35,20 @@ class Instance(object):
 	def getInfo(self):
 		self.updateInfo()
 		return [self.id, self.name, self.host, self.status,self.network]
-
-	def sendCreateIP(self):
+	'''
+	def sendUpdate(self):
 		so = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 		so.connect((self.host ,5001))
 		#ip = so.recv(1024)
-		so.send(str(self.network)+"Add")
+		so.send(str(self.network))
 		#print ip
 		so.close()
-		'''
-		while True:
-			cs, addr = s.accept()
-			print "addr:", addr
-			cs.send(self.network)
-			d = cs.recv(1024)
-			#print d
-			if d == "get":
-				cs.close()
-			else:
-				continue
-		'''
+
 	def sendDeleteIP(self):
 		so = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 		so.connect((self.host, 5001))
 		# ip = so.recv(1024)
-		so.send(str(self.network)+"Remove")
+		so.send()
 		# print ip
 		so.close()
+	'''
