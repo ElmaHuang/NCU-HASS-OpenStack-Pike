@@ -230,11 +230,11 @@ def main():
     config.read('hass.conf')
 
     log_level = logging.getLevelName(config.get("log", "level"))
-    logFilename = config.get("log", "location")
-    dir = os.path.dirname(logFilename)
+    log_file_name = config.get("log", "location")
+    dir = os.path.dirname(log_file_name)
     if not os.path.exists(dir):
         os.makedirs(dir)
-    logging.basicConfig(filename=logFilename, level=log_level, format="%(asctime)s [%(levelname)s] : %(message)s")
+    logging.basicConfig(filename=log_file_name, level=log_level, format="%(asctime)s [%(levelname)s] : %(message)s")
 
     server = SimpleXMLRPCServer(('',int(config.get("rpc", "rpc_bind_port"))), requestHandler=RequestHandler, allow_none = True, logRequests=False)
     server.register_introspection_functions()

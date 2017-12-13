@@ -1,6 +1,18 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+#########################################################
+#:Date: 2017/12/13
+#:Version: 1
+#:Authors:
+#    - Elma Huang <huanghuei0206@gmail.com>
+#    - LSC <sclee@g.ncu.edu.tw>
+#:Python_Version: 2.7
+#:Platform: Unix
+#:Description:
+#   IPMI Configuration file.
+##########################################################
+
 BASE_CMD = "ipmitool -I lanplus -H %s -U %s -P %s " # %(NODEID , USER , PASSWD)
 
 REBOOTNODE = "chassis power reset"
