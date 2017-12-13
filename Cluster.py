@@ -113,8 +113,6 @@ class Cluster(ClusterInterface):
 				return result
 
 	def deleteInstance(self , instance_id):
-		if not self.isProtected(instance_id):
-			raise Exception("this instance is not being protected")
 		for instance in self.instance_list:
 			host = instance.host
 			if instance.id == instance_id:
