@@ -1,9 +1,18 @@
 #!/usr/bin/python
-"""
-HASS Service
-Using SimpleXMLRPC library handle http requests
-Client can use function in Hass class directly
-"""
+#########################################################
+#:Date: 2017/12/13
+#:Version: 1
+#:Authors:
+#    - Elma Huang <huanghuei0206@gmail.com>
+#    - LSC <sclee@g.ncu.edu.tw>
+#:Python_Version: 2.7
+#:Platform: Unix
+#:Description:
+#   HASS Service
+#   Using SimpleXMLRPC library handle http requests
+#   Client can use function in Hass class directly
+##########################################################
+
 
 from SimpleXMLRPCServer import SimpleXMLRPCServer
 from SimpleXMLRPCServer import SimpleXMLRPCRequestHandler

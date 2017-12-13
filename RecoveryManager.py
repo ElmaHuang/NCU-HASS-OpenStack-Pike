@@ -1,3 +1,16 @@
+#########################################################
+#:Date: 2017/12/13
+#:Version: 1
+#:Authors:
+#    - Elma Huang <huanghuei0206@gmail.com>
+#    - LSC <sclee@g.ncu.edu.tw>
+#:Python_Version: 2.7
+#:Platform: Unix
+#:Description:
+#   This is a class maintains recovery methods.
+##########################################################
+
+
 from ClusterManager import ClusterManager
 from NovaClient import NovaClient
 from Detector import Detector
@@ -118,7 +131,7 @@ class RecoveryManager(object):
 			status = self.restartDetectionService(fail_node, version)
 		else:
 			status = self.restartServices(fail_node, fail_services, version)
-			
+
 		if not status: # restart service fail
 			print "start recovery"
 			print "fail node is %s" % fail_node.name
