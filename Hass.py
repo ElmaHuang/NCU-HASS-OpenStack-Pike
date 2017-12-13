@@ -77,7 +77,7 @@ class Hass (object):
     def __init__(self):
         ClusterManager.init()
         self.Operator = Operator()
-        self.Recovery = RecoveryManager()
+        self.RecoveryManager = RecoveryManager()
 
     def test_auth_response(self):
     #Unit tester call this function to get successful message if authenticate success.
@@ -210,7 +210,7 @@ class Hass (object):
     
     def recover(self, fail_type, cluster_id, node_name):
         try:
-            result = self.Recovery.recover(fail_type, cluster_id, node_name)
+            result = self.RecoveryManager.recover(fail_type, cluster_id, node_name)
             return result
         except Exception as e:
             print str(e)

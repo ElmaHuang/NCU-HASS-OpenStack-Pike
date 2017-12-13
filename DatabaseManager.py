@@ -25,7 +25,15 @@ class DatabaseManager(object):
                                     )
         self.db = self.db_conn.cursor(cursorclass = MySQLdb.cursors.DictCursor)
 
+    def checkDB(self):
+        try:
+            self.db_conn.ping()
+        except Exception as e:
+            logging.info("MYSQL CONNECTION REESTABLISHED!")
+            self.connect()
+
     def createTable(self):
+        self.checkDB()
         try:
             self.db.execute("SET sql_notes = 0;")
             self.db.execute("""
@@ -68,6 +76,7 @@ class DatabaseManager(object):
             sys.exit(1)
 
     def syncFromDB(self):
+        self.checkDB()
         try:
             self.db.execute("SELECT * FROM ha_cluster;")
             ha_cluster_date = self.db.fetchall()
@@ -100,6 +109,7 @@ class DatabaseManager(object):
             sys.exit(1)
 
     def syncToDB(self, cluster_list):
+        self.checkDB()
         self.resetAll()
         try:
             #cluster_list = cluster_manager.getClusterList()
@@ -124,6 +134,7 @@ class DatabaseManager(object):
             sys.exit(1)
 
     def writeDB(self , dbName , data):
+        self.checkDB()
         if dbName == "ha_cluster":
             format = "INSERT INTO ha_cluster (cluster_uuid,cluster_name) VALUES (%(cluster_uuid)s, %(cluster_name)s);"
         elif dbName == "ha_node":
@@ -139,6 +150,7 @@ class DatabaseManager(object):
             raise
 
     def _getAllTable(self):
+        self.checkDB()
         table_list = []
         cmd = "show tables"
         self.db.execute(cmd)
@@ -149,21 +161,84 @@ class DatabaseManager(object):
         return table_list
 
     def resetAll(self):
+        self.checkDB()
         table_list = self._getAllTable()
         for table in table_list:
             self._resetTable(table)
 
     def _resetTable(self, table_name):
+        self.checkDB()
         cmd = " DELETE FROM  `%s` WHERE true" % table_name
         self.db.execute(cmd)
         self.db_conn.commit()
 
 
     def closeDB(self):
+        self.checkDB()
         self.db.close()
         self.db_conn.close()
 
+class IIIDatabaseManager(object):
+    def __init__(self):
+        self.config = ConfigParser.RawConfigParser()
+        self.config.read('hass.conf')
+        self.db_conn = None
+        self.db = None
+        try:
+            self.connect()
+        except MySQLdb.Error, e:
+            logging.error("Hass AccessDB(III) - connect to database failed (MySQL Error: %s)", str(e))
+            print "MySQL Error: %s" % str(e)
+            sys.exit(1)
+    def connect(self):
+        self.db_conn = MySQLdb.connect(  host = self.config.get("iii", "mysql_ip"),
+                                         user = self.config.get("iii", "mysql_username"),
+                                        passwd = self.config.get("iii", "mysql_password"),
+                                        db = self.config.get("iii", "mysql_db"),
+                                    )
+        self.db = self.db_conn.cursor(cursorclass = MySQLdb.cursors.DictCursor)
+
+    def updateInstance(self, instance_id, node):
+        self.checkDB()
+        compute_num = self._getComputeNum(node)
+        instance_resource_id = self.getInstanceResourceID(instance_id)
+
+        if not instance_resource_id: 
+            print "%s not a iii VM, don't need to modify the database!"
+            logging.info("%s not a iii VM, don't need to modify the database!" % instance_id)
+            return
+
+        self.db.execute("""
+            UPDATE `Resource_Relationship`
+            SET `parent` =%s
+            WHERE `child`=%s
+            AND parent=13
+            OR parent=14
+            """, (compute_num, instance_resource_id))
+        self.db_conn.commit()
+
+
+    def getInstanceResourceID(self, instance_id):
+        self.checkDB()
+        self.db.execute("SELECT * FROM `Resource` WHERE `OID`= '%s' AND `type`=1" % instance_id)
+        data = self.db.fetchall()
+        if len(data) == 0: return None
+        return str(data[0]["id"])
+
+    def _getComputeNum(self, node):
+        if node == "compute1":
+            return 13
+        elif node == "compute2":
+            return 14
+
+    def checkDB(self):
+        try:
+            self.db_conn.ping()
+        except Exception as e:
+            logging.info("MYSQL CONNECTION REESTABLISHED!")
+            self.connect()
+
 
 if __name__ == "__main__":
-    a = DatabaseManager()
-    print a.resetAll()
+    a = IIIDatabaseManager()
+    a.getInstanceResourceID("123")

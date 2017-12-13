@@ -2,6 +2,8 @@ import socket
 import subprocess
 import State
 import time
+import logging
+import ConfigParser
 from IPMIModule import IPMIManager
 
 class Detector(object):
@@ -11,6 +13,8 @@ class Detector(object):
 		self.ipmi_manager = IPMIManager()
 		self.port = port
 		self.sock = None
+		self.config = ConfigParser.RawConfigParser()
+		self.config.read('hass.conf')
 		self.connect()
 
 	def connect(self):
@@ -21,17 +25,23 @@ class Detector(object):
 			self.sock.setblocking(0)
 			self.sock.settimeout(0.5)
 			self.sock.connect((self.node, self.port))
-			#time.sleep(5)
 		except Exception as e:
 			print str(e)
 			print "Init ["+self.node+"] connection failed"
 
 	def checkNetworkStatus(self):
-		try:
-			response = subprocess.check_output(['timeout', '0.2', 'ping', '-c', '1', self.node], stderr=subprocess.STDOUT, universal_newlines=True)
-		except subprocess.CalledProcessError:
-			return State.NETWORK_FAIL
-		return State.HEALTH
+		heartbeat_time = int(self.config.get("default","heartbeat_time"))
+		while heartbeat_time > 0:
+			try:
+				response = subprocess.check_output(['timeout', '0.2', 'ping', '-c', '1', self.node], stderr=subprocess.STDOUT, universal_newlines=True)
+				return State.HEALTH
+			except Exception as e:
+				logging.error("transient network fail")
+				pass
+			finally:
+				time.sleep(1)
+				heartbeat_time -= 1
+		return State.NETWORK_FAIL
 
 	def checkServiceStatus(self):
 		try:
@@ -65,7 +75,7 @@ class Detector(object):
 	def checkOSStatus(self):
 		if not self.ipmi_status:
 			return State.HEALTH
-		status = self.ipmi_manager.getOSStatus_new(self.node)
+		status = self.ipmi_manager.getOSStatus(self.node)
 		if status == "OK":
 			return State.HEALTH
 		return State.OS_FAIL

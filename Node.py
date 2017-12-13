@@ -43,6 +43,10 @@ class Node (NodeInterface):
 		if not self.client:
 			logging.error("RecoveryManager : cannot create ssh connection")
 			return
+		if not self.check_connection():
+			logging.error("ssh connection lost")
+			self.client = self._create_ssh_client()
+			logging.info("ssh connection re-established")
 		stdin, stdout, stderr = self.client.exec_command(cmd, timeout = 5)
 		return stdin, stdout, stderr
 
@@ -55,6 +59,14 @@ class Node (NodeInterface):
 		except Exception as e:
 			print "Excpeption : %s" % str(e)
 			return None
+
+	def check_connection(self):
+		try:
+			self.client.exec_command('ls', timeout=5)
+			return True
+		except Exception as e:
+			print "Connection lost : %s" % str(e)
+			return False
 
 if __name__ == "__main__":
 	a = Node("compute2", "123")

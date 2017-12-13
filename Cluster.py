@@ -29,6 +29,7 @@ class Cluster(ClusterInterface):
 					message += "the node %s is illegal.  " %node_name
 					logging.error(message)
 		except Exception as e:
+			print str(e)
 			message = "Cluster-- add node fail , some node maybe overlapping or not in compute pool please check again! The node list is %s." % (self.getAllNodeStr())
 			logging.error(message)
 			result = {"code": "1", "clusterId": self.id, "message": message}

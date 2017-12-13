@@ -189,24 +189,6 @@ class IPMIManager(object):
 
     def getOSStatus(self, node_name):
         status = "OK"
-        time.sleep(float(IPMIConf.WATCHDOG_THRESHOLD)) # wait watchdog countdown
-        try:
-            initial = self._getOSValue(node_name, IPMIConf.OS_TYPE_INITIAL)
-            present = self._getOSValue(node_name, IPMIConf.OS_TYPE_PRESENT)
-        except Exception as e:
-            logging.error("IpmiModule detectOSstatus - %s" % e)
-            status = "IPMI_disable"
-            return status
-        if (initial - present) > IPMIConf.WATCHDOG_THRESHOLD:
-            #print initial - present
-            status = "Error"
-            return status
-        else:
-            return status
-
-
-    def getOSStatus_new(self, node_name):
-        status = "OK"
         interval = (IPMIConf.WATCHDOG_THRESHOLD / 2)
         prev_initial = None
         prev_present = None
@@ -301,3 +283,21 @@ class IPMIManager(object):
 if __name__ == "__main__":
     i = IPMIManager()
     print i.getOSStatus_new("compute2")
+
+
+# def getOSStatus(self, node_name):
+#     status = "OK"
+#     time.sleep(float(IPMIConf.WATCHDOG_THRESHOLD)) # wait watchdog countdown
+#     try:
+#         initial = self._getOSValue(node_name, IPMIConf.OS_TYPE_INITIAL)
+#         present = self._getOSValue(node_name, IPMIConf.OS_TYPE_PRESENT)
+#     except Exception as e:
+#         logging.error("IpmiModule detectOSstatus - %s" % e)
+#         status = "IPMI_disable"
+#         return status
+#     if (initial - present) > IPMIConf.WATCHDOG_THRESHOLD:
+#         #print initial - present
+#         status = "Error"
+#         return status
+#     else:
+#         return status
