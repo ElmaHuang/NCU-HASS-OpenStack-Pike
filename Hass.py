@@ -93,6 +93,19 @@ class Hass (object):
         return "auth success"
         
     def createCluster(self, name, nodeList=[]):
+        """
+        The function for create a HA cluster. 
+        You can either put nodeList or cluster name only.
+        If you put cluster name only then this function will only create a empty cluster, 
+        But if you put node parameter the function will do both create cluster and add node to cluster
+        Args:
+            name (str): cluster name.
+            nodeList (list): the nodes would add to cluster.
+        Return:
+            (map) create cluster result.
+            {"code" : "0","message": message} -> success.
+            {"code" : "1","message": message} -> fail.
+        """
         try:
             createCluster_result = ClusterManager.createCluster(name)
             if createCluster_result["code"] == "0":
@@ -122,6 +135,16 @@ class Hass (object):
             logging.error("HASS-create cluster-except--create cluster fail")
 
     def deleteCluster(self, cluster_uuid):
+        """
+        The function for delete a HA cluster. 
+        Put the cluster uuid to this function, it will delete a HA cluster.
+        Args:
+            cluster_uuid (str): cluster name.
+        Return:
+            (map) delete cluster result.
+            {"code" : "0","message": message} -> success.
+            {"code" : "1","message": message} -> fail.
+        """
         try:
             result = ClusterManager.deleteCluster(cluster_uuid)
             return result
@@ -129,6 +152,13 @@ class Hass (object):
             logging.error("HASS--delete cluster fail")
 
     def listCluster(self):
+        """
+        The function for list HA clusters. 
+        Args:
+            no arguments
+        Return:
+            (list) cluster info
+        """
         try:
             result = ClusterManager.listCluster()
             return result
@@ -136,6 +166,17 @@ class Hass (object):
             logging.error("HASS--list all cluster fail")
 
     def addNode(self, clusterId, nodeList):
+        """
+        The function for add a computing node to HA cluster. 
+        Put the cluster uuid and nodeList to this function, it will add node to HA cluster.
+        Args:
+            cluster_Id (str): cluster uuid.
+            nodeList (str): node name.
+        Return:
+            (map) add node result.
+            {"code" : "0","message": message} -> success.
+            {"code" : "1","message": message} -> fail.
+        """
         try:
             result = ClusterManager.addNode(clusterId, nodeList)
             return result
@@ -143,6 +184,17 @@ class Hass (object):
             logging.error("HASS--add node fail")
 
     def deleteNode(self, cluster_id, node_name):
+        """
+        The function for delete a computing node from HA cluster. 
+        Put the cluster uuid and node name to this function, it will delete node from HA cluster.
+        Args:
+            cluster_Id (str): cluster uuid.
+            node_name (str): node name.
+        Return:
+            (map) delete node result.
+            {"code" : "0","message": message} -> success.
+            {"code" : "1","message": message} -> fail.
+        """
         try:
             result = ClusterManager.deleteNode(cluster_id, node_name)
             return result
@@ -150,6 +202,15 @@ class Hass (object):
             logging.error("HASS--delete node fail")
 
     def listNode(self, clusterId) :
+        """
+        The function for list computing nodes from HA cluster. 
+        Put the cluster uuid to this function, it will list nodes from HA cluster.
+        Args:
+            clusterId (str): cluster uuid.
+        Return:
+            (map) list node result.
+            {"code":"0","nodeList":nodelist} -> success.
+        """
         try:
             result = ClusterManager.listNode(clusterId)
             return result
@@ -157,6 +218,16 @@ class Hass (object):
             logging.error("HASS--List node fail")
 
     def startNode(self, nodeName):
+        """
+        The function for start computing node.
+        Put the node name to this function, it will start node.
+        Args:
+            nodeName (str): node name.
+        Return:
+            (map) start node result.
+            {"code": "0", "node_name": node_name, "message": message} -> success.
+            {"code": "1", "node_name": node_name, "message": message} -> fail.
+        """
         try:
             result = self.Operator.startNode(nodeName)
             return result
@@ -164,6 +235,16 @@ class Hass (object):
             logging.error("HASS--Start node fail")
 
     def shutOffNode(self, nodeName):
+        """
+        The function for shutoff computing node.
+        Put the node name to this function, it will shutoff node.
+        Args:
+            nodeName (str): node name.
+        Return:
+            (map) shutoff node result.
+            {"code": "0", "node_name": node_name, "message": message} -> success.
+            {"code": "1", "node_name": node_name, "message": message} -> fail.
+        """
         try:
             result = self.Operator.shutOffNode(nodeName)
             return result
@@ -171,6 +252,16 @@ class Hass (object):
             logging.error("HASS--Shut off fail")
 
     def rebootNode(self, nodeName):
+        """
+        The function for reboot computing node.
+        Put the node name to this function, it will reboot node.
+        Args:
+            nodeName (str): node name.
+        Return:
+            (map) reboot node result.
+            {"code": "0", "node_name": node_name, "message": message} -> success.
+            {"code": "1", "node_name": node_name, "message": message} -> fail.
+        """
         try:
             result = self.Operator.rebootNode(nodeName)
             return result
@@ -178,6 +269,16 @@ class Hass (object):
             logging.error("HASS--reboot node fail")
 
     def getAllInfoOfNode(self, nodeName):
+        """
+        The function for get compute node information.
+        Put the node name to this function, it will get the compute node information.
+        Args:
+            nodeName (str): node name.
+        Return:
+            (map) node information result.
+            {"code": "0", "info":result_list,"message":message} -> success
+            {"code": "1", "info":result_list,"message":message} -> fail.
+        """
         try:
             result = self.Operator.getAllInfoByNode(nodeName)
             logging.info("HASS--get All Info from %s finish" %nodeName)
@@ -186,6 +287,17 @@ class Hass (object):
             logging.error("HASS--get All Info from %s fail"%nodeName)
 
     def getNodeInfoByType(self, nodeName, sensorType):
+        """
+        The function for get compute node information by sensor type.
+        Put the node name and sensor type to this function, it will get the compute node information by sensor type.
+        Args:
+            nodeName (str): node name.
+            sensorType (str): sensor type
+        Return:
+            (map) node information result.
+            {"code": "0", "info":result_list,"message":message} -> success
+            {"code": "1", "info":result_list,"message":message} -> fail.
+        """
         try:
             result = self.Operator.getNodeInfoByType(nodeName, sensorType)
             logging.info("HASS--get %s info from %s success"%(sensorType,nodeName))
@@ -194,6 +306,17 @@ class Hass (object):
             logging.error("HASS--get %s info from %s fail" %(sensorType,nodeName))
 
     def addInstance(self, clusterId, instanceId):
+        """
+        The function for add a instance to HA cluster. 
+        Put the cluster uuid and instance id to this function, it will add instance to HA cluster.
+        Args:
+            clusterId (str): cluster uuid.
+            instanceId (str): instance id.
+        Return:
+            (map) add instance result.
+            {"code" : "0","message": message} -> success.
+            {"code" : "1","message": message} -> fail.
+        """
         try:
             result = ClusterManager.addInstance(clusterId, instanceId)
             logging.info("HASS--add instance success.")
@@ -202,6 +325,17 @@ class Hass (object):
             logging.error("HASS--add Instance fail")
 
     def deleteInstance(self, clusterId, instanceId):
+        """
+        The function for delete a instance from HA cluster. 
+        Put the cluster uuid and instance id to this function, it will delete instance from HA cluster.
+        Args:
+            clusterId (str): cluster uuid.
+            instanceId (str): instance id.
+        Return:
+            (map) delete instance result.
+            {"code" : "0","message": message} -> success.
+            {"code" : "1","message": message} -> fail.
+        """
         try:
             result = ClusterManager.deleteInstance(clusterId, instanceId)
             logging.info("HASS--delete instance success")
@@ -210,6 +344,15 @@ class Hass (object):
             logging.error("HASS--delete instance fail")
 
     def listInstance(self, clusterId) :
+        """
+        The function for list instances from HA cluster. 
+        Put the cluster uuid to this function, it will list instances from HA cluster.
+        Args:
+            clusterId (str): cluster uuid.
+        Return:
+            (map) list instance result.
+            {"code":"0","instanceList":instance_list}-> success.
+        """
         try:
             result = ClusterManager.listInstance(clusterId)
             logging.info("HASS-list instance success")
@@ -218,6 +361,18 @@ class Hass (object):
             logging.error("HASS--list instance fail")
     
     def recover(self, fail_type, cluster_id, node_name):
+        """
+        The function for recover compute node fail from HA cluster. 
+        Put the fail type, cluster uuid and node name to this function, it will start to recover compute node fail
+        Args:
+            fail_type (str): fail type
+            cluster_id (str): cluster uuid
+            node_name(str): node name
+        Return:
+            (bool) recover success or not.
+            True -> success.
+            False -> fail.
+        """
         try:
             result = self.RecoveryManager.recover(fail_type, cluster_id, node_name)
             return result

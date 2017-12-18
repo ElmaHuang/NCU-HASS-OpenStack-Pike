@@ -217,7 +217,7 @@ class IIIDatabaseManager(object):
         instance_resource_id = self.getInstanceResourceID(instance_id)
 
         if not instance_resource_id: 
-            print "%s not a iii VM, don't need to modify the database!"
+            print "%s not a iii VM, don't need to modify the database!" % instance_id
             logging.info("%s not a iii VM, don't need to modify the database!" % instance_id)
             return
 

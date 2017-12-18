@@ -1,6 +1,18 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+#########################################################
+#:Date: 2017/12/13
+#:Version: 1
+#:Authors:
+#    - Elma Huang <huanghuei0206@gmail.com>
+#    - LSC <sclee@g.ncu.edu.tw>
+#:Python_Version: 2.7
+#:Platform: Unix
+#:Description:
+#   This is a class maintains IPMI command operation.
+##########################################################
+
 import subprocess
 import logging
 import time
@@ -282,7 +294,7 @@ class IPMIManager(object):
         return node_name in self.ip_dict
 if __name__ == "__main__":
     i = IPMIManager()
-    print i.getOSStatus_new("compute2")
+    print i.getOSStatus("compute2")
 
 
 # def getOSStatus(self, node_name):
