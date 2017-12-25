@@ -16,6 +16,13 @@ from openstack_dashboard.dashboards.haAdmin.ha_instances\
 
 import xmlrpclib
 
+
+class Response(object):
+	def __init__(self, code, message=None, data=None):
+		self.code = code
+		self.message = message
+		self.data = data
+
 class AddView(forms.ModalFormView):
     form_class = project_forms.AddForm
     template_name = 'haAdmin/ha_instances/create.html'    
@@ -67,31 +74,33 @@ class IndexView(tables.DataTableView):
         #return self._more
 
     def get_data(self):
-        authUrl = "http://user:0928759204@127.0.0.1:61209"
+	authUrl = "http://user:0928759204@127.0.0.1:61209"
         server = xmlrpclib.ServerProxy(authUrl)
-        clusters = server.listCluster()
+	clusters = server.listCluster()
         instances = []
-        for clusrer in clusters:
-            uuid = clusrer[0]
-            name = clusrer[1]
-            _cluster_instances = server.listInstance(uuid)
-            #result,cluster_instances = _cluster_instances.split(";")
-            result = _cluster_instances["code"]
-            cluster_instances = _cluster_instances["instanceList"]
-            if result == '0':
-                if cluster_instances != "":
-                    #cluster_instances = cluster_instances.split(",")
-                    for _instance in cluster_instances:
-                        instance_id = _instance[0]
-                        try:
-                            instance = api.nova.server_get(self.request, instance_id)
-                            instance.cluster_name = name
-                            instance.cluster_id = uuid
-                            instances.append(instance)
-                        except Exception:
-                            msg = _('Unable to retrieve instance list.')
-                            exceptions.handle(self.request, msg)
-        marker = self.request.GET.get(project_tables.InstancesTable._meta.pagination_param, None)
+	for cluster in clusters:
+	    uuid = cluster[0]
+	    name = cluster[1]
+	    _cluster_instances = server.listInstance(uuid)
+	    _cluster_instances = Response(code=_cluster_instances["code"], message=_cluster_instances["message"], data=_cluster_instances["data"])
+	    result = _cluster_instances.code
+	    cluster_instances = _cluster_instances.data.get("instanceList")
+	    if result == 'succeed':
+		if cluster_instances != "":
+		    #cluster_instances = cluster_instances.split(",")
+		    for _instance in cluster_instances:
+			instance_id = _instance[0]
+			try:
+			    instance = api.nova.server_get(self.request, instance_id)
+			    instance.cluster_name = name
+			    instance.cluster_id = uuid
+			    instances.append(instance)
+			except Exception:
+			    msg = _('Unable to retrieve instance list.')
+			    exceptions.handle(self.request, msg)
+		
+        marker = self.request.GET.get(
+            project_tables.InstancesTable._meta.pagination_param, None)
         search_opts = self.get_filters({'marker': marker, 'paginate': True})
         # Gather our tenants to correlate against IDs
         try:
@@ -102,14 +111,15 @@ class IndexView(tables.DataTableView):
             exceptions.handle(self.request, msg)
 
         if 'project' in search_opts:
-            ten_filter_ids = [t.id for t in tenants if t.name == search_opts['project']]
+            ten_filter_ids = [t.id for t in tenants
+                              if t.name == search_opts['project']]
             del search_opts['project']
             if len(ten_filter_ids) > 0:
                 search_opts['tenant_id'] = ten_filter_ids[0]
             else:
                 self._more = False
                 return []
-        """
+	"""
         try:
             instances, self._more = api.nova.server_list(
                 self.request,
@@ -120,9 +130,10 @@ class IndexView(tables.DataTableView):
             exceptions.handle(self.request,
                               _('Unable to retrieve instance list.'))
         """
-        if instances:
+	if instances:
             try:
-                api.network.servers_update_addresses(self.request, instances,all_tenants=True)
+                api.network.servers_update_addresses(self.request, instances,
+                                                     all_tenants=True)
             except Exception:
                 exceptions.handle(
                     self.request,
@@ -148,27 +159,29 @@ class IndexView(tables.DataTableView):
                     else:
                         # If the flavor_id is not in full_flavors list,
                         # gets it via nova api.
-                        inst.full_flavor = api.nova.flavor_get(self.request, flavor_id)
+                        inst.full_flavor = api.nova.flavor_get(
+                            self.request, flavor_id)
                 except Exception:
                     msg = _('Unable to retrieve instance size information.')
                     exceptions.handle(self.request, msg)
                 tenant = tenant_dict.get(inst.tenant_id, None)
-                inst.number = count
+		inst.number = count
                 inst.tenant_name = getattr(tenant, "name", None)
 
-                cluster_id = inst.cluster_id
-                #result, node_list = server.listNode(cluster_id).split(";")
-                cluster_node = server.listNode(cluster_id)
-                result = cluster_node["code"]
-                node_list = cluster_node["nodeList"]
-                cluster_nodes = []
-                for node in node_list:
-                    cluster_nodes.append(node[0])
-                if len(cluster_nodes) == 1:
-                    inst.protection = "Incomplete Protected"
-                else:
-                    inst.protection = "Protected"
-                count = count +1
+		cluster_id = inst.cluster_id
+	        #result, node_list = server.listNode(cluster_id).split(";")
+		cluster_node = server.listNode(cluster_id)
+                cluster_node = Response(code=cluster_node["code"], message=cluster_node["message"], data=cluster_node["data"])
+		result = cluster_node.code
+		node_list = cluster_node.data.get("nodeList")
+		cluster_nodes = []
+		for node in node_list:
+			cluster_nodes.append(node[0])
+	        if len(cluster_nodes) == 1:
+		    inst.protection = "Incomplete Protected"
+	        else:
+		    inst.protection = "Protected"
+		count = count +1
         return instances
 
     def get_filters(self, filters):

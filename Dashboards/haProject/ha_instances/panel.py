@@ -6,7 +6,7 @@ from openstack_dashboard.dashboards.haProject import dashboard
 
 
 class HA_Instances(horizon.Panel):
-    name = _("HA Instances")
+    name = _("HA Inatances")
     slug = "ha_instances"
     #permissions = ('openstack.services.compute')
 

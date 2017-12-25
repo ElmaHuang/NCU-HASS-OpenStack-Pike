@@ -42,6 +42,7 @@ class Node (NodeInterface):
 		return instance.name in self._get_virsh_list()
 
 	def undefineInstance(self, instance):
+		logging.info("undefine instance")
 		stdin, stdout, stderr = self.remote_exec("virsh destroy %s" % instance.name)
 		print stdout.read()
 		stdin, stdout, stderr = self.remote_exec("virsh undefine %s" % instance.name)

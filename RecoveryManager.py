@@ -14,6 +14,7 @@ from ClusterManager import ClusterManager
 from NovaClient import NovaClient
 from Detector import Detector
 from DatabaseManager import IIIDatabaseManager
+from Response import Response
 import State
 import logging
 import ConfigParser
@@ -191,10 +192,10 @@ class RecoveryManager(object):
 	def recoverNodeByReboot(self, fail_node):
 		print "start recover node by reboot"
 		result = fail_node.reboot()
-		print "boot node result : %s" % result
-		message = "RecoveryManager recover network isolation"
-		if result["code"] == "0":
-			logging.info(message + result["message"])
+		print "boot node result : %s" % result.message
+		message = "RecoveryManager recover "
+		if result.code == "succeed":
+			logging.info(message + result.message)
 			boot_up = self.checkNodeBootSuccess(fail_node)
 			if boot_up:
 				print "Node %s recovery finished." % fail_node.name
@@ -203,26 +204,26 @@ class RecoveryManager(object):
 				logging.error(message + "Can not reboot node %s successfully", fail_node.name)
 				return False
 		else:
-			logging.error(message + result["message"])
+			logging.error(message + result.message)
 			return False
 
 	def recoverNodeByShutoff(self, fail_node):
 		print "start recover node by shutoff"
 		result = fail_node.shutoff()
-		if result["code"] == "0":
+		if result.code == "succeed":
 			return True
 		else:
-			logging.error(result["message"])
-			print result["message"]
+			logging.error(result.message)
+			print result.message
 			return False
 
 	def recoverNodeByStart(self, fail_node):
-		print "start recover node by reboot"
+		print "start recover node by start"
 		result = fail_node.start()
-		print "boot node result : %s" % result
-		message = "RecoveryManager recover network isolation"
-		if result["code"] == "0":
-			logging.info(message + result["message"])
+		print "boot node result : %s" % result.message
+		message = "RecoveryManager recover"
+		if result.code == "succeed":
+			logging.info(message + result.message)
 			boot_up = self.checkNodeBootSuccess(fail_node)
 			if boot_up:
 				print "Node %s recovery finished." % fail_node.name
@@ -231,7 +232,7 @@ class RecoveryManager(object):
 				logging.error(message + "Can not start node %s successfully", fail_node.name)
 				return False
 		else:
-			logging.error(message + result["message"])
+			logging.error(message + result.message)
 			return False
 
 	def restartDetectionService(self, fail_node, version):

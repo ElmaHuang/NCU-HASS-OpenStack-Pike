@@ -11,13 +11,14 @@
 ##########################################################
 
 from ClusterInterface import ClusterInterface
-#from DetectionManager import DetectionManager
+from Response import Response
 from Node import Node
 from Instance import Instance
 import socket
 import uuid
 import logging
 import ConfigParser
+
 
 class Cluster(ClusterInterface):
 	def __init__(self, id , name):
@@ -36,7 +37,10 @@ class Cluster(ClusterInterface):
 					node.startDetectionThread()
 					message = "Cluster--The node %s is added to cluster." % self.getAllNodeStr()
 					logging.info(message)
-					result = {"code": "0","clusterId": self.id,"node":node_name, "message": message}
+					#result = {"code": "0","clusterId": self.id,"node":node_name, "message": message}
+					result = Response(code="succeed", 
+									  message=message, 
+									  data={"clusterId":self.id, "node":node_name})
 				else:
 					message += "the node %s is illegal.  " %node_name
 					logging.error(message)
@@ -44,7 +48,10 @@ class Cluster(ClusterInterface):
 			print str(e)
 			message = "Cluster-- add node fail , some node maybe overlapping or not in compute pool please check again! The node list is %s." % (self.getAllNodeStr())
 			logging.error(message)
-			result = {"code": "1", "clusterId": self.id, "message": message}
+			#result = {"code": "1", "clusterId": self.id, "message": message}
+			result = Response(code="failed", 
+							  message=message, 
+							  data={"clusterId":self.id})
 		finally:
 			return result
 
@@ -60,12 +67,18 @@ class Cluster(ClusterInterface):
 				if node.name == node_name:raise Exception
 			message = "Cluster delete node success! node is %s , node list is %s,cluster id is %s." % (node_name, self.getAllNodeStr(),self.id)
 			logging.info(message)
-			result = {"code": "0","clusterId": self.id, "node":node_name, "message": message}
+			#result = {"code": "0","clusterId": self.id, "node":node_name, "message": message}
+			result = Response(code="succeed", 
+							  message=message, 
+							  data={"clusterId":self.id, "node":node_name})
 		except Exception as e:
 			print str(e)
 			message = "Cluster delete node fail , node maybe not in compute pool please check again! node is %s  The node list is %s." % (node_name,self.getAllNodeStr())
 			logging.error(message)
-			result = {"code": "1", "node":node_name,"clusterId": self.id, "message": message}
+			#result = {"code": "1", "node":node_name,"clusterId": self.id, "message": message}
+			result = Response(code="failed", 
+							  message=message, 
+							  data={"clusterId":self.id, "node":node_name})
 		finally:
 			return result
 
@@ -103,12 +116,18 @@ class Cluster(ClusterInterface):
 				self.instance_list.append(instance)
 				message = "Cluster--Cluster add instance success ! The instance id is %s." % (instance_id)
 				logging.info(message)
-				result = {"code":"0","cluster id":self.id,"node":final_host,"instance id":instance_id,"message":message}
+				#result = {"code":"0","cluster id":self.id,"node":final_host,"instance id":instance_id,"message":message}
+				result = Response(code="succeed", 
+							      message=message, 
+							      data={"cluster id":self.id, "node":final_host, "instance id":instance_id})
 			except Exception as e:
 				print str(e)
 				message = "Cluster--Cluster add instance fail ,please check again! The instance id is %s." % (instance_id)
 				logging.error(message)
-				result = {"code":"1","cluster id":self.id,"instance id":instance_id,"message":message}
+				#result = {"code":"1","cluster id":self.id,"instance id":instance_id,"message":message}
+				result = Response(code="failed", 
+							      message=message, 
+							      data={"cluster id":self.id, "instance id":instance_id})
 			finally:
 				return result
 
@@ -121,7 +140,10 @@ class Cluster(ClusterInterface):
 		#if instanceid not in self.instacne_list:
 		message = "Cluster--delete instance success. this instance is now deleted (instance_id = %s)" % instance_id
 		logging.info(message)
-		result = {"code": "0", "clusterId": self.id, "instance id": instance_id, "message": message}
+		#result = {"code": "0", "clusterId": self.id, "instance id": instance_id, "message": message}
+		result = Response(code="succeed", 
+						  message=message, 
+						  data={"clusterId":self.id, "instance id":instance_id})
 		return result
 
 	def deleteInstanceByNode(self, node):

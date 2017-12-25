@@ -1,6 +1,18 @@
+#########################################################
+#:Date: 2017/12/13
+#:Version: 1
+#:Authors:
+#    - Elma Huang <huanghuei0206@gmail.com>
+#    - LSC <sclee@g.ncu.edu.tw>
+#:Python_Version: 2.7
+#:Platform: Unix
+#:Description:
+#   Command Line Interface for users.
+##########################################################
 import xmlrpclib
 import ConfigParser
 import argparse
+from Response import Response
 
 from enum import Enum
 from prettytable import PrettyTable
@@ -33,10 +45,11 @@ class HassAPI():
         self.END_color = '\033[0m'
 
     def showResult(self,result):
-        if result["code"] == "0":
-            return self.OK_color + "[Success] " + self.END_color + result["message"]
+        result = Response(code=result["code"], message=result["message"], data=result["data"])
+        if result.code == "succeed":
+            return self.OK_color + "[Success] " + self.END_color + result.message
         else:
-            return self.ERROR_color + "[Error] " + self.END_color + result["message"]
+            return self.ERROR_color + "[Error] " + self.END_color + result.message
 
     def showTable(self, result , type):
         # cluster list info
@@ -154,8 +167,9 @@ class HassAPI():
         elif self.args.command == "node-list":
             try:
                 self.HASS_result = self.server.listNode(self.args.uuid)
-                if self.HASS_result["code"] == "0":
-                    self.showTable(self.HASS_result["nodeList"], self.TABLE.NODE)
+                self.HASS_result = Response(code=self.HASS_result["code"], message=self.HASS_result["message"], data=self.HASS_result["data"])
+                if self.HASS_result.code == "succeed":
+                    self.showTable(self.HASS_result.data.get("nodeList"), self.TABLE.NODE)
                 else:
                     raise Exception
             except Exception as e:
@@ -218,8 +232,9 @@ class HassAPI():
         elif self.args.command == "instance-list":
             try:
                 self.HASS_result = self.server.listInstance(self.args.uuid)
-                if self.HASS_result["code"] == "0":
-                    self.showTable(self.HASS_result["instanceList"], self.TABLE.INSTANCE)
+                self.HASS_result = Response(code=self.HASS_result["code"], message=self.HASS_result["message"], data=self.HASS_result["data"])
+                if self.HASS_result.code == "succeed":
+                    self.showTable(self.HASS_result.data.get("instanceList"), self.TABLE.INSTANCE)
                 else:
                     raise Exception
             except Exception as e:

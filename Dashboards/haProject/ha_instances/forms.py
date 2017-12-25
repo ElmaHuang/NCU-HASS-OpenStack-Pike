@@ -37,6 +37,14 @@ from openstack_dashboard.dashboards.project.instances \
 
 LOG = logging.getLogger(__name__)
 
+class Response(object):
+	def __init__(self, code, message=None, data=None):
+		self.code = code
+		self.message = message
+		self.data = data
+
+
+
 class AddForm(forms.SelfHandlingForm):
     instance_id = forms.ChoiceField(label=_("Instance"))
 
@@ -75,9 +83,10 @@ class AddForm(forms.SelfHandlingForm):
 	    return False
 
 	random_cluster = random.choice(clusters)
-        result = server.addInstance(random_cluster[0], data['instance_id']).split(";")
-        if result[0] == '1':
-            err_msg = _(result[1])
+        result = server.addInstance(random_cluster[0], data['instance_id'])
+	result = Response(code=result["code"], message=result["message"], data=result["data"])
+        if result.code == 'failed':
+            err_msg = _(result.message)
             messages.error(request, err_msg)
             return False
         try:
@@ -121,9 +130,10 @@ class UpdateForm(forms.SelfHandlingForm):
         err_msg = _('Unable to remove protection of HA instance: %s ' % data['name'])
         if data['protection'] == 'False':
             cluster_id = self.get_cluster_by_instance(server, data['instance_id'])
-            result = server.deleteInstance(cluster_id, data['instance_id']).split(";")
-            if result[0] == '1':
-                err_msg = result[1]
+            result = server.deleteInstance(cluster_id, data['instance_id'])
+	    result = Response(code=result["code"], message=result["message"], data=result["data"])
+            if result.code  == 'failed':
+                err_msg = result.message
                 messages.error(request, err_msg)
                 return False
             try:
@@ -140,11 +150,18 @@ class UpdateForm(forms.SelfHandlingForm):
     def get_cluster_by_instance(self, server, instance_id):
         clusters = server.listCluster()
         cluster_uuid = ""
-        for (uuid,name) in clusters:
+        for cluster in clusters:
+	    uuid = cluster[0]
+	    name = cluster[1]
             _ha_instances = server.listInstance(uuid)
-            result,ha_instances = _ha_instances.split(";")
-            if result == '0':
-                ha_instances = ha_instances.split(",")
+            _ha_instances = Response(code=_ha_instances["code"], message=_ha_instances["message"], data=_ha_instances["data"])
+            #result,ha_instances = _ha_instances.split(";")
+	    result = _ha_instances.code
+	    ha_instance = _ha_instances.data.get("instanceList")
+	    ha_instances = []#all instance id of cluster
+            if result == 'succeed':
+		for _instance in ha_instance:
+                	ha_instances.append(_instance[0])
                 for _inst_id in ha_instances:
                     if instance_id in _inst_id:
                         cluster_uuid = uuid

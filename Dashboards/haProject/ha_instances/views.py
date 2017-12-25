@@ -16,6 +16,12 @@ from openstack_dashboard.dashboards.haProject.ha_instances\
 
 import xmlrpclib
 
+class Response(object):
+	def __init__(self, code, message=None, data=None):
+		self.code = code
+		self.message = message
+		self.data = data
+
 class AddView(forms.ModalFormView):
     form_class = project_forms.AddForm
     template_name = 'haProject/ha_instances/create.html'
@@ -70,14 +76,20 @@ class IndexView(tables.DataTableView):
         clusters = server.listCluster()
         instances = []
         ha_instances = []
-	for (uuid,name) in clusters:
+	for cluster in clusters:
+	    uuid = cluster[0]
+	    name = cluster[1]
             _cluster_instances = server.listInstance(uuid)
-            result,cluster_instances = _cluster_instances.split(";")
-            if result == '0':
+            _cluster_instances = Response(code=_cluster_instances["code"], message=_cluster_instances["message"], data=_cluster_instances["data"])
+            #result,cluster_instances = _cluster_instances.split(";")
+	    result = _cluster_instances.code
+	    cluster_instances = _cluster_instances.data.get("instanceList")
+            if result == 'succeed':
                 if cluster_instances != "":
-                    cluster_instances = cluster_instances.split(",")
-                    for _instance_id in cluster_instances:
-                        instance_id = _instance_id.split(":")[0]
+		    for _instance in cluster_instances:
+                    #cluster_instances = cluster_instances.split(",")
+                    #for _instance_id in cluster_instances:
+                        instance_id = _instance[0]
                         try:
                             instance = api.nova.server_get(self.request, instance_id)
                             instance.cluster_name = name

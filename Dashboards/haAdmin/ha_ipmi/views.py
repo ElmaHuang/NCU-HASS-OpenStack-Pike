@@ -56,17 +56,17 @@ class DetailView(tables.MultiTableView):
     def get_IPMI_Temp_data(self):
         authUrl = "http://user:0928759204@127.0.0.1:61209"
         server = xmlrpclib.ServerProxy(authUrl)
-        correct, result = server.getAllInfoOfNode(self.kwargs["node_id"])
+        result = server.getAllInfoOfNode(self.kwargs["node_id"])
         self.volt_list = []
         temp_data = []
-        if correct == "0":
-            data_id = 0
-            for data in result:
-                if "Temp" in data[0]:
-                    temp_data.append(Temperature(data_id, data[0], data[1], data[2], data[3], data[4]))
-                    data_id = data_id + 1
-                else:
-                    self.volt_list.append(data)
+        #if correct == "0":
+        data_id = 0
+        for data in result:
+            if "Temp" in data[0]:
+                temp_data.append(Temperature(data_id, data[0], data[1], data[2], data[3], data[4]))
+                data_id = data_id + 1
+            else:
+                self.volt_list.append(data)
         return temp_data
 
     def get_IPMI_Volt_data(self):

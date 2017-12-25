@@ -25,6 +25,7 @@ import sys
 from RecoveryManager import RecoveryManager
 from ClusterManager import ClusterManager
 from IPMINodeOperator import Operator
+from Response import Response
 
 class RequestHandler(SimpleXMLRPCRequestHandler):
 #   Handle RPC request from remote user, and suport access authenticate. 
@@ -108,24 +109,27 @@ class Hass (object):
         """
         try:
             createCluster_result = ClusterManager.createCluster(name)
-            if createCluster_result["code"] == "0":
+            if createCluster_result.code == "succeed":
                 if nodeList != []:
-                    addNode_result = ClusterManager.addNode(createCluster_result["clusterId"], nodeList)
-
-                    if addNode_result["code"] == "0":
-                        message = "Create HA cluster and add computing node success, cluster uuid is %s , add node message %s" % (createCluster_result["clusterId"], addNode_result["message"])
+                    addNode_result = ClusterManager.addNode(createCluster_result.data.get("clusterId"), nodeList)
+                    if addNode_result.code == "succeed":
+                        message = "Create HA cluster and add computing node success, cluster uuid is %s , add node message %s" % (createCluster_result.data.get("clusterId"), addNode_result.message)
                         logging.info(message)
-                        result= {"code" : "0","message": message}
+                        #result= {"code" : "0","message": message}
+                        result = Response(code="succeed", 
+                                          message=message)
                         return result
                     else:
                         #add node fail
-                        message = "The cluster is created.(uuid = " + createCluster_result["clusterId"] + ") But," + addNode_result["message"]
+                        message = "The cluster is created.(uuid = " + createCluster_result.data.get("clusterId") + ") But," + addNode_result.message
                         logging.error(message)
-                        result ={"code":"0","message":message}
+                        #result ={"code":"0","message":message}
+                        result = Response(code="succeed", 
+                                          message=message)
                         return result
                 else :#nodelist is None
                     #addNode_result = {"code":"0", "clusterId":createCluster_result["clusterId"], "message":"not add any node."}
-                    logging.info(createCluster_result["message"])
+                    logging.info(createCluster_result.message)
                     return createCluster_result
             else:
                 #create cluster

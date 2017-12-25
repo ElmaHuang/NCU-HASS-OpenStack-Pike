@@ -110,5 +110,5 @@ class InstancesTable(tables.DataTable):
     class Meta:
         name = "ha_instances"
         verbose_name = _("HA_Instances")
-        table_actions = (AddInstanceToProtectionAction,)
-        row_actions = (EditInstanceProtectionAction,)
+	table_actions = (AddInstanceToProtectionAction,)
+	row_actions = (EditInstanceProtectionAction,)

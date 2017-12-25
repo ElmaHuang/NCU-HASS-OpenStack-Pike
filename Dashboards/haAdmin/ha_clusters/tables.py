@@ -34,19 +34,19 @@ class DeleteHACluster(tables.DeleteAction):
             count
         )
     def handle(self, table, request, obj_ids):
-        authUrl = "http://user:0928759204@127.0.0.1:61209"
+	authUrl = "http://user:0928759204@127.0.0.1:61209"
         server = xmlrpclib.ServerProxy(authUrl)
-        name = []
-        for uuid in obj_ids:
+	name = []
+	for uuid in obj_ids:
             result = server.deleteCluster(uuid)
-            name.append(self.table.get_object_by_id(uuid).cluster_name) # get cluster's name
-            if result["code"] == '1':
-                err_msg = result["message"]
-                messages.error(request, err_msg)
-                return False
-        success_message = _('Deleted HA Cluster: %s' ) % ",".join(name)
-        messages.success(request, success_message)
-        return shortcuts.redirect(self.get_success_url(request))
+	    name.append(self.table.get_object_by_id(uuid).cluster_name) # get cluster's name
+	    if result["code"] == "1":
+	        err_msg = result["message"]
+	        messages.error(request, err_msg)
+	        return False
+	success_message = _('Deleted HA Cluster: %s' ) % ",".join(name)
+	messages.success(request, success_message)
+	return shortcuts.redirect(self.get_success_url(request))
 
 class DeleteComputingNode(tables.DeleteAction):
     @staticmethod
@@ -65,21 +65,22 @@ class DeleteComputingNode(tables.DeleteAction):
             count
         )
 
+
     def handle(self, table, request, obj_ids):
-        authUrl = "http://user:0928759204@127.0.0.1:61209"
-        server = xmlrpclib.ServerProxy(authUrl)
-        cluster_id = self.table.kwargs["cluster_id"]
-        node_names = []
-        for obj_id in obj_ids:
-            node_name = self.table.get_object_by_id(obj_id).computing_node_name
+	authUrl = "http://user:0928759204@127.0.0.1:61209"
+        server = xmlrpclib.ServerProxy(authUrl)	
+	cluster_id = self.table.kwargs["cluster_id"]
+	node_names = []
+	for obj_id in obj_ids:
+	    node_name = self.table.get_object_by_id(obj_id).computing_node_name
             result = server.deleteNode(cluster_id, node_name)
-            node_names.append(node_name)
+	    node_names.append(node_name)
             if result["code"] == '1':
-                err_msg = result["message"]
+	        err_msg = result["message"]
                 messages.error(request, err_msg)
                 return False
-        self.success_message = _("Deleted Computing Node: %s " % ",".join(node_names))
-        messages.success(request, self.success_message)
+	self.success_message = _("Deleted Computing Node: %s " % ",".join(node_names))
+	messages.success(request, self.success_message)
         return shortcuts.redirect(self.get_success_url(request))
 
 class CreateHAClusterAction(tables.LinkAction):
@@ -98,27 +99,35 @@ class AddComputingNodeAction(tables.LinkAction):
 
     def get_link_url(self, datum=None):
         cluster_id = self.table.kwargs["cluster_id"]
-        print urlresolvers.reverse(self.url,args=[cluster_id])
+	print urlresolvers.reverse(self.url,args=[cluster_id])
         return urlresolvers.reverse(self.url, args=[cluster_id])
 
 class ClustersTable(tables.DataTable):
-    name = tables.Column("cluster_name",link="horizon:haAdmin:ha_clusters:detail",verbose_name=_("Cluster Name"))
+    #message_list = "1234567"
+    name = tables.Column("cluster_name",
+			 link="horizon:haAdmin:ha_clusters:detail",
+ 	                 verbose_name=_("Cluster Name"))
+    
     computing_number = tables.Column("computing_node_number", verbose_name=_("# of Computing nodes"))
+
     instance_number = tables.Column("instance_number", verbose_name=_("# of Instances"))
     
     class Meta:
         name = "ha_clusters"
         verbose_name = _("HA_Clusters")
-        table_actions = (CreateHAClusterAction, DeleteHACluster)
-        row_actions = (DeleteHACluster,)
+	table_actions = (CreateHAClusterAction, DeleteHACluster)
+	row_actions = (DeleteHACluster,)
 
 class ClusterDetailTable(tables.DataTable):
+
     name = tables.Column("computing_node_name", verbose_name=_("Computing Node Name"))
+
     instance_number = tables.Column("instance_number", verbose_name=_("# of Instances"))
 
     class Meta:
-        name = "cluster_detail"
-        hidden_title = False
-        verbose_name = _("Computing Nodes")
-        table_actions = (AddComputingNodeAction, DeleteComputingNode)
-        row_actions = (DeleteComputingNode,)
+	name = "cluster_detail"
+	hidden_title = False
+	verbose_name = _("Computing Nodes")
+        table_actions = (AddComputingNodeAction, DeleteComputingNode) 
+	row_actions = (DeleteComputingNode,)
+
