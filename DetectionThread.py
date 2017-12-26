@@ -58,6 +58,7 @@ class DetectionThread(threading.Thread):
                 except Exception as e:
                     print "Exception : " + str(e)
                     self.stop()
+                self.server.updateDB()
             time.sleep(self.polling_interval)
 
     def stop(self):

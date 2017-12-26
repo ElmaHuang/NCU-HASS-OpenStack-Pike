@@ -384,6 +384,21 @@ class Hass (object):
             print str(e)
             logging.error("HASS--recover node %s fail" % node_name)
 
+    def updateDB(self):
+        """
+        The function for updating the data structures in the system. 
+        Args:
+        Return:
+            (bool) recover success or not.
+            True -> success.
+            False -> fail.
+        """
+        try:
+            result = ClusterManager.syncToDatabase()
+            return result
+        except Exception as e:
+            logging.error("HASS--update database fail : %s" % str(e))
+
 def main():
     config = ConfigParser.RawConfigParser()
     config.read('hass.conf')
