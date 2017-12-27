@@ -256,11 +256,14 @@ class IPMIManager(object):
         ipmi_watched_sensor_list = json.loads(self.config.get("ipmi_sensor","ipmi_watched_sensors"))
         upper_critical = int(self.config.get("ipmi_sensor","upper_critical"))
         lower_critical = int(self.config.get("ipmi_sensor","lower_critical"))
-        for sensor in ipmi_watched_sensor_list:
-            value = self.getTempInfoByNode(node_name, sensor)
-            if value > upper_critical or value < lower_critical:
-                return "Error"
-        return "OK"
+        try:
+            for sensor in ipmi_watched_sensor_list:
+                value = self.getTempInfoByNode(node_name, sensor)
+                if value > upper_critical or value < lower_critical:
+                    return "Error"
+            return "OK"
+        except Exception as e:
+            logging.error("IPMIModule-- getSensorStatus fail : %s" % str(e))
 
     def resetWatchDog(self, node_name):
         status = True

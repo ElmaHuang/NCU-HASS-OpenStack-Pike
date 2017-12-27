@@ -103,16 +103,17 @@ class RecoveryManager(object):
 			return self.recoverNodeByReboot(fail_node)
 
 	def recoverSensorCritical(self, cluster_id, fail_node_name):
-		cluster = ClusterManager.getCluster(cluster_id)
-		if not cluster:
-			logging.error("RecoverManager : cluster not found")
-			return
-		fail_node = cluster.getNodeByName(fail_node_name)
-		print "fail node is %s" % fail_node.name
-		print "start recovery vm"
-		self.recoverVM(cluster, fail_node)
-		print "end recovery vm"
-		return self.recoverNodeByShutoff(fail_node)
+		pass
+		# cluster = ClusterManager.getCluster(cluster_id)
+		# if not cluster:
+		# 	logging.error("RecoverManager : cluster not found")
+		# 	return
+		# fail_node = cluster.getNodeByName(fail_node_name)
+		# print "fail node is %s" % fail_node.name
+		# print "start recovery vm"
+		# self.recoverVM(cluster, fail_node)
+		# print "end recovery vm"
+		# return self.recoverNodeByShutoff(fail_node)
 
 	def recoverServiceFail(self, cluster_id, fail_node_name):
 		cluster = ClusterManager.getCluster(cluster_id) 
