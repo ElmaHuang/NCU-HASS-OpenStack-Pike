@@ -211,11 +211,11 @@ class RecoveryManager(object):
 		print "start recover node by shutoff"
 		result = fail_node.shutoff()
 		if result.code == "succeed":
-			return True
+			return False # shutoff need to remove from cluster, so return False
 		else:
 			logging.error(result.message)
 			print result.message
-			return False
+			return True
 
 	def recoverNodeByStart(self, fail_node):
 		print "start recover node by start"
