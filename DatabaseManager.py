@@ -31,12 +31,12 @@ class DatabaseManager(object):
             sys.exit(1)
 
     def connect(self):
-        self.db_conn = MySQLdb.connect(  host = self.config.get("mysql", "mysql_ip"),
-                                         user = self.config.get("mysql", "mysql_username"),
-                                        passwd = self.config.get("mysql", "mysql_password"),
-                                        db = self.config.get("mysql", "mysql_db"),
-                                    )
-        self.db = self.db_conn.cursor(cursorclass = MySQLdb.cursors.DictCursor)
+        self.db_conn = MySQLdb.connect(host=self.config.get("mysql", "mysql_ip"),
+                                       user=self.config.get("mysql", "mysql_username"),
+                                       passwd=self.config.get("mysql", "mysql_password"),
+                                       db=self.config.get("mysql", "mysql_db"),
+                                       )
+        self.db = self.db_conn.cursor(cursorclass=MySQLdb.cursors.DictCursor)
 
     def checkDB(self):
         try:
@@ -106,12 +106,13 @@ class DatabaseManager(object):
                     node_list.append(node["node_name"])
                 for instance in ha_instance_date:
                     instance_list.append(instance["instance_id"])
-                #cluster_id = cluster["cluster_uuid"][:8]+"-"+cluster["cluster_uuid"][8:12]+"-"+cluster["cluster_uuid"][12:16]+"-"+cluster["cluster_uuid"][16:20]+"-"+cluster["cluster_uuid"][20:]
+                # cluster_id = cluster["cluster_uuid"][:8]+"-"+cluster["cluster_uuid"][8:12]+"-"+cluster["cluster_uuid"][12:16]+"-"+cluster["cluster_uuid"][16:20]+"-"+cluster["cluster_uuid"][20:]
                 cluster_id = cluster["cluster_uuid"]
                 cluster_name = cluster["cluster_name"]
-                exist_cluster.append({"cluster_id": cluster_id, "cluster_name": cluster_name, "node_list": node_list, "instance_list": instance_list})
-                #cluster_manager.createCluster(cluster_name = name , cluster_id = cluster_id)
-                #cluster_manager.addNode(cluster_id, node_list)
+                exist_cluster.append({"cluster_id": cluster_id, "cluster_name": cluster_name, "node_list": node_list,
+                                      "instance_list": instance_list})
+                # cluster_manager.createCluster(cluster_name = name , cluster_id = cluster_id)
+                # cluster_manager.addNode(cluster_id, node_list)
             logging.info("Hass AccessDB - Read data success")
             return exist_cluster
 
@@ -125,20 +126,21 @@ class DatabaseManager(object):
         self.checkDB()
         self.resetAll()
         try:
-            #cluster_list = cluster_manager.getClusterList()
-            for cluster_id , cluster in cluster_list.items():
+            # cluster_list = cluster_manager.getClusterList()
+            for cluster_id, cluster in cluster_list.items():
                 # sync cluster
-                data = {"cluster_uuid":cluster_id, "cluster_name":cluster.name}
+                data = {"cluster_uuid": cluster_id, "cluster_name": cluster.name}
                 self.writeDB("ha_cluster", data)
                 # sync node
                 node_list = cluster.getNodeList()
                 for node in node_list:
-                    data = {"node_name": node.name,"below_cluster":node.cluster_id}
+                    data = {"node_name": node.name, "below_cluster": node.cluster_id}
                     self.writeDB("ha_node", data)
-                #sync instance
+                # sync instance
                 instance_list = cluster.getProtectedInstanceList()
                 for instance in instance_list:
-                    data = {"instance_id": instance.id, "below_cluster": cluster_id, "host": instance.host, "status": instance.status, "network": str(instance.network)}
+                    data = {"instance_id": instance.id, "below_cluster": cluster_id, "host": instance.host,
+                            "status": instance.status, "network": str(instance.network)}
                     self.writeDB("ha_instance", data)
         except MySQLdb.Error, e:
             self.closeDB()
@@ -146,7 +148,7 @@ class DatabaseManager(object):
             print "MySQL Error: %s" % str(e)
             sys.exit(1)
 
-    def writeDB(self , dbName , data):
+    def writeDB(self, dbName, data):
         self.checkDB()
         if dbName == "ha_cluster":
             format = "INSERT INTO ha_cluster (cluster_uuid,cluster_name) VALUES (%(cluster_uuid)s, %(cluster_name)s);"
@@ -167,7 +169,7 @@ class DatabaseManager(object):
         table_list = []
         cmd = "show tables"
         self.db.execute(cmd)
-        res = self.db.fetchall() #({'Tables_in_hass': 'talbe1'}, {'Tables_in_hass': 'table2'})
+        res = self.db.fetchall()  # ({'Tables_in_hass': 'talbe1'}, {'Tables_in_hass': 'table2'})
         index = "Tables_in_%s" % self.config.get("mysql", "mysql_db")
         for table in res:
             table_list.append(table[index])
@@ -185,11 +187,11 @@ class DatabaseManager(object):
         self.db.execute(cmd)
         self.db_conn.commit()
 
-
     def closeDB(self):
         self.checkDB()
         self.db.close()
         self.db_conn.close()
+
 
 class IIIDatabaseManager(object):
     def __init__(self):
@@ -203,20 +205,21 @@ class IIIDatabaseManager(object):
             logging.error("Hass AccessDB(III) - connect to database failed (MySQL Error: %s)", str(e))
             print "MySQL Error: %s" % str(e)
             sys.exit(1)
+
     def connect(self):
-        self.db_conn = MySQLdb.connect(  host = self.config.get("iii", "mysql_ip"),
-                                         user = self.config.get("iii", "mysql_username"),
-                                        passwd = self.config.get("iii", "mysql_password"),
-                                        db = self.config.get("iii", "mysql_db"),
-                                    )
-        self.db = self.db_conn.cursor(cursorclass = MySQLdb.cursors.DictCursor)
+        self.db_conn = MySQLdb.connect(host=self.config.get("iii", "mysql_ip"),
+                                       user=self.config.get("iii", "mysql_username"),
+                                       passwd=self.config.get("iii", "mysql_password"),
+                                       db=self.config.get("iii", "mysql_db"),
+                                       )
+        self.db = self.db_conn.cursor(cursorclass=MySQLdb.cursors.DictCursor)
 
     def updateInstance(self, instance_id, node):
         self.checkDB()
         compute_num = self._getComputeNum(node)
         instance_resource_id = self.getInstanceResourceID(instance_id)
 
-        if not instance_resource_id: 
+        if not instance_resource_id:
             print "%s not a iii VM, don't need to modify the database!" % instance_id
             logging.info("%s not a iii VM, don't need to modify the database!" % instance_id)
             return
@@ -229,7 +232,6 @@ class IIIDatabaseManager(object):
             OR parent=14
             """, (compute_num, instance_resource_id))
         self.db_conn.commit()
-
 
     def getInstanceResourceID(self, instance_id):
         self.checkDB()

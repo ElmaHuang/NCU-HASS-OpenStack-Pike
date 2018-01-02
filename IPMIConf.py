@@ -13,7 +13,7 @@
 #   IPMI Configuration file.
 ##########################################################
 
-BASE_CMD = "ipmitool -I lanplus -H %s -U %s -P %s " # %(NODEID , USER , PASSWD)
+BASE_CMD = "ipmitool -I lanplus -H %s -U %s -P %s "  # %(NODEID , USER , PASSWD)
 
 REBOOTNODE = "chassis power reset"
 REBOOTNODE_SUCCESS_MSG = "Reset"
