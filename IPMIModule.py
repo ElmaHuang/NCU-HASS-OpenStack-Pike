@@ -128,6 +128,7 @@ class IPMIManager(object):
         except Exception as e:
             message = "Error! Unable to get computing node : %s's hardware information." % node_name
             logging.error("IpmiModule getNodeInfo - %s, %s" % (message, e))
+            return "Error"
 
     def dataClean(self, raw_data, type=None):
         if type == "temperature":
@@ -262,12 +263,12 @@ class IPMIManager(object):
         try:
             for sensor in ipmi_watched_sensor_list:
                 value = self.getTempInfoByNode(node_name, sensor)
+                if value == "Error" and self.getPowerStatus(node_name) != "OK":
+                    return "OK"
                 if value > upper_critical or value < lower_critical:
                     return "Error"
             return "OK"
         except Exception as e:
-            if self.getPowerStatus(node_name) != "OK":
-                return "OK"
             logging.error("IPMIModule-- getSensorStatus fail : %s" % str(e))
 
     def resetWatchDog(self, node_name):
