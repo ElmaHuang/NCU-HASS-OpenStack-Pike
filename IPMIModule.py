@@ -266,6 +266,8 @@ class IPMIManager(object):
                     return "Error"
             return "OK"
         except Exception as e:
+            if self.getPowerStatus(node_name) != "OK":
+                return "OK"
             logging.error("IPMIModule-- getSensorStatus fail : %s" % str(e))
 
     def resetWatchDog(self, node_name):

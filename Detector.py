@@ -103,10 +103,7 @@ class Detector(object):
         if not self.ipmi_status:
             return State.HEALTH
         status = self.ipmi_manager.getSensorStatus(self.node)
-        power_status = self.ipmi_manager.getPowerStatus(self.node)
         if status == "OK":
-            return State.HEALTH
-        if power_status != "OK":
             return State.HEALTH
         return State.SENSOR_FAIL
 
