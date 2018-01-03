@@ -34,16 +34,8 @@ class Instance(object):
     def hasVolume(self):
         return self.nova_client.isInstanceGetVolume(self.id)
 
-    ''''
-    def isPowerOn(self):
-        if not self.isPowerOn():
-            logging.info("VM %s is not running" % self.name)
-            return False
-        return True
-    '''
-
     def updateInfo(self):
-        self.host = self.nova_client.getInstanceHost(self.id)  # checkinstanceState ??
+        self.host = self.nova_client.getInstanceHost(self.id)  # checkinstanceState
         self.status = self.nova_client.getInstanceState(self.id)
         self.network = self.nova_client.getInstanceNetwork(self.id)
 
@@ -67,4 +59,11 @@ class Instance(object):
         so.send()
         # print ip
         so.close()
+    '''
+    '''
+    def isPowerOn(self):
+        if not self.isPowerOn():
+            logging.info("VM %s is not running" % self.name)
+            return False
+        return True
     '''
