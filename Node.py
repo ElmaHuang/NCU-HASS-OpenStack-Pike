@@ -39,7 +39,7 @@ class Node(NodeInterface):
     def reboot(self):
         return self.ipmi.rebootNode(self.name)
 
-    def InstanceOverlappingInLibvirt(self, instance):
+    def instanceOverlappingInLibvirt(self, instance):
         return instance.name in self._get_virsh_list()
 
     def undefineInstance(self, instance):
