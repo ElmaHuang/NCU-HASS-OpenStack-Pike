@@ -47,7 +47,7 @@ class Cluster(ClusterInterface):
         except Exception as e:
             print str(e)
             message = "Cluster-- add node fail , some node maybe overlapping or not in compute pool please check again! The node list is %s." % (
-            self.getAllNodeStr())
+                self.getAllNodeStr())
             logging.error(message)
             # result = {"code": "1", "clusterId": self.id, "message": message}
             result = Response(code="failed",
@@ -67,7 +67,7 @@ class Cluster(ClusterInterface):
             for node in self.node_list:
                 if node.name == node_name: raise Exception
             message = "Cluster delete node success! node is %s , node list is %s,cluster id is %s." % (
-            node_name, self.getAllNodeStr(), self.id)
+                node_name, self.getAllNodeStr(), self.id)
             logging.info(message)
             # result = {"code": "0","clusterId": self.id, "node":node_name, "message": message}
             result = Response(code="succeed",
@@ -76,7 +76,7 @@ class Cluster(ClusterInterface):
         except Exception as e:
             print str(e)
             message = "Cluster delete node fail , node maybe not in compute pool please check again! node is %s  The node list is %s." % (
-            node_name, self.getAllNodeStr())
+                node_name, self.getAllNodeStr())
             logging.error(message)
             # result = {"code": "1", "node":node_name,"clusterId": self.id, "message": message}
             result = Response(code="failed",
@@ -92,11 +92,6 @@ class Cluster(ClusterInterface):
         return ret
 
     def addInstance(self, instance_id):
-        # self.host = None
-        '''
-        if self.isProtected(instance_id): # check instance is already being protected
-            raise Exception("this instance is already being protected!")
-        '''
         if not self.checkInstanceExist(instance_id):
             raise Exception("Not any node have this instance!")
         elif not self.checkInstanceGetVolume(instance_id):
@@ -106,7 +101,6 @@ class Cluster(ClusterInterface):
         else:
             try:
                 # Live migration VM to cluster node
-                # print "start live migration"
                 final_host = self.checkInstanceHost(instance_id)
                 if final_host == None:
                     final_host = self.liveMigrateInstance(instance_id)
@@ -127,7 +121,7 @@ class Cluster(ClusterInterface):
                 print str(e)
                 logging.error("Cluster-- add instance fail : %s" % str(e))
                 message = "Cluster--Cluster add instance fail ,please check again! The instance id is %s." % (
-                instance_id)
+                    instance_id)
                 logging.error(message)
                 # result = {"code":"1","cluster id":self.id,"instance id":instance_id,"message":message}
                 result = Response(code="failed",
@@ -137,18 +131,25 @@ class Cluster(ClusterInterface):
                 return result
 
     def deleteInstance(self, instance_id):
+        result = None
         for instance in self.instance_list:
-            host = instance.host
+            # host = instance.host
             if instance.id == instance_id:
                 self.instance_list.remove(instance)
-            # self.sendUpdateInstance(host)
+                message = "Cluster--delete instance success. this instance is deleted (instance_id = %s)" % instance_id
+                logging.info(message)
+                # result = {"code": "0", "clusterId": self.id, "instance id": instance_id, "message": message}
+                result = Response(code="succeed",
+                                  message=message,
+                                  data={"cluster_id": self.id, "instance_id": instance_id})
         # if instanceid not in self.instacne_list:
-        message = "Cluster--delete instance success. this instance is now deleted (instance_id = %s)" % instance_id
-        logging.info(message)
-        # result = {"code": "0", "clusterId": self.id, "instance id": instance_id, "message": message}
-        result = Response(code="succeed",
-                          message=message,
-                          data={"clusterId": self.id, "instance id": instance_id})
+        if result == None:
+            message = "Cluster--delete instance fail ,please check again! The instance id is %s." % instance_id
+            logging.error(message)
+            # result = {"code": "1", "cluster id": self.id, "instance id": instance_id, "message": message}
+            result = Response(code="failed",
+                              message=message,
+                              data={"cluster_id": self.id, "instance_id": instance_id})
         return result
 
     def deleteInstanceByNode(self, node):
@@ -169,7 +170,7 @@ class Cluster(ClusterInterface):
                 self.deleteInstance(info[0])
             else:
                 ret.append(info)
-            # self.sendUpdateInstance(instance.host)
+                # self.sendUpdateInstance(instance.host)
         return ret
 
     # cluster.addInstance
@@ -178,28 +179,6 @@ class Cluster(ClusterInterface):
             if node.containsInstance(instance_id):
                 return node
         return None
-
-    '''
-    def _isNodeDuplicate(self , unchecked_node_name):
-        for node in self.node_list:
-            if node.name == unchecked_node_name:
-                return True
-        return False
-        
-    #addNode call
-    def _getIPMIStatus(self, node_name):
-        config = ConfigParser.RawConfigParser()
-        config.read('hass.conf')
-        ip_dict = dict(config._sections['ipmi'])
-        return node_name in ip_dict
-        
-    def _nodeIsIllegal(self , unchecked_node_name):
-        if not self._isInComputePool(unchecked_node_name):
-            return True
-        #if self._isNodeDuplicate(unchecked_node_name):
-            #return True
-        return False		
-    '''
 
     def _isInComputePool(self, unchecked_node_name):
         return unchecked_node_name in self.nova_client.getComputePool()
@@ -231,7 +210,7 @@ class Cluster(ClusterInterface):
     def deleteAllNode(self):
         for node in self.node_list[:]:
             self.deleteNode(node.name)
-        # print "node list:",self.node_list
+            # print "node list:",self.node_list
 
     def getInfo(self):
         return [self.id, self.name]
@@ -269,7 +248,7 @@ class Cluster(ClusterInterface):
             if instance.id == instance_id:
                 return True
         message = "this instance is  already in the cluster. Instance id is %s. cluster id is %s .instance list is %s" % (
-        instance_id, self.id, self.instance_list)
+            instance_id, self.id, self.instance_list)
         logging.error(message)
         return False
 
@@ -283,7 +262,7 @@ class Cluster(ClusterInterface):
         for instance in self.instance_list:
             instance.updateInfo()
             print "instance %s update host to %s" % (instance.name, instance.host)
-        # instance.host = host
+            # instance.host = host
 
     def checkInstanceHost(self, instance_id):
         host = self.nova_client.getInstanceHost(instance_id)
@@ -317,28 +296,48 @@ class Cluster(ClusterInterface):
                 ret.append(instance)
         return ret
 
-    '''
-    def sendToLocal(self,ip):
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.bind(('192.168.0.112', 5001))
-        s.listen(5)
-        # s.settimeout(5)
-        while True:
-            cs, addr = s.accept()
-            print "addr:", addr
-            cs.send(ip)
-            d = cs.recv(1024)
-            # print d
-            if d == "get":
-                cs.close()
-            else:
-                continue
-    '''
-
 
 if __name__ == "__main__":
     a = Cluster("123", "name")
     list = ["compute3"]
     a.addNode(list)
     host = a.findNodeByInstance("0e0ce568-4ae3-4ade-b072-74edeb3ae58c")
-# print "h:",host
+    # print "h:",host
+    '''
+    def _isNodeDuplicate(self , unchecked_node_name):
+        for node in self.node_list:
+            if node.name == unchecked_node_name:
+                return True
+        return False
+
+    #addNode call
+    def _getIPMIStatus(self, node_name):
+        config = ConfigParser.RawConfigParser()
+        config.read('hass.conf')
+        ip_dict = dict(config._sections['ipmi'])
+        return node_name in ip_dict
+
+    def _nodeIsIllegal(self , unchecked_node_name):
+        if not self._isInComputePool(unchecked_node_name):
+            return True
+        #if self._isNodeDuplicate(unchecked_node_name):
+            #return True
+        return False		
+    '''
+    '''
+     def sendToLocal(self,ip):
+         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+         s.bind(('192.168.0.112', 5001))
+         s.listen(5)
+         # s.settimeout(5)
+         while True:
+             cs, addr = s.accept()
+             print "addr:", addr
+             cs.send(ip)
+             d = cs.recv(1024)
+             # print d
+             if d == "get":
+                 cs.close()
+             else:
+                 continue
+     '''
