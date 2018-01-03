@@ -173,7 +173,7 @@ class RecoveryManager(object):
                 logging.error("RecoverManager - The instance %s evacuate failed" % instance.id)
 
         print "check instance status"
-        status = self.checkInstanceStatus(fail_node, cluster)
+        status = self.checkInstanceNetworkStatus(fail_node, cluster)
         if status == False:
             logging.error("RecoverManager : check vm status false")
 
@@ -293,14 +293,17 @@ class RecoveryManager(object):
             print str(e)
             return False
 
-    def checkInstanceStatus(self, fail_node, cluster, check_timeout=60):
+    def checkInstanceNetworkStatus(self, fail_node, cluster, check_timeout=60):
         status = False
         fail = False
         protected_instance_list = cluster.getProtectedInstanceListByNode(fail_node)
         for instance in protected_instance_list:
             openstack_instance = self.nova_client.getVM(instance.id)
             try:
-                ip = str(openstack_instance.networks['selfservice'][1])
+                if "provider" in openstack_instance.networks:
+                    ip = str(openstack_instance.networks['provider'][0])
+                else:
+                    ip = str(openstack_instance.networks['selfservice'][1])
                 status = self._pingInstance(ip, check_timeout)
             except Exception as e:
                 print "vm : %s has no floating network, abort ping process!" % instance.name
