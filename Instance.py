@@ -21,12 +21,9 @@ class Instance(object):
         self.id = id
         self.name = name
         self.host = host
-        self.network = None
-        self.status = None
+        self.network = network
+        self.status = status
         self.nova_client = NovaClient.getInstance()
-        self.updateInfo()
-
-    # self.sendIP()
 
     def isPowerOn(self):
         return self.nova_client.isInstancePowerOn(self.id)

@@ -217,7 +217,6 @@ class RecoveryManager(object):
         else:
             logging.error(result.message)
             print result.message
-            return True
 
     def recoverNodeByStart(self, fail_node):
         print "start recover node by start"
