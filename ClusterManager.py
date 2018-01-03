@@ -126,7 +126,7 @@ class ClusterManager():
         else:
             try:
                 result = cluster.addNode(node_name_list)
-                logging.info("ClusterManager--add node success.cluster id is %s ,node is %s " % (cluster_id, node_name))
+                logging.info("ClusterManager--add node success.cluster id is %s ,node is %s " % (cluster_id, node_name_list))
                 if result.code == "succeed" and write_DB:
                     ClusterManager.syncToDatabase()
                 return result
@@ -239,8 +239,8 @@ class ClusterManager():
                 logging.info("ClusterManager--delete instance success")
                 return result
             except Exception as e:
-                logging.error(str(e))
-                message = "ClusterManager--delete instance failed. this instance is not being protected (instance_id = %s)" % instance_id
+                #logging.error(str(e))
+                message = "ClusterManager--delete instance failed. this instance is not being protected (instance_id = %s)"+str(e) % instance_id
                 logging.error(message)
                 # result = {"code": "1", "clusterId":cluster_id, "message":message}
                 result = Response(code="failed",
