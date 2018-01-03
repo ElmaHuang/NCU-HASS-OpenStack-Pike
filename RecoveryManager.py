@@ -159,7 +159,7 @@ class RecoveryManager(object):
         protected_instance_list = cluster.getProtectedInstanceListByNode(fail_node)
         print "protected list : %s" % protected_instance_list
         for instance in protected_instance_list:
-            if target_host.InstanceOverlappingInLibvirt(instance):
+            if target_host.instanceOverlappingInLibvirt(instance):
                 print "instance %s overlapping in %s" % (instance.name, target_host.name)
                 print "start undefine instance in %s" % target_host.name
                 target_host.undefineInstance(instance)
