@@ -1,16 +1,9 @@
-from django.utils.translation import ugettext_lazy as _
-from django.utils.translation import pgettext_lazy
-
 from django import template
 from django.template.defaultfilters import title  # noqa
-
-from horizon.utils import filters
-
-
+from django.utils.translation import pgettext_lazy
+from django.utils.translation import ugettext_lazy as _
 from horizon import tables
-
-from openstack_dashboard import api
-
+from horizon.utils import filters
 
 POWER_STATES = {
     0: "NO STATE",
@@ -24,6 +17,7 @@ POWER_STATES = {
     8: "FAILED",
     9: "BUILDING",
 }
+
 
 class AddInstanceToProtectionAction(tables.LinkAction):
     name = "add_to_protection"
@@ -39,7 +33,7 @@ class EditInstanceProtectionAction(tables.LinkAction):
     url = "horizon:haProject:ha_instances:update"
     classes = ("ajax-modal",)
     icon = "pencil"
-     
+
 
 def get_ips(instance):
     template_name = 'haProject/ha_instances/_instance_ips.html'
@@ -52,7 +46,7 @@ def get_ips(instance):
 
         for address in addresses:
             if ('OS-EXT-IPS:type' in address and
-               address['OS-EXT-IPS:type'] == "floating"):
+                        address['OS-EXT-IPS:type'] == "floating"):
                 ip_groups[ip_group]["floating"].append(address)
             else:
                 ip_groups[ip_group]["non_floating"].append(address)
@@ -62,8 +56,10 @@ def get_ips(instance):
     }
     return template.loader.render_to_string(template_name, context)
 
+
 def get_power_state(instance):
     return POWER_STATES.get(getattr(instance, "OS-EXT-STS:power_state", 0), '')
+
 
 POWER_DISPLAY_CHOICES = (
     ("NO STATE", pgettext_lazy("Power state of an Instance", u"No State")),
@@ -78,11 +74,12 @@ POWER_DISPLAY_CHOICES = (
     ("BUILDING", pgettext_lazy("Power state of an Instance", u"Building")),
 )
 
+
 class InstancesTable(tables.DataTable):
     name = tables.Column("name",
                          link="horizon:project:instances:detail",
                          verbose_name=_("Instance Name"))
-    
+
     ip = tables.Column(get_ips,
                        verbose_name=_("IP Address"),
                        attrs={'data-type': "ip"})
@@ -93,10 +90,10 @@ class InstancesTable(tables.DataTable):
                           display_choices=POWER_DISPLAY_CHOICES)
 
     created = tables.Column("created",
-			    verbose_name=_("Time since created"),
-			    filters=(filters.parse_isotime,
-				     filters.timesince_sortable),
-			    attrs={'data-type': 'timesince'})
+                            verbose_name=_("Time since created"),
+                            filters=(filters.parse_isotime,
+                                     filters.timesince_sortable),
+                            attrs={'data-type': 'timesince'})
     """
     name = tables.Column('name', \
                          verbose_name=_("Name"))
@@ -107,8 +104,9 @@ class InstancesTable(tables.DataTable):
     image_name = tables.Column('image_name', \
                                verbose_name=_("Image Name"))
     """
+
     class Meta:
         name = "ha_instances"
         verbose_name = _("HA_Instances")
-	table_actions = (AddInstanceToProtectionAction,)
-	row_actions = (EditInstanceProtectionAction,)
+        table_actions = (AddInstanceToProtectionAction,)
+        row_actions = (EditInstanceProtectionAction,)
