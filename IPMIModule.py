@@ -227,6 +227,8 @@ class IPMIManager(object):
             initial = self._getOSValue(node_name, IPMIConf.OS_TYPE_INITIAL)
             present = self._getOSValue(node_name, IPMIConf.OS_TYPE_PRESENT)
 
+            if initial == False or present == False:
+                return "Error"
             if (initial - present) > IPMIConf.WATCHDOG_THRESHOLD:
                 return "Error"
             if prev_initial != initial:
@@ -251,6 +253,8 @@ class IPMIManager(object):
             raise Exception("Error! The subprocess's command is invalid.")
         while True:
             info = p.stdout.readline()
+            if "Stopped" in info:
+                return False
             if not info:
                 break
             if value_type in info:
