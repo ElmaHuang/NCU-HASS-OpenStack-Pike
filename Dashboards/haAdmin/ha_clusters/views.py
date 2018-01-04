@@ -40,31 +40,13 @@ class IndexView(tables.DataTableView):
     table_class = project_tables.ClustersTable
     template_name = 'haAdmin/ha_clusters/index.html'
     page_title = _("HA_Clusters")
-    # LOG.error("aaaaaaaaaaaaaaaa")
-    #
-    #
-    '''
-    authUrl = "http://user:0928759204@127.0.0.1:61209"
-    server = xmlrpclib.ServerProxy(authUrl)
-    result = server.listCluster()
-    for cluster in result:
-        uuid = cluster[0]
-	LOG.error(uuid)
-        node_infoo = server.listInstance(uuid)["instanceList"]
-        LOG.error(node_infoo)
-	LOG.error(len(node_infoo))
-    '''
 
-    #
-    #         
     def get_data(self):
         authUrl = "http://user:0928759204@127.0.0.1:61209"
         server = xmlrpclib.ServerProxy(authUrl)
         result = server.listCluster()
         clusters = []
         for cluster in result:
-            node_info = []
-            instance_info = []
             uuid = cluster[0]
             name = cluster[1]
             node_number = 0

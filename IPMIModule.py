@@ -214,7 +214,7 @@ class IPMIManager(object):
         AllTemp = ["Temp", "Inlet Temp", "Fan1", "Fan2"]
         try:
             result = self.getNodeInfoByType(node_name, AllTemp)
-            logging.info("IPMIModule--getAllInfoMoudle finish %s" % result["message"])
+            logging.info("IPMIModule--getAllInfoMoudle finish %s" % result.message)
             return result
         except Exception as e:
             logging.error("IPMIModule--getAllInfoNode fail" + str(e))

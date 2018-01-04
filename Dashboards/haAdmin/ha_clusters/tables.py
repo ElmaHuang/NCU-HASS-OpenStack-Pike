@@ -116,7 +116,6 @@ class ClustersTable(tables.DataTable):
 
 class ClusterDetailTable(tables.DataTable):
     name = tables.Column("computing_node_name", verbose_name=_("Computing Node Name"))
-
     instance_number = tables.Column("instance_number", verbose_name=_("# of Instances"))
 
     class Meta:
