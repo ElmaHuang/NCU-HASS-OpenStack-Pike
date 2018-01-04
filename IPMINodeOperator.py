@@ -17,12 +17,12 @@
 
 from NovaClient import NovaClient
 from IPMIModule import IPMIManager
-import time
 from ClusterManager import ClusterManager
+from Response import Response
+import time
 import ConfigParser
 import logging
 import socket
-from Response import Response
 
 
 class Operator(object):

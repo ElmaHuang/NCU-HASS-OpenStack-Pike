@@ -119,7 +119,7 @@ class Cluster(ClusterInterface):
                                   data={"cluster id": self.id, "node": final_host, "instance id": instance_id})
             except Exception as e:
                 print str(e)
-                message = "Cluster--Cluster add instance fail ,please check again! The instance id is %s."+str(e) % (
+                message = "Cluster--Cluster add instance fail ,please check again! The instance id is %s." + str(e) % (
                     instance_id)
                 logging.error(message)
                 # result = {"code":"1","cluster id":self.id,"instance id":instance_id,"message":message}
