@@ -215,8 +215,8 @@ class IPMIManager(object):
             result = self.getNodeInfoByType(node_name, AllTemp)
             logging.info("IPMIModule--getAllInfoMoudle finish %s" % result["message"])
             return result
-        except:
-            logging.error("IPMIModule--getAllInfoNode fail")
+        except Exception as e:
+            logging.error("IPMIModule--getAllInfoNode fail"+str(e))
 
     def getOSStatus(self, node_name):
         status = "OK"
