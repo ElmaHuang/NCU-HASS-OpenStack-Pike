@@ -1,28 +1,28 @@
 import socket
 import asyncore
-import socket
 import sys
 import ConfigParser
 import xmlrpclib
 import time
-#import libvirt
-#import subprocess
-from HostFailures import  HostFailure
+from ReceiveInfoFromController import ReceiveInfoFromController
+from HostFailures import HostFailures
 from InstanceFailures import InstanceFailure
-from RecoveryInstance import RecoveryInstance
+
 
 class DetectionAgent():
     def __init__(self):
-        config = ConfigParser.RawConfigParser()
-        config.read('hass_node.conf')
-        self.port = int(config.get("polling","listen_port"))
-        self.version = int(config.get("version","version"))
-        
+        pass
+        # config = ConfigParser.RawConfigParser()
+        # config.read('hass_node.conf')
+        # self.host = None
+        # self.port = int(config.get("polling","listen_port"))
+        # self.version = int(config.get("version","version"))
+
+    '''   
     def startListen(self):
         print "create listen thread"
         server = PollingHandler('', self.port, self.version)
         asyncore.loop()
-    
 
 class PollingHandler(asyncore.dispatcher):
     def __init__(self, host, port, version):
@@ -32,12 +32,11 @@ class PollingHandler(asyncore.dispatcher):
         self.bind((host, port))
         #self.libvirt_uri = "qemu:///system"
         self.version = version
-        self.host = host
-        self.recover = RecoveryInstance()
-        self.host_detection = HostFailure(self.version)
-        self.host_detection.start()
-        self.instance_detection = InstanceFailure(self.host)
-        self.instance_detection.start()
+        #self.host = host
+        #self.host_detection = HostFailure(self.version)
+        #self.host_detection.start()
+        #self.instance_detection = InstanceFailure(self.host)
+        #self.instance_detection.start()
         self.authUrl = "http://user:0928759204@192.168.0.112:61209"
         self.server = xmlrpclib.ServerProxy(self.authUrl)
         #self.server.test_auth_response()
@@ -56,7 +55,7 @@ class PollingHandler(asyncore.dispatcher):
                 self.sendto(check_result, addr)
 
         #instancelist = self.getHAInstance()
-        '''
+        
         if instancelist != []:
             #instance_detection = InstanceFailure(instancelist)
             time.sleep(5)
@@ -73,8 +72,7 @@ class PollingHandler(asyncore.dispatcher):
                             recovery_result = self.recover.rebuildInstance(fail_instance)
                             if recovery_result == False:
                              self.server.deleteInstacne(fail_instance)
-        '''
-    '''
+
     def check_services(self):
         message = ""
         #check libvirt
@@ -116,7 +114,7 @@ class PollingHandler(asyncore.dispatcher):
             print str(e)
             return False
         return True
-    '''
+    
     def check_host(self):
         result = ""
         with open('./host_fail.log', 'r') as fs:
@@ -144,16 +142,26 @@ class PollingHandler(asyncore.dispatcher):
                 if instance[2] == self.host:
                     host_instance.append(instance)
         return host_instance
+    '''
+
 
 def main():
-    agent = DetectionAgent()
-    agent.startListen()
+    # agent = DetectionAgent()
+    # agent.startListen()
+    host_detection = HostFailures()
+    recv = ReceiveInfoFromController()
+    recv.daemon = True
+    recv.start()
+    instance_detection = InstanceFailure()
+    instance_detection.daemon = True
+    instance_detection.start()
+    asyncore.loop()
     try:
         while True:
             pass
     except:
         sys.exit(1)
 
+
 if __name__ == "__main__":
     main()
-

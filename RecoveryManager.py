@@ -167,6 +167,7 @@ class RecoveryManager(object):
 
             try:
                 print "start evacuate"
+                logging.info("start evacuate")
                 cluster.evacuate(instance, target_host, fail_node)
             except Exception as e:
                 print str(e)

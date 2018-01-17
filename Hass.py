@@ -350,7 +350,7 @@ class Hass(object):
         except:
             logging.error("HASS--delete instance fail")
 
-    def listInstance(self, clusterId):
+    def listInstance(self, clusterId, send=True):
         """
         The function for list instances from HA cluster. 
         Put the cluster uuid to this function, it will list instances from HA cluster.
@@ -361,7 +361,7 @@ class Hass(object):
             {"code":"0","instanceList":instance_list}-> success.
         """
         try:
-            result = ClusterManager.listInstance(clusterId)
+            result = ClusterManager.listInstance(clusterId, send)
             logging.info("HASS-list instance success")
             return result
         except:

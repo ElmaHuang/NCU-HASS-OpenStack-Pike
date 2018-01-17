@@ -37,7 +37,7 @@ class Instance(object):
         self.network = self.nova_client.getInstanceNetwork(self.id)
 
     def getInfo(self):
-        self.updateInfo()
+        #self.updateInfo()
         return [self.id, self.name, self.host, self.status, self.network]
 
     '''

@@ -1,38 +1,46 @@
-import libvirt
-import time
-import sys
-import threading
+import asyncore
+import socket
+import ConfigParser
 import subprocess
+import libvirt
 
-class HostFailure(threading.Thread):
-    def __init__(self,version):
-        threading.Thread.__init__(self)
+
+class HostFailures(asyncore.dispatcher):
+    def __init__(self):
+        asyncore.dispatcher.__init__(self)
+        config = ConfigParser.RawConfigParser()
+        config.read('hass_node.conf')
+        self.host = None
+        self.port = int(config.get("polling", "listen_port"))
+        self.version = int(config.get("version", "version"))
+        self.create_socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.set_reuse_addr()
+        self.bind(('', self.port))
         self.libvirt_uri = "qemu:///system"
-        self.version = version
-        self.str = ""
+        print "host failure port:", self.port
 
-    def run(self):
-        while True:
-            self.clearlog()
-            result = self.check_services(self.version)
-            print "sevice fail:",result
-            self.writelog(result)
-            time.sleep(5)
+    def handle_read(self):
+        data, addr = self.recvfrom(2048)
+        # print 'request from: ', addr
+        print data
+        if "polling request" in data:
+            check_result = self.check_services()
+            if check_result == "":
+                self.sendto("OK", addr)
+            else:
+                check_result = "error:" + check_result
+                self.sendto(check_result, addr)
 
-    def check_services(self, version):
-        self.version = version
+    def check_services(self):
         message = ""
-        #check libvirt
+        # check libvirt
         if not self._checkLibvirt():
             message = "libvirt;"
-            #self.str = message+"\n"
-        #check nova-compute
+        # check nova-compute
         if not self._checkNovaCompute():
             message += "nova;"
-            #self.str +=  message+"\n"
         if not self._checkQEMUKVM():
             message += "qemukvm;"
-            #self.str += message+"\n"
         return message
 
     def _checkLibvirt(self):
@@ -41,7 +49,7 @@ class HostFailure(threading.Thread):
             if not conn:
                 return False
         except Exception as e:
-            print "libvirt exception:",str(e)
+            print str(e)
             return False
         return True
 
@@ -50,8 +58,7 @@ class HostFailure(threading.Thread):
             output = subprocess.check_output(['ps', '-A'])
             if "nova-compute" not in output:
                 return False
-        except Exception as e:
-            print "nova-compute exception:",str(e)
+        except:
             return False
         return True
 
@@ -65,25 +72,6 @@ class HostFailure(threading.Thread):
                 if "active" not in output:
                     return False
         except Exception as e:
-            print "qemu exception:",str(e)
+            print str(e)
             return False
         return True
-
-    def clearlog(self):
-        with open('./host_fail.log', 'w'): pass
-        #with open('./log/sucess.log', 'w'): pass
-
-    def writelog(self,str):
-        with open('./host_fail.log', 'a') as f:
-            f.write(str)
-            f.close()
-'''
-if __name__ == '__main__':
-    a = HostFailure(16)
-    a.start()
-    try:
-        while True:
-            pass
-    except:
-        sys.exit(1)
-'''

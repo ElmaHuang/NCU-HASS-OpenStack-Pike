@@ -222,7 +222,7 @@ class ClusterManager():
                 return result
 
     @staticmethod
-    def deleteInstance(cluster_id, instance_id, write_DB=True):
+    def deleteInstance(cluster_id, instance_id, send_flag=True, write_DB=True):
         cluster = ClusterManager.getCluster(cluster_id)
         if not cluster:
             message = "delete the instance to cluster failed. The cluster is not found. (cluster_id = %s)" % cluster_id
@@ -233,13 +233,14 @@ class ClusterManager():
             return result
         else:
             try:
-                result = cluster.deleteInstance(instance_id)
+                result = cluster.deleteInstance(instance_id, send_flag)
                 if write_DB:
                     ClusterManager.syncToDatabase()
                 logging.info("ClusterManager--delete instance success")
                 return result
             except Exception as e:
                 #logging.error(str(e))
+                print str(e)
                 message = "ClusterManager--delete instance failed. this instance is not being protected (instance_id = %s)"+str(e) % instance_id
                 logging.error(message)
                 # result = {"code": "1", "clusterId":cluster_id, "message":message}
@@ -249,15 +250,20 @@ class ClusterManager():
                 return result
 
     @staticmethod
-    def listInstance(cluster_id):
+    def listInstance(cluster_id, send_flag=True):
         cluster = ClusterManager.getCluster(cluster_id)
         if not cluster:
             raise Exception("get instance list fail , not find the cluster %s" % cluster_id)
         try:
-            instance_list = cluster.getAllInstanceInfo()
-            # if not instance_list:
+            instance_list, illegal_instance = cluster.getAllInstanceInfo()
+            if illegal_instance != []:
+            	ClusterManager.deleteInstance(cluster_id, instance[0], False)
+            if send_flag == True:
+            	for instance in instance_list[:]:
+                    cluster.sendUpdateInstance(instance[2])  # info[2]
+                for instance in illegal_instance[:]:
+                    cluster.sendUpdateInstance(instance[1])  # prev_host
             logging.info("ClusterManager--listInstance,getInstanceList success,instanceList is %s" % instance_list)
-            # result = {"code":"0","instanceList":instance_list}
             result = Response(code="succeed",
                               message=None,
                               data={"instanceList": instance_list})

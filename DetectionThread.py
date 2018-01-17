@@ -68,8 +68,6 @@ class DetectionThread(threading.Thread):
 
     def detect(self):
         highest_level_check = self.function_map[-1]
-        if self.detector.checkSensorStatus() != State.HEALTH:
-            return State.SENSOR_FAIL
         if highest_level_check() != State.HEALTH:
             state = self.verify(highest_level_check)
             if state == State.HEALTH:
