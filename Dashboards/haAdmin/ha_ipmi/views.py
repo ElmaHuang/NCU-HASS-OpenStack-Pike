@@ -1,20 +1,12 @@
-from django.utils.translation import ugettext_lazy as _
-from django.utils.datastructures import SortedDict
-from django.core.urlresolvers import reverse_lazy
-from django.core.urlresolvers import reverse
+import xmlrpclib
 
-from horizon import tabs
+from django.utils.translation import ugettext_lazy as _
 from horizon import exceptions
 from horizon import tables
-from horizon import forms
 from horizon.utils import functions as utils
-
-from openstack_dashboard import api
 from openstack_dashboard.api import nova
-
 from openstack_dashboard.dashboards.haAdmin.ha_ipmi import tables as project_tables
 
-import xmlrpclib
 
 class Temperature:
     def __init__(self, id, sensor_ID, device, value, lower_critical, upper_critical):
@@ -25,12 +17,14 @@ class Temperature:
         self.lower_critical = lower_critical
         self.upper_critical = upper_critical
 
+
 class Voltage:
     def __init__(self, id, sensor_ID, device, value):
         self.id = id
         self.sensor_ID = sensor_ID
         self.device = device
         self.value = value
+
 
 class IndexView(tables.DataTableView):
     table_class = project_tables.Ipmi_CN_Table
@@ -46,11 +40,12 @@ class IndexView(tables.DataTableView):
             exceptions.handle(self.request, _('Unable to retrieve hypervisor information.'))
         return hypervisors
 
+
 class DetailView(tables.MultiTableView):
     table_classes = (project_tables.IPMINodeTemperatureTable, project_tables.IPMINodeVoltageTable)
     template_name = 'haAdmin/ha_ipmi/detail.html'
     page_title = _("IPMI-based Node : {{node_id}}")
-    
+
     volt_list = []
 
     def get_IPMI_Temp_data(self):
@@ -59,7 +54,7 @@ class DetailView(tables.MultiTableView):
         result = server.getAllInfoOfNode(self.kwargs["node_id"])
         self.volt_list = []
         temp_data = []
-        #if correct == "0":
+        # if correct == "0":
         data_id = 0
         for data in result:
             if "Temp" in data[0]:
@@ -76,4 +71,3 @@ class DetailView(tables.MultiTableView):
             volt_data.append(Voltage(volt_id, volt[0], volt[1], volt[2]))
             volt_id = volt_id + 1
         return volt_data
-

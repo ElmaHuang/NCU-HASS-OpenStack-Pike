@@ -1,14 +1,12 @@
-from django.utils.translation import ugettext_lazy as _
-
 import horizon
-
+from django.utils.translation import ugettext_lazy as _
 from openstack_dashboard.dashboards.haProject import dashboard
 
 
 class HA_Instances(horizon.Panel):
     name = _("HA Inatances")
     slug = "ha_instances"
-    #permissions = ('openstack.services.compute')
+    # permissions = ('openstack.services.compute')
 
 
 dashboard.HA_Project.register(HA_Instances)

@@ -76,7 +76,6 @@ class HassAPI():
             print self.instance_table
 
     def Input_Command(self):
-
         self.parser = argparse.ArgumentParser(description='Openstack high availability software service(HASS)')
         self.subparsers = self.parser.add_subparsers(help='functions of HASS', dest='command')
 
@@ -224,7 +223,7 @@ class HassAPI():
         elif self.args.command == "node-info-show":
             try:
                 self.HASS_result = self.server.getAllInfoOfNode(self.args.node)
-                self.generateSensorTable(self.HASS_result["info"])
+                self.generateSensorTable(self.HASS_result["data"]["info"])
                 print self.showResult(self.HASS_result)
             except Exception as e:
                 print self.ERROR_color + "[Error] " + self.END_color + str(e)
@@ -234,7 +233,7 @@ class HassAPI():
             try:
                 self.HASS_result = self.server.getNodeInfoByType(self.args.node, self.type_list)
                 print "Computing Node : " + self.args.node
-                self.generateSensorTable(self.HASS_result["info"])
+                self.generateSensorTable(self.HASS_result["data"]["info"])
                 print self.showResult(self.HASS_result)
             except Exception as e:
                 print self.ERROR_color + "[Error] " + self.END_color + str(e)

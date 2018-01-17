@@ -20,7 +20,7 @@ class InstanceTab(tabs.TableTab):
     def get_instances_data(self):
         try:
             marker = self.request.GET.get(
-                        tables.InstancesTable._meta.pagination_param, None)
+                tables.InstancesTable._meta.pagination_param, None)
 
             instances, self._has_more = api.nova.server_list(
                 self.request,
@@ -33,6 +33,7 @@ class InstanceTab(tabs.TableTab):
             exceptions.handle(self.request, error_message)
 
             return []
+
 
 class MypanelTabs(tabs.TabGroup):
     slug = "mypanel_tabs"

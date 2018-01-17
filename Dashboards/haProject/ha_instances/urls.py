@@ -1,10 +1,9 @@
 from django.conf.urls import patterns
 from django.conf.urls import url
-
-from openstack_dashboard.dashboards.haProject.ha_instances.views \
-    import IndexView
 from openstack_dashboard.dashboards.haProject.ha_instances.views \
     import AddView
+from openstack_dashboard.dashboards.haProject.ha_instances.views \
+    import IndexView
 from openstack_dashboard.dashboards.haProject.ha_instances.views \
     import UpdateView
 

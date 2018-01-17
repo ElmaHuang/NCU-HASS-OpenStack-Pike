@@ -17,12 +17,12 @@
 
 from NovaClient import NovaClient
 from IPMIModule import IPMIManager
-import time
 from ClusterManager import ClusterManager
+from Response import Response
+import time
 import ConfigParser
 import logging
 import socket
-from Response import Response
 
 
 class Operator(object):
@@ -45,10 +45,13 @@ class Operator(object):
             try:
                 ipmi_result = self.ipmi_module.startNode(node_name)
                 if ipmi_result.code == "succeed":
-                    boot_up = self._check_node_boot_success(node_name, default_wait_time)
+                    boot_up = self._checkNodeBootSuccess(node_name, default_wait_time)
                     if boot_up:
                         message += "start node success.The node is %s." % node_name
                         logging.info(message)
+                        detection = self._checkDetectionAgent(node_name, default_wait_time)
+                        if not detection:
+                            message += "detectionagent in computing node is fail."
                         # result = {"code": "0", "node_name": node_name, "message": message}
                         result = Response(code="succeed", message=message, data={"node_name": node_name})
                     else:
@@ -96,7 +99,7 @@ class Operator(object):
             result = Response(code="failed", message=message, data={"node_name": node_name})
         return result
 
-    def rebootNode(self, node_name):
+    def rebootNode(self, node_name, default_wait_time=180):
         message = ""
         if self._checkNodeIPMI(node_name) and self._checkNodeNotInCluster(node_name):
             try:
@@ -104,6 +107,9 @@ class Operator(object):
                 if ipmi_result.code == "succeed":
                     message += "reboot node success.The node is %s." % node_name
                     logging.info(message)
+                    detection = self._checkDetectionAgent(node_name, default_wait_time)
+                    if not detection:
+                        message += "detectionagent in computing node is fail."
                     # result = {"code": "0", "node_name": node_name, "message": message}
                     result = Response(code="succeed", message=message, data={"node_name": node_name})
                 else:
@@ -152,25 +158,53 @@ class Operator(object):
                 return False
         return True
 
-    def _check_node_boot_success(self, nodeName, check_timeout, timeout=1):
+    def _checkNodeBootSuccess(self, nodeName, check_timeout):
+        status = False
+        while not status:
+            if check_timeout > 0:
+                result = self.ipmi_module.getPowerStatus(nodeName)
+                print result, check_timeout
+                if result == "OK":
+                    status = True
+                else:
+                    time.sleep(1)
+                    check_timeout -= 1
+            else:
+                return status
+        return status
+
+    def _checkDetectionAgent(self, nodeName, check_timeout):
         # not be protect(not connect socket)
-        # check power statue in IPMIModule
         # check detection agent
         status = False
         data = ""
-        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        sock.setblocking(0)
-        sock.settimeout(1)
-        while "OK" not in data and check_timeout > 0:
-            try:
-                sock.sendto("polling request", (nodeName, int(self.port)))
-                data, addr = sock.recvfrom(2048)
-            except Exception as e:
-                print e
-            if "OK" in data:
-                status = True
-                sock.close()
+        try:
+            sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            sock.setblocking(0)
+            sock.settimeout(0.5)
+            sock.connect((nodeName, self.port))
+        except Exception as e:
+            print "create socket fail", str(e)
+
+        while status == False:
+            time.sleep(5)
+            if check_timeout > 0:
+                try:
+                    sock.sendall("polling request")
+                    data, addr = sock.recvfrom(2048)
+                except Exception as e:
+                    print str(e)
+
+                if "OK" in data:
+                    status = True
+                    sock.close()
+                    print data
+                else:
+                    # time.sleep(1)
+                    print "data:", data, "wating:", check_timeout
+                    check_timeout -= 5
             else:
-                time.sleep(1)
-                check_timeout -= 1
+                # timeout
+                return status
+        # status is True
         return status

@@ -13,13 +13,14 @@
 #   This is a class maintains IPMI command operation.
 ##########################################################
 
-import subprocess
-import logging
-import time
 import ConfigParser
-import re
-import IPMIConf
 import json
+import logging
+import re
+import subprocess
+import time
+
+import IPMIConf
 from Response import Response
 
 
@@ -213,20 +214,20 @@ class IPMIManager(object):
         AllTemp = ["Temp", "Inlet Temp", "Fan1", "Fan2"]
         try:
             result = self.getNodeInfoByType(node_name, AllTemp)
-            logging.info("IPMIModule--getAllInfoMoudle finish %s" % result["message"])
+            logging.info("IPMIModule--getAllInfoMoudle finish %s" % result.message)
             return result
-        except:
-            logging.error("IPMIModule--getAllInfoNode fail")
+        except Exception as e:
+            logging.error("IPMIModule--getAllInfoNode fail" + str(e))
 
     def getOSStatus(self, node_name):
-        status = "OK"
         interval = (IPMIConf.WATCHDOG_THRESHOLD / 2)
         prev_initial = None
         prev_present = None
         for _ in range(3):
             initial = self._getOSValue(node_name, IPMIConf.OS_TYPE_INITIAL)
             present = self._getOSValue(node_name, IPMIConf.OS_TYPE_PRESENT)
-
+            if initial == False or present == False:
+                return "Error"
             if (initial - present) > IPMIConf.WATCHDOG_THRESHOLD:
                 return "Error"
             if prev_initial != initial:
@@ -251,6 +252,8 @@ class IPMIManager(object):
             raise Exception("Error! The subprocess's command is invalid.")
         while True:
             info = p.stdout.readline()
+            if "Stopped" in info:
+                return False
             if not info:
                 break
             if value_type in info:
