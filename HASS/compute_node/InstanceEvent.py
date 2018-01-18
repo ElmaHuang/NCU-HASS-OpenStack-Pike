@@ -3,14 +3,16 @@ import libvirt
 Event_string = (
     ("Added", "Updated"),
     ("Removed"),
-    ("Booted", "Migrated", "Restored", "Snapshot", "Wakeup"),
-    ("Paused", "Migrated", "IOError", "Watchdog", "Restored", "Snapshot"),
-    ("Unpaused", "Migrated", "Snapshot"),
-    ("Shutdown", "Destroyed", "Crashed", "Migrated", "Saved", "Failed", "Snapshot"),
+    ("Booted", "Migrated_when_boot", "Restored", "Snapshot", "Wakeup"),
+    ("Paused", "Migrated_when_pause", "IOError", "Watchdog", "Restored", "Snapshot"),
+    ("Unpaused", "Migrated_when_unpause", "Snapshot"),
+    ("Shutdown", "Destroyed", "Crashed", "Migrated_when_shutoff", "Saved", "Failed", "Snapshot"),
     ("Finished")
 )
 
 Event_failed = (Event_string[5][2], Event_string[5][5])
+Event_destroyed = (Event_string[5][0], Event_string[5][1])
+Event_migrated = (Event_string[4][1])
 
 Event_watchdog_action = (
     libvirt.VIR_DOMAIN_EVENT_WATCHDOG_NONE,  # = 0, No action, watchdog ignored
