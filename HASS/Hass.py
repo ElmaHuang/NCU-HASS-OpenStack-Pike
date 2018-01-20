@@ -14,17 +14,17 @@
 #   Client can use function in Hass class directly
 ##########################################################
 
-from SimpleXMLRPCServer import SimpleXMLRPCServer
-from SimpleXMLRPCServer import SimpleXMLRPCRequestHandler
-from base64 import b64decode
 import ConfigParser
 import logging
 import os
 import sys
+from SimpleXMLRPCServer import SimpleXMLRPCRequestHandler
+from SimpleXMLRPCServer import SimpleXMLRPCServer
+from base64 import b64decode
 
-from RecoveryManager import RecoveryManager
 from ClusterManager import ClusterManager
 from IPMINodeOperator import Operator
+from RecoveryManager import RecoveryManager
 from Response import Response
 
 
@@ -49,7 +49,7 @@ class RequestHandler(SimpleXMLRPCRequestHandler):
         try:
             (basic, encoded) = headers.get('Authorization').split(' ')
         except:
-            logging.info("Hass RequestHandler - No authentication header, request from %s", self.clientip)
+            logging.error("Hass RequestHandler - No authentication header, request from %s", self.clientip)
             return False
         else:
             (basic, encoded) = headers.get('Authorization').split(' ')
@@ -351,7 +351,7 @@ class Hass(object):
         except:
             logging.error("HASS--delete instance fail")
 
-    def listInstance(self, clusterId, send=True):
+    def listInstance(self, clusterId, send_flag=True):
         """
                 The function for list instances from HA cluster.
                 Put the cluster uuid to this function, it will list instances from HA cluster.
@@ -362,7 +362,7 @@ class Hass(object):
                     {"code":"0","instanceList":instance_list}-> success.
                 """
         try:
-            result = ClusterManager.listInstance(clusterId, send)
+            result = ClusterManager.listInstance(clusterId, send_flag)
             logging.info("HASS-list instance success")
             return result
         except:
@@ -402,6 +402,26 @@ class Hass(object):
             return result
         except Exception as e:
             logging.error("HASS--update database fail : %s" % str(e))
+
+    def updateAllCluster(self):
+        try:
+            ClusterManager.updateAllCluster()
+        except Exception as e:
+            logging.error(str(e))
+
+    '''
+    def check_vm_protected(self,instance_name):
+        try:
+            result = self.listCluster()
+            for (uuid, name) in result:
+                ha_instance = self.listInstance(uuid)["data"]["instance_list"]
+                for instance in ha_instance:
+                    if instance.name == instance_name:
+                        return True
+            return False
+        except Exception as e:
+            logging.error("HASS--check vm protected fail : %s" % str(e))
+    '''
 
 
 def main():
