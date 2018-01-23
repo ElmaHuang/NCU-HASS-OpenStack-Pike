@@ -19,8 +19,10 @@ def main():
     # agent.startListen()
     host_detection = HostFailures()
     recv = ReceiveInfoFromController()
+    recv.daemon = True
     recv.start()
     instance_detection = InstanceFailure()
+    instance_detection.daemon = True
     instance_detection.start()
     asyncore.loop()
     try:
