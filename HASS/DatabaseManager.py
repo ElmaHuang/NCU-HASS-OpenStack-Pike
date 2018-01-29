@@ -10,10 +10,12 @@
 #   This is a class which maintains database for both hass/iii.
 ##########################################################
 
-import logging
 import ConfigParser
-import MySQLdb, MySQLdb.cursors
+import logging
 import sys
+
+import pymysql
+import pymysql.cursors
 
 
 class DatabaseManager(object):
@@ -24,24 +26,25 @@ class DatabaseManager(object):
         self.db = None
         try:
             self.connect()
-        except MySQLdb.Error, e:
+        except pymysql.Error, e:
             logging.error("Hass AccessDB - connect to database failed (MySQL Error: %s)", str(e))
             print "MySQL Error: %s" % str(e)
             sys.exit(1)
 
     def connect(self):
-        self.db_conn = MySQLdb.connect(host=self.config.get("mysql", "mysql_ip"),
+        self.db_conn = pymysql.connect(host=self.config.get("mysql", "mysql_ip"),
                                        user=self.config.get("mysql", "mysql_username"),
                                        passwd=self.config.get("mysql", "mysql_password"),
                                        db=self.config.get("mysql", "mysql_db"),
                                        )
-        self.db = self.db_conn.cursor(cursorclass=MySQLdb.cursors.DictCursor)
+        # self.db = self.db_conn.cursor(cursorclass=pymysql.cursors.DictCursor)
+        self.db = self.db_conn.cursor()
 
     def checkDB(self):
         try:
             self.db_conn.ping()
         except Exception as e:
-            logging.info("MYSQL CONNECTION REESTABLISHED!")
+            logging.info("MYSQL CONNECTION REESTABLISHED!" + str(e))
             self.connect()
 
     def createTable(self):
@@ -81,7 +84,7 @@ class DatabaseManager(object):
                             ON DELETE CASCADE
                             );
                             """)
-        except MySQLdb.Error, e:
+        except pymysql.Error, e:
             self.closeDB()
             logging.error("Hass AccessDB - Create Table failed (MySQL Error: %s)", str(e))
             print "MySQL Error: %s" % str(e)
@@ -115,7 +118,7 @@ class DatabaseManager(object):
             logging.info("Hass AccessDB - Read data success")
             return exist_cluster
 
-        except MySQLdb.Error, e:
+        except pymysql.Error, e:
             self.closeDB()
             logging.error("Hass AccessDB - Read data failed (MySQL Error: %s)", str(e))
             print "MySQL Error: %s" % str(e)
@@ -141,7 +144,7 @@ class DatabaseManager(object):
                     data = {"instance_id": instance.id, "below_cluster": cluster_id, "host": instance.host,
                             "status": instance.status, "network": str(instance.network)}
                     self.writeDB("ha_instance", data)
-        except MySQLdb.Error, e:
+        except pymysql.Error, e:
             self.closeDB()
             logging.error("Hass database manager - sync data failed (MySQL Error: %s)", str(e))
             print "MySQL Error: %s" % str(e)
@@ -168,10 +171,10 @@ class DatabaseManager(object):
         table_list = []
         cmd = "show tables"
         self.db.execute(cmd)
-        res = self.db.fetchall()  # ({'Tables_in_hass': 'talbe1'}, {'Tables_in_hass': 'table2'})
-        index = "Tables_in_%s" % self.config.get("mysql", "mysql_db")
-        for table in res:
-            table_list.append(table[index])
+        res = self.db.fetchall()  # res: (('ha_cluster',), ('ha_instance',), ('ha_node',))
+        for tables in res:
+            for table in tables:
+                table_list.append(table)
         return table_list
 
     def resetAll(self):
