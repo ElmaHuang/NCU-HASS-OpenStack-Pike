@@ -1,6 +1,7 @@
 import subprocess
-from RPCServer import RPCServer
+
 from Instance import Instance
+from RPCServer import RPCServer
 
 
 class HAInstance():
@@ -20,16 +21,14 @@ class HAInstance():
         try:
             cluster_list = HAInstance.server.listCluster()
             for cluster in cluster_list:
-                clusterId = cluster[0]
-                print "00"
-                HAInstance.ha_instance_list[clusterId] = HAInstance._getHAInstance(clusterId)
-                print 111
+                cluster_uuid = cluster[0]
+                HAInstance.ha_instance_list[cluster_uuid] = HAInstance._getHAInstance(cluster_uuid)
                 # for clusteruuid,ha_instance_list in ha_instance_list.iter:, width=1)
             host_instance = HAInstance._getInstanceByNode(HAInstance.ha_instance_list)
             for cluster_id, instance_list in host_instance.iteritems():
                 for instance in instance_list:
-                    print cluster_id
-                    print instance
+                    # print cluster_id
+                    # print instance
                     HAInstance.addInstance(cluster_id, instance)
             # return host_instance
         except Exception as e:
@@ -48,15 +47,11 @@ class HAInstance():
 
     @staticmethod
     def _getInstanceByNode(instance_lists):
-        print 1
         for id, instance_list in instance_lists.iteritems():
-            print 2
             for instance in instance_list[:]:
-                print 3
                 if HAInstance.host not in instance[2]:
                     print instance[2]
                     instance_list.remove(instance)
-        print 4
         return instance_lists
 
     @staticmethod

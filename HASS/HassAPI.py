@@ -189,12 +189,12 @@ class HassAPI():
         elif self.args.command == "node-list":
             try:
                 HASS_result = self.server.listNode(self.args.uuid)
-                HASS_result = Response(code=HASS_result["code"], message=HASS_result["message"],
-                                       data=HASS_result["data"])
-                if HASS_result.code == "succeed":
+                if HASS_result["code"] == "succeed":
+                    HASS_result = Response(code=HASS_result["code"], message=HASS_result["message"],
+                                           data=HASS_result["data"])
                     self.showTable(HASS_result.data.get("node_list"), self.TABLE.NODE)
                 else:
-                    raise Exception
+                    print self.showResult(HASS_result)
             except Exception as e:
                 print self.ERROR_color + "[Error] " + self.END_color + str(e)
                 # return
@@ -255,12 +255,12 @@ class HassAPI():
         elif self.args.command == "instance-list":
             try:
                 HASS_result = self.server.listInstance(self.args.uuid)
-                HASS_result = Response(code=HASS_result["code"], message=HASS_result["message"],
-                                       data=HASS_result["data"])
-                if HASS_result.code == "succeed":
+                if HASS_result["code"] == "succeed":
+                    HASS_result = Response(code=HASS_result["code"], message=HASS_result["message"],
+                                           data=HASS_result["data"])
                     self.showTable(HASS_result.data.get("instance_list"), self.TABLE.INSTANCE)
                 else:
-                    raise Exception
+                    print self.showResult(HASS_result)
             except Exception as e:
                 print self.ERROR_color + "[Error] " + self.END_color + str(e)
 

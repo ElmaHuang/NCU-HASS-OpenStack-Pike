@@ -15,7 +15,7 @@ class NovaClient(object):
     def __init__(self):
         self.config = ConfigParser.RawConfigParser()
         self.config.read('hass_node.conf')
-        if NovaClient._instance != None:
+        if NovaClient._instance is not None:
             raise Exception("This class is a singleton! , cannot initialize twice")
         else:
             self.initializeHelper()

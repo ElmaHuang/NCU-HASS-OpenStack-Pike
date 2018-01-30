@@ -67,6 +67,9 @@ class NovaClient(object):
             computePool.append(str(hypervisor.hypervisor_hostname))
         return computePool
 
+    def isInComputePool(self, name):
+        return name in self.getComputePool()
+
     def _getHostList(self):
         return NovaClient._helper.hypervisors.list()
 

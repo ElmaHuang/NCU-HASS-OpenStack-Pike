@@ -1,17 +1,22 @@
-import socket
-import asyncore
-import sys
 import ConfigParser
-import xmlrpclib
-import time
-from ReceiveInfoFromController import ReceiveInfoFromController
+import asyncore
+import logging
+import sys
+
 from HostFailures import HostFailures
 from InstanceFailures import InstanceFailure
+from ReceiveInfoFromController import ReceiveInfoFromController
 
 
 class DetectionAgent():
     def __init__(self):
-        pass
+        config = ConfigParser.RawConfigParser()
+        config.read('hass_node.conf')
+
+        log_level = logging.getLevelName(config.get("log", "level"))
+        log_file_name = config.get("log", "location")
+        FORMAT = "%(asctime)s [%(levelname)s] : %(message)s"
+        logging.basicConfig(filename=log_file_name, level=log_level, format=FORMAT)
 
 
 def main():
@@ -28,7 +33,8 @@ def main():
     try:
         while True:
             pass
-    except:
+    except Exception as e:
+        logging.error(str(e))
         sys.exit(1)
 
 

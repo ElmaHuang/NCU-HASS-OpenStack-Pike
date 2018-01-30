@@ -49,17 +49,15 @@ class DatabaseManager(object):
 
     def createTable(self):
         self.checkDB()
-        try:
-            self.db.execute("SET sql_notes = 0;")
-            self.db.execute("""
+        table = {"ha_cluster": """
                             CREATE TABLE IF NOT EXISTS ha_cluster 
                             (
                             cluster_uuid char(36),
                             cluster_name char(18),
                             PRIMARY KEY(cluster_uuid)
                             );
-                            """)
-            self.db.execute("""
+                            """,
+                 "ha_node": """
                             CREATE TABLE IF NOT EXISTS ha_node 
                             (
                             node_name char(18),
@@ -69,8 +67,8 @@ class DatabaseManager(object):
                             REFERENCES ha_cluster(cluster_uuid)
                             ON DELETE CASCADE
                             );
-                            """)
-            self.db.execute("""
+                            """,
+                 "ha_instance": """
                             CREATE TABLE IF NOT EXISTS ha_instance 
                             (
                             instance_id char(36),
@@ -83,45 +81,52 @@ class DatabaseManager(object):
                             REFERENCES ha_cluster(cluster_uuid)
                             ON DELETE CASCADE
                             );
-                            """)
+                            """}
+        try:
+            self.db.execute("SET sql_notes = 0;")
+            self.db.execute(table["ha_cluster"])
+            self.db.execute(table["ha_node"])
+            self.db.execute(table["ha_instance"])
         except pymysql.Error, e:
             self.closeDB()
             logging.error("Hass AccessDB - Create Table failed (MySQL Error: %s)", str(e))
-            print "MySQL Error: %s" % str(e)
+            print "createTable--MySQL Error: %s" % str(e)
             sys.exit(1)
 
     def syncFromDB(self):
         self.checkDB()
         try:
             self.db.execute("SELECT * FROM ha_cluster;")
-            ha_cluster_date = self.db.fetchall()
+            ha_cluster_date = self.db.fetchall()  # (('5e3f6ae8-cde2-4a42-99bd-3381b886f867', 'test'),)
             exist_cluster = []
             for cluster in ha_cluster_date:
+                cluster_id = cluster[0]
+                cluster_name = cluster[1]
+                # get ha node
                 node_list = []
-                instance_list = []
-                self.db.execute("SELECT * FROM ha_node WHERE below_cluster = '%s'" % cluster["cluster_uuid"])
+                cmd = self._selectCMD("ha_node", "below_cluster", cluster_id)
+                self.db.execute(cmd)
                 ha_node_date = self.db.fetchall()
-                self.db.execute("SELECT * FROM ha_instance WHERE below_cluster = '%s'" % cluster["cluster_uuid"])
-                ha_instance_date = self.db.fetchall()
-
                 for node in ha_node_date:
-                    node_list.append(node["node_name"])
+                    node_list.append(node[0])
+                # get ha instance
+                instance_list = []
+                cmd = self._selectCMD("ha_instance", "below_cluster", cluster_id)
+                self.db.execute(cmd)
+                ha_instance_date = self.db.fetchall()
                 for instance in ha_instance_date:
-                    instance_list.append(instance["instance_id"])
-                # cluster_id = cluster["cluster_uuid"][:8]+"-"+cluster["cluster_uuid"][8:12]+"-"+cluster["cluster_uuid"][12:16]+"-"+cluster["cluster_uuid"][16:20]+"-"+cluster["cluster_uuid"][20:]
-                cluster_id = cluster["cluster_uuid"]
-                cluster_name = cluster["cluster_name"]
+                    instance_list.append(instance[0])
+                # cluster_id = cluster["cluster_uuid"]
+                # cluster_name = cluster["cluster_name"]
                 exist_cluster.append({"cluster_id": cluster_id, "cluster_name": cluster_name, "node_list": node_list,
                                       "instance_list": instance_list})
-                # cluster_manager.createCluster(cluster_name = name , cluster_id = cluster_id)
-                # cluster_manager.addNode(cluster_id, node_list)
             logging.info("Hass AccessDB - Read data success")
             return exist_cluster
 
         except pymysql.Error, e:
             self.closeDB()
             logging.error("Hass AccessDB - Read data failed (MySQL Error: %s)", str(e))
-            print "MySQL Error: %s" % str(e)
+            print "syncFromDB--MySQL Error: %s" % str(e)
             sys.exit(1)
 
     def syncToDB(self, cluster_list):
@@ -152,19 +157,34 @@ class DatabaseManager(object):
 
     def writeDB(self, dbName, data):
         self.checkDB()
-        if dbName == "ha_cluster":
-            format = "INSERT INTO ha_cluster (cluster_uuid,cluster_name) VALUES (%(cluster_uuid)s, %(cluster_name)s);"
-        elif dbName == "ha_node":
-            format = "INSERT INTO ha_node (node_name,below_cluster) VALUES (%(node_name)s, %(below_cluster)s);"
-        elif dbName == "ha_instance":
-            format = "INSERT INTO ha_instance (instance_id, below_cluster, host, status, network) VALUES (%(instance_id)s, %(below_cluster)s, %(host)s, %(status)s, %(network)s);"
         try:
-            self.db.execute(format, data)
+            cmd = ""
+            if dbName == "ha_cluster":
+                # format = "INSERT INTO ha_cluster (cluster_uuid,cluster_name) VALUES (%(cluster_uuid)s, %(cluster_name)s);"
+                cmd = self._insertCMD("ha_cluster (cluster_uuid,cluster_name)", "(%(cluster_uuid)s, %(cluster_name)s)")
+            elif dbName == "ha_node":
+                # format = "INSERT INTO ha_node (node_name,below_cluster) VALUES (%(node_name)s, %(below_cluster)s);"
+                cmd = self._insertCMD("ha_node (node_name,below_cluster)", "(%(node_name)s, %(below_cluster)s)")
+            elif dbName == "ha_instance":
+                # format = "INSERT INTO ha_instance (instance_id, below_cluster, host, status, network) VALUES (%(instance_id)s, %(below_cluster)s, %(host)s, %(status)s, %(network)s);"
+                cmd = self._insertCMD("ha_instance (instance_id, below_cluster, host, status, network)",
+                                      "(%(instance_id)s, %(below_cluster)s, %(host)s, %(status)s, %(network)s)")
+            self.db.execute(cmd, data)
             self.db_conn.commit()
         except Exception as e:
             logging.error("Hass AccessDB - write data to DB Failed (MySQL Error: %s)", str(e))
             print "MySQL Error: %s" % str(e)
             raise
+
+    def _insertCMD(self, table_index, value):
+        # "INSERT INTO ha_cluster (cluster_uuid,cluster_name) VALUES (%(cluster_uuid)s, %(cluster_name)s);"
+        cmd = "INSERT INTO " + table_index + " VALUES" + value + " ;"
+        return cmd
+
+    def _selectCMD(self, table, index, id):
+        # "SELECT * FROM ha_node WHERE below_cluster = '%s'" % cluster["cluster_uuid"]
+        cmd = "SELECT * FROM " + table + " WHERE " + index + " = '" + id + "'"
+        return cmd
 
     def _getAllTable(self):
         self.checkDB()

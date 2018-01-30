@@ -7,6 +7,7 @@ class HA_Project(horizon.Dashboard):
     slug = "haProject"
     default_panel = 'ha_instances'
     panels = ('ha_instances',)
+    permissions = ('openstack.roles.user',)
 
 
 horizon.register(HA_Project)

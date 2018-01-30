@@ -1,5 +1,6 @@
-import threading
 import socket
+import threading
+
 from HAInstance import HAInstance
 
 
@@ -23,18 +24,15 @@ class ReceiveInfoFromController(threading.Thread):
         while True:
             cs, addr = self.s.accept()
             print "addr:", addr
-            d = cs.recv(1024)
-            print d
-            if d == "update instance":
+            data = cs.recv(1024)
+            print data
+            if "update instance" in data:
                 self.updateHAInstance()
 
     def updateHAInstance(self):
-        # self.clearlog()
-        #instance_list = self.getInstanceFromController()
         HAInstance.init()
         HAInstance.getInstanceFromController()
         # for instance in instance_list[:]:
         #     # [self.id, self.name, self.host, self.status, self.network]
         #     vm = Instance(ha_instance=instance)
         #     HAInstance.addInstance(vm)
-        #     # self.writelog(ha_vm)

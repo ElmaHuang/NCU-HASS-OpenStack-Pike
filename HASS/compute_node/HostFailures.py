@@ -1,7 +1,9 @@
-import asyncore
-import socket
 import ConfigParser
+import asyncore
+import logging
+import socket
 import subprocess
+
 import libvirt
 
 
@@ -49,8 +51,9 @@ class HostFailures(asyncore.dispatcher):
             if not conn:
                 return False
         except Exception as e:
-            print str(e)
+            logging.error(str(e))
             return False
+        conn.close()
         return True
 
     def _checkNovaCompute(self):
@@ -58,7 +61,8 @@ class HostFailures(asyncore.dispatcher):
             output = subprocess.check_output(['ps', '-A'])
             if "nova-compute" not in output:
                 return False
-        except:
+        except Exception as e:
+            logging.error(str(e))
             return False
         return True
 
@@ -72,6 +76,6 @@ class HostFailures(asyncore.dispatcher):
                 if "active" not in output:
                     return False
         except Exception as e:
-            print str(e)
+            logging.error(str(e))
             return False
         return True
