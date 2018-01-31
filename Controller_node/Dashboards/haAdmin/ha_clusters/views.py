@@ -8,7 +8,10 @@ from openstack_dashboard.dashboards.haAdmin.ha_clusters import tables as project
 from openstack_dashboard.dashboards.haAdmin.ha_clusters import workflows as ha_cluster_workflows
 
 config = ConfigParser.RawConfigParser()
-config.read('/MOST/HASS/hass.conf')
+config.read('/home/controller/Desktop/HASS/Controller_node/HASS/hass.conf')
+# user = config.get("rpc", "rpc_username")
+# password = config.get("rpc", "rpc_password")
+# port = config.get("rpc", "rpc_bind_port")
 
 
 class Cluster:
@@ -32,7 +35,12 @@ class IndexView(tables.DataTableView):
     page_title = _("HA_Clusters")
 
     def get_data(self):
-        authUrl = "http://user:0928759204@127.0.0.1:61209"
+        # user = config.get("rpc","rpc_username")
+        # password = config.get("rpc","rpc_password")
+        # port = config.get("rpc","rpc_bind_port")
+        authUrl = "http://" + config.get("rpc", "rpc_username") + ":" + config.get("rpc",
+                                                                                   "rpc_password") + "@127.0.0.1:" + config.get(
+            "rpc", "rpc_bind_port")
         server = xmlrpclib.ServerProxy(authUrl)
         result = server.listCluster()
         clusters = []
@@ -59,7 +67,7 @@ class DetailView(tables.DataTableView):
     page_title = _("HA Cluster (uuid:{{cluster_id}})")
 
     def get_data(self):
-        authUrl = "http://user:0928759204@127.0.0.1:61209"
+        authUrl = "http://" + config.get("rpc", "rpc_username") + ":" + config.get("rpc","rpc_password") + "@127.0.0.1:" + config.get("rpc", "rpc_bind_port")
         server = xmlrpclib.ServerProxy(authUrl)
         result = server.listNode(self.kwargs["cluster_id"])
         if result["code"] == "succeed":  # Success

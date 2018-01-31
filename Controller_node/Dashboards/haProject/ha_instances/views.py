@@ -1,3 +1,4 @@
+import ConfigParser
 import logging
 import xmlrpclib
 
@@ -14,6 +15,11 @@ from openstack_dashboard.dashboards.haProject.ha_instances \
 from openstack_dashboard.dashboards.haProject.ha_instances import tables as project_tables
 
 LOG = logging.getLogger(__name__)
+config = ConfigParser.RawConfigParser()
+config.read('/home/controller/Desktop/HASS/Controller_node/HASS/hass.conf')
+# user = config.get("rpc", "rpc_username")
+# password = config.get("rpc", "rpc_password")
+# port = config.get("rpc", "rpc_bind_port")
 
 
 class AddView(forms.ModalFormView):
@@ -64,7 +70,7 @@ class IndexView(tables.DataTableView):
     page_title = _("HA_Instances")
 
     def get_data(self):
-        authUrl = "http://user:0928759204@127.0.0.1:61209"
+        authUrl = "http://" + config.get("rpc", "rpc_username") + ":" + config.get("rpc","rpc_password") + "@127.0.0.1:" + config.get("rpc", "rpc_bind_port")
         server = xmlrpclib.ServerProxy(authUrl)
         clusters = server.listCluster()
         instances = []

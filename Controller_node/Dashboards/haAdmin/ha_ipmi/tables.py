@@ -1,3 +1,4 @@
+import ConfigParser
 import xmlrpclib
 
 from django.utils.translation import pgettext_lazy
@@ -5,6 +6,14 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import ungettext_lazy
 from horizon import messages
 from horizon import tables
+
+config = ConfigParser.RawConfigParser()
+config.read('/home/controller/Desktop/HASS/Controller_node/HASS/hass.conf')
+
+
+# user = config.get("rpc", "rpc_username")
+# password = config.get("rpc", "rpc_password")
+# port = config.get("rpc", "rpc_bind_port")
 
 
 class GetNodeInfoAction(tables.LinkAction):
@@ -39,7 +48,9 @@ class StartNodeAction(tables.BatchAction):
         return (computing_node.state != "up")
 
     def action(self, request, obj_id):
-        authUrl = "http://user:0928759204@127.0.0.1:61209"
+        authUrl = "http://" + config.get("rpc", "rpc_username") + ":" + config.get("rpc",
+                                                                                   "rpc_password") + "@127.0.0.1:" + config.get(
+            "rpc", "rpc_bind_port")
         server = xmlrpclib.ServerProxy(authUrl)
         result = server.startNode(obj_id)
         if result["code"] == "failed":
@@ -65,11 +76,13 @@ class RebootNodeAction(tables.DeleteAction):
         )
 
     def action(self, request, obj_id):
-        authUrl = "http://user:0928759204@127.0.0.1:61209"
+        authUrl = "http://" + config.get("rpc", "rpc_username") + ":" + config.get("rpc",
+                                                                                   "rpc_password") + "@127.0.0.1:" + config.get(
+            "rpc", "rpc_bind_port")
         server = xmlrpclib.ServerProxy(authUrl)
         result = server.rebootNode(obj_id)
         if result["code"] == "failed":
-            err_msg = result["meaasge"]
+            err_msg = result["message"]
             messages.error(request, err_msg)
 
 
@@ -100,7 +113,9 @@ class ShutOffNodeAction(tables.BatchAction):
         return (computing_node.state != "down")
 
     def action(self, request, obj_id):
-        authUrl = "http://user:0928759204@127.0.0.1:61209"
+        authUrl = "http://" + config.get("rpc", "rpc_username") + ":" + config.get("rpc",
+                                                                                   "rpc_password") + "@127.0.0.1:" + config.get(
+            "rpc", "rpc_bind_port")
         server = xmlrpclib.ServerProxy(authUrl)
         result = server.shutOffNode(obj_id)
         if result["code"] == "failed":
@@ -156,9 +171,17 @@ class IPMINodeTemperatureTable(tables.DataTable):
 
     device = tables.Column("device", verbose_name=_("Device"))
 
+    sensor_type = tables.Column("sensor_type", verbose_name=_("Sensor Type"))
+
     value = tables.Column("value", verbose_name=_("Value"))
 
+    status = tables.Column("status", verbose_name=_("Status"))
+
     lc = tables.Column("lower_critical", verbose_name=_("Lower Critical"))
+
+    l = tables.Column("lower_no_critical", verbose_name=_("Lower Non-Critical"))
+
+    u = tables.Column("upper_no_critical", verbose_name=_("Upper Non-Critical"))
 
     uc = tables.Column("upper_critical", verbose_name=_("Upper Critical"))
 
@@ -168,17 +191,26 @@ class IPMINodeTemperatureTable(tables.DataTable):
         verbose_name = _("Temperature")
 
 
-'''
-class IPMINodeVoltageTable(tables.DataTable):
-	
-    sensor = tables.Column("sensor_ID", verbose_name=_("Sensor"))
+class IPMINodeFanTable(tables.DataTable):
+    sensor = tables.Column("sensor_ID", verbose_name=_("Sensor ID"))
 
     device = tables.Column("device", verbose_name=_("Device"))
 
+    sensor_type = tables.Column("sensor_type", verbose_name=_("Sensor Type"))
+
     value = tables.Column("value", verbose_name=_("Value"))
 
+    status = tables.Column("status", verbose_name=_("Status"))
+
+    lc = tables.Column("lower_critical", verbose_name=_("Lower Critical"))
+
+    l = tables.Column("lower_no_critical", verbose_name=_("Lower Non-Critical"))
+
+    u = tables.Column("upper_no_critical", verbose_name=_("Upper Non-Critical"))
+
+    uc = tables.Column("upper_critical", verbose_name=_("Upper Critical"))
+
     class Meta:
-        name = "IPMI_Volt"
+        name = "IPMI_Fan"
         hidden_title = False
-        verbose_name = _("Voltage")
-'''
+        verbose_name = _("Fan")

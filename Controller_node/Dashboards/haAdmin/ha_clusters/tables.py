@@ -1,3 +1,4 @@
+import ConfigParser
 import xmlrpclib
 
 from django import shortcuts
@@ -6,6 +7,12 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import ungettext_lazy
 from horizon import messages
 from horizon import tables
+
+config = ConfigParser.RawConfigParser()
+config.read('/home/controller/Desktop/HASS/Controller_node/HASS/hass.conf')
+# user = config.get("rpc", "rpc_username")
+# password = config.get("rpc", "rpc_password")
+# port = config.get("rpc", "rpc_bind_port")
 
 
 class DeleteHACluster(tables.DeleteAction):
@@ -26,7 +33,7 @@ class DeleteHACluster(tables.DeleteAction):
         )
 
     def handle(self, table, request, obj_ids):
-        authUrl = "http://user:0928759204@127.0.0.1:61209"
+        authUrl = "http://" + config.get("rpc", "rpc_username") + ":" + config.get("rpc","rpc_password") + "@127.0.0.1:" + config.get("rpc", "rpc_bind_port")
         server = xmlrpclib.ServerProxy(authUrl)
         name = []
         for uuid in obj_ids:
@@ -59,7 +66,7 @@ class DeleteComputingNode(tables.DeleteAction):
         )
 
     def handle(self, table, request, obj_ids):
-        authUrl = "http://user:0928759204@127.0.0.1:61209"
+        authUrl = "http://" + config.get("rpc", "rpc_username") + ":" + config.get("rpc","rpc_password") + "@127.0.0.1:" + config.get("rpc", "rpc_bind_port")
         server = xmlrpclib.ServerProxy(authUrl)
         cluster_id = self.table.kwargs["cluster_id"]
         node_names = []
@@ -71,8 +78,8 @@ class DeleteComputingNode(tables.DeleteAction):
                 err_msg = result["message"]
                 messages.error(request, err_msg)
                 return False
-        self.success_message = _("Deleted Computing Node: %s " % ",".join(node_names))
-        messages.success(request, self.success_message)
+        success_message = _("Deleted Computing Node: %s " % ",".join(node_names))
+        messages.success(request, success_message)
         return shortcuts.redirect(self.get_success_url(request))
 
 
