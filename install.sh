@@ -7,7 +7,7 @@ if [ $EUID -ne 0 ] ; then
     set -e
 fi
 
-LOG_FILE=/mnt/drbd/hass/install.log
+LOG_FILE=/mnt/drbd/HASS/install.log
 if [ ! -e "$LOG_FILE" ] ; then
     touch $LOG_FILE
 fi
@@ -20,7 +20,7 @@ install_script_start() {
 }
 
 upstart_setting() {
-    UPSTART_CONF_FILE=/mnt/drbd/hass/example/HASSd.conf
+    UPSTART_CONF_FILE=/mnt/drbd/HASS/example/HASSd.conf
     cp $UPSTART_CONF_FILE /etc/init/.
     ipmitool_install
 }
@@ -50,7 +50,19 @@ ipmitool_install() {
     then
 	echo ipmi_si >> "$MODULE_FILE" ;
     fi
-    start_HASS_service
+    dashboard_setting
+}
+
+dashboard_setting() {
+    OPENSTACK_DASHBOARD_DIR=/usr/share/openstack-dashboard/openstack_dashboard/dashboards/
+    OPENSTACK_ENABLE_DIR=/usr/share/openstack-dashboard/openstack_dashboard/enabled/
+    rm -rf $OPENSTACK_DASHBOARD_DIR haAdmin
+    rm -rf $OPENSTACK_DASHBOARD_DIR haProject
+    cp -r /mnt/drbd/HASS/Dashboards/haAdmin $OPENSTACK_DASHBOARD_DIR
+    cp -r /mnt/drbd/HASS/Dashboards/haProject $OPENSTACK_DASHBOARD_DIR
+    cp /mnt/drbd/HASS/Dashboards/_2400_haProject.py $OPENSTACK_ENABLE_DIR
+    cp /mnt/drbd/HASS/Dashboards/_2600_haAdmin.py $OPENSTACK_ENABLE_DIR
+    service apache2 restart
 }
 
 start_HASS_service() {
