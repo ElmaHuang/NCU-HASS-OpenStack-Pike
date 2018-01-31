@@ -86,12 +86,11 @@ configure_watchdog_and_ipmitool() {
 }
 
 install_compute_service() {
-    $DIR = /home/localadmin/HASS/
+    DIR=/home/localadmin/HASS/
     cp -r $DIR/compute_node /home/localadmin/.
     cp $DIR/example/detectionagentd.conf /etc/init/.
     service detectionagentd start >> $LOG_FILE
     service detectionagentd status >> $LOG_FILE
-    rm -rf $DIR
 }
 
 install_script_end() {
