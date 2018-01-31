@@ -128,7 +128,7 @@ class Cluster(ClusterInterface):
             finally:
                 return result
 
-    def deleteInstance(self, instance_id, send_flag):
+    def deleteInstance(self, instance_id, send_flag=True):
         result = None
         for instance in self.instance_list:
             host = instance.host

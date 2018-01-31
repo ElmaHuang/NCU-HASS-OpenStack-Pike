@@ -1,13 +1,14 @@
 from django.conf.urls import patterns
 from django.conf.urls import url
+
 from openstack_dashboard.dashboards.haAdmin.ha_clusters.views \
-    import AddView
-from openstack_dashboard.dashboards.haAdmin.ha_clusters.views \
-    import CreateView
+    import IndexView
 from openstack_dashboard.dashboards.haAdmin.ha_clusters.views \
     import DetailView
 from openstack_dashboard.dashboards.haAdmin.ha_clusters.views \
-    import IndexView
+    import CreateView
+from openstack_dashboard.dashboards.haAdmin.ha_clusters.views \
+    import AddView
 
 CLUSTERS = r'^(?P<cluster_id>[^/]+)/%s$'
 

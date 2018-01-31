@@ -31,6 +31,9 @@ class Instance(object):
     def hasVolume(self):
         return self.nova_client.isInstanceGetVolume(self.id)
 
+    def getIP(self, interface_name):
+        return self.nova_client.getInstanceNetwork(self.id)[interface_name][0]
+
     def updateInfo(self):
         self.host = self.nova_client.getInstanceHost(self.id)  # checkinstanceState
         self.status = self.nova_client.getInstanceState(self.id)
@@ -39,6 +42,7 @@ class Instance(object):
     def getInfo(self):
         #self.updateInfo()
         return [self.id, self.name, self.host, self.status, self.network]
+
 
     '''
     def sendUpdate(self):

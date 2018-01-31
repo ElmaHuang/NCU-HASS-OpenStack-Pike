@@ -37,7 +37,7 @@ class Detector(object):
             print "[" + self.node + "] create socket connection"
             self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             self.sock.setblocking(0)
-            self.sock.settimeout(0.5)
+            self.sock.settimeout(1)
             self.sock.connect((self.node, self.port))
         except Exception as e:
             print str(e)
@@ -78,6 +78,7 @@ class Detector(object):
                 print "[" + self.node + "]Receive:" + data
             return State.SERVICE_FAIL
         except Exception as e:
+            logging.error(str(e))
             fail_services = "agents"
             print "[" + self.node + "] connection failed"
             self.sock.connect((self.node, self.port))
@@ -102,7 +103,7 @@ class Detector(object):
     def checkSensorStatus(self):
         if not self.ipmi_status:
             return State.HEALTH
-        status = self.ipmi_manager.getSensorStatus(self.node)
+        status = self.ipmi_manager.getSensorStatus(self.node) 
         if status == "OK":
             return State.HEALTH
         return State.SENSOR_FAIL

@@ -1,27 +1,26 @@
-import logging
+from django.utils.translation import ugettext_lazy as _
+from django.utils.datastructures import SortedDict
+from django.core.urlresolvers import reverse_lazy
+from django.core.urlresolvers import reverse
+
+from horizon import tabs
+from horizon import exceptions
+from horizon import tables
+from horizon import forms
+
+from openstack_dashboard import api
+
+from openstack_dashboard.dashboards.haProject.ha_instances import tables as project_tables
+from openstack_dashboard.dashboards.haProject.ha_instances\
+    import forms as project_forms
+
 import xmlrpclib
 
-from django.core.urlresolvers import reverse
-from django.core.urlresolvers import reverse_lazy
-from django.utils.datastructures import SortedDict
-from django.utils.translation import ugettext_lazy as _
-from horizon import exceptions
-from horizon import forms
-from horizon import tables
-from openstack_dashboard import api
-from openstack_dashboard.dashboards.haProject.ha_instances \
-    import forms as project_forms
-from openstack_dashboard.dashboards.haProject.ha_instances import tables as project_tables
-
-LOG = logging.getLogger(__name__)
-
-
 class Response(object):
-    def __init__(self, code, message=None, data=None):
-        self.code = code
-        self.message = message
-        self.data = data
-
+	def __init__(self, code, message=None, data=None):
+		self.code = code
+		self.message = message
+		self.data = data
 
 class AddView(forms.ModalFormView):
     form_class = project_forms.AddForm
@@ -65,31 +64,31 @@ class UpdateView(forms.ModalFormView):
         return initial
 
 
+
 class IndexView(tables.DataTableView):
     table_class = project_tables.InstancesTable
     template_name = 'haProject/ha_instances/index.html'
     page_title = _("HA_Instances")
 
     def get_data(self):
-        authUrl = "http://user:0928759204@127.0.0.1:61209"
+	authUrl = "http://user:0928759204@127.0.0.1:61209"
         server = xmlrpclib.ServerProxy(authUrl)
         clusters = server.listCluster()
         instances = []
         ha_instances = []
-        for cluster in clusters:
-            uuid = cluster[0]
-            name = cluster[1]
+	for cluster in clusters:
+	    uuid = cluster[0]
+	    name = cluster[1]
             _cluster_instances = server.listInstance(uuid)
-            _cluster_instances = Response(code=_cluster_instances["code"], message=_cluster_instances["message"],
-                                          data=_cluster_instances["data"])
-            # result,cluster_instances = _cluster_instances.split(";")
-            result = _cluster_instances.code
-            cluster_instances = _cluster_instances.data.get("instanceList")
+            _cluster_instances = Response(code=_cluster_instances["code"], message=_cluster_instances["message"], data=_cluster_instances["data"])
+            #result,cluster_instances = _cluster_instances.split(";")
+	    result = _cluster_instances.code
+	    cluster_instances = _cluster_instances.data.get("instanceList")
             if result == 'succeed':
                 if cluster_instances != "":
-                    for _instance in cluster_instances:
-                        # cluster_instances = cluster_instances.split(",")
-                        # for _instance_id in cluster_instances:
+		    for _instance in cluster_instances:
+                    #cluster_instances = cluster_instances.split(",")
+                    #for _instance_id in cluster_instances:
                         instance_id = _instance[0]
                         try:
                             instance = api.nova.server_get(self.request, instance_id)
@@ -104,8 +103,8 @@ class IndexView(tables.DataTableView):
             project_tables.InstancesTable._meta.pagination_param, None)
         search_opts = self.get_filters({'marker': marker, 'paginate': True})
         # Gather our tenants to correlate against IDs
-
-        try:
+        
+	try:
             total_instances, self._more = api.nova.server_list(
                 self.request,
                 search_opts=search_opts)
@@ -113,13 +112,13 @@ class IndexView(tables.DataTableView):
             self._more = False
             total_instances = []
             exceptions.handle(self.request,
-                              _('Unable to retrieve instances.'))
-
-        for instance in ha_instances:
-            print instance
-            for _instance in total_instances:
-                if instance.id == _instance.id:
-                    instances.append(instance)
+                              _('Unable to retrieve instances.'))	
+	
+	for instance in ha_instances:
+	    print instance
+	    for _instance in total_instances:
+	    	if instance.id == _instance.id:
+		    instances.append(instance)
         if instances:
             try:
                 api.network.servers_update_addresses(self.request, instances)

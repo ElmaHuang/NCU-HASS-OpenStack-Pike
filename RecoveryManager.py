@@ -128,6 +128,10 @@ class RecoveryManager(object):
         detector = Detector(fail_node, port)
         fail_services = detector.getFailServices()
 
+        if fail_services == None:
+            logging.info("get fail service equals to None, abort recover service fail")
+            return True
+
         status = True
         if "agents" in fail_services:
             status = self.restartDetectionService(fail_node, version)
@@ -299,19 +303,14 @@ class RecoveryManager(object):
         fail = False
         protected_instance_list = cluster.getProtectedInstanceListByNode(fail_node)
         for instance in protected_instance_list:
-            openstack_instance = self.nova_client.getVM(instance.id)
             try:
-                if "provider" in openstack_instance.networks:
-                    ip = str(openstack_instance.networks['provider'][0])
-                else:
-                    ip = str(openstack_instance.networks['selfservice'][1])
-                status = self._pingInstance(ip, check_timeout)
+                status = self._pingInstance(instance.getIP("ext-net"), check_timeout)
             except Exception as e:
                 print "vm : %s has no floating network, abort ping process!" % instance.name
                 continue
             if not status:
                 fail = True
-                logging.error("vm %s cannot ping %s" % (instance.name, ip))
+                logging.error("vm %s cannot ping %s" % (instance.name, instance.getIP("ext-net")))
         return fail
 
     def _pingInstance(self, ip, check_timeout):

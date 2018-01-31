@@ -18,26 +18,31 @@ Views for managing Neutron Routers.
 """
 import logging
 import random
-import xmlrpclib
 
 from django.core.urlresolvers import reverse
 from django.core.urlresolvers import reverse_lazy
 from django.utils.translation import ugettext_lazy as _
+
 from horizon import exceptions
 from horizon import forms
 from horizon import messages
+
+import xmlrpclib
+
 from openstack_dashboard import api
+
 from openstack_dashboard.dashboards.project.instances \
     import tables as project_tables
 
+
 LOG = logging.getLogger(__name__)
 
-
 class Response(object):
-    def __init__(self, code, message=None, data=None):
-        self.code = code
-        self.message = message
-        self.data = data
+	def __init__(self, code, message=None, data=None):
+		self.code = code
+		self.message = message
+		self.data = data
+
 
 
 class AddForm(forms.SelfHandlingForm):
@@ -52,11 +57,11 @@ class AddForm(forms.SelfHandlingForm):
         instances = []
         marker = self.request.GET.get(
             project_tables.InstancesTable._meta.pagination_param, None)
-        # search_opts = self.get_filters({'marker': marker, 'paginate': True})
+        #search_opts = self.get_filters({'marker': marker, 'paginate': True})
         try:
             instances, self._more = api.nova.server_list(
                 self.request)
-            # search_opts=search_opts)
+                #search_opts=search_opts)
         except Exception:
             self._more = False
             exceptions.handle(self.request,
@@ -69,17 +74,17 @@ class AddForm(forms.SelfHandlingForm):
     def handle(self, request, data):
         authUrl = "http://user:0928759204@127.0.0.1:61209"
         server = xmlrpclib.ServerProxy(authUrl)
+	
+	clusters = server.listCluster()
+	
+	if not clusters:
+	    err_msg = _("There is no available HA Cluster in system.")
+	    messages.error(request, err_msg)
+	    return False
 
-        clusters = server.listCluster()
-
-        if not clusters:
-            err_msg = _("There is no available HA Cluster in system.")
-            messages.error(request, err_msg)
-            return False
-
-        random_cluster = random.choice(clusters)
+	random_cluster = random.choice(clusters)
         result = server.addInstance(random_cluster[0], data['instance_id'])
-        result = Response(code=result["code"], message=result["message"], data=result["data"])
+	result = Response(code=result["code"], message=result["message"], data=result["data"])
         if result.code == 'failed':
             err_msg = _(result.message)
             messages.error(request, err_msg)
@@ -97,21 +102,21 @@ class AddForm(forms.SelfHandlingForm):
 
 class UpdateForm(forms.SelfHandlingForm):
     name = forms.CharField(label=_("Name"), required=False,
-                           widget=forms.TextInput(
-                               attrs={'readonly': 'readonly'}))
+			   widget=forms.TextInput(
+			       attrs={'readonly': 'readonly'}))
     protection = forms.ChoiceField(choices=[(True, _('Protected')),
-                                            (False, _('Non-Protected'))],
-                                   label=_("Protection"))
+					    (False, _('Non-Protected'))],
+			           label=_("Protection"))
     instance_id = forms.CharField(widget=forms.TextInput(
-        attrs={'readonly': 'readonly'}))
-    # admin_state = forms.ChoiceField(choices=[(True, _('UP')),
+				      attrs={'readonly': 'readonly'}))
+    #admin_state = forms.ChoiceField(choices=[(True, _('UP')),
     #                                         (False, _('DOWN'))],
     #                                label=_("Admin State"))
-    # router_id = forms.CharField(label=_("ID"),
+    #router_id = forms.CharField(label=_("ID"),
     #                            widget=forms.TextInput(
     #                                attrs={'readonly': 'readonly'}))
-    # mode = forms.ChoiceField(label=_("Router Type"))
-
+    #mode = forms.ChoiceField(label=_("Router Type"))
+	
     redirect_url = reverse_lazy('horizon:haProject:ha_instances:index')
 
     def __init__(self, request, *args, **kwargs):
@@ -120,14 +125,14 @@ class UpdateForm(forms.SelfHandlingForm):
         self.fields['instance_id'].initial = instance_id
 
     def handle(self, request, data):
-        authUrl = "http://user:0928759204@127.0.0.1:61209"
+	authUrl = "http://user:0928759204@127.0.0.1:61209"
         server = xmlrpclib.ServerProxy(authUrl)
         err_msg = _('Unable to remove protection of HA instance: %s ' % data['name'])
         if data['protection'] == 'False':
             cluster_id = self.get_cluster_by_instance(server, data['instance_id'])
             result = server.deleteInstance(cluster_id, data['instance_id'])
-            result = Response(code=result["code"], message=result["message"], data=result["data"])
-            if result.code == 'failed':
+	    result = Response(code=result["code"], message=result["message"], data=result["data"])
+            if result.code  == 'failed':
                 err_msg = result.message
                 messages.error(request, err_msg)
                 return False
@@ -146,18 +151,17 @@ class UpdateForm(forms.SelfHandlingForm):
         clusters = server.listCluster()
         cluster_uuid = ""
         for cluster in clusters:
-            uuid = cluster[0]
-            name = cluster[1]
+	    uuid = cluster[0]
+	    name = cluster[1]
             _ha_instances = server.listInstance(uuid)
-            _ha_instances = Response(code=_ha_instances["code"], message=_ha_instances["message"],
-                                     data=_ha_instances["data"])
-            # result,ha_instances = _ha_instances.split(";")
-            result = _ha_instances.code
-            ha_instance = _ha_instances.data.get("instanceList")
-            ha_instances = []  # all instance id of cluster
+            _ha_instances = Response(code=_ha_instances["code"], message=_ha_instances["message"], data=_ha_instances["data"])
+            #result,ha_instances = _ha_instances.split(";")
+	    result = _ha_instances.code
+	    ha_instance = _ha_instances.data.get("instanceList")
+	    ha_instances = []#all instance id of cluster
             if result == 'succeed':
-                for _instance in ha_instance:
-                    ha_instances.append(_instance[0])
+		for _instance in ha_instance:
+                	ha_instances.append(_instance[0])
                 for _inst_id in ha_instances:
                     if instance_id in _inst_id:
                         cluster_uuid = uuid

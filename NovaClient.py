@@ -158,6 +158,8 @@ class NovaClient(object):
 
 if __name__ == "__main__":
     a = NovaClient.getInstance()
+    b = a.getInstanceNetwork("a1f64ff2-ad44-4c84-8c77-75295a8c3f77")
+    print b["ext-net"][0]
 # print a.getVM("4df5a97d-9cf2-4d47-99a2-cf68e107acf6")
 # print a.isInstanceExist("4df5a97d-9cf2-4d47-99a2-cf68e107acf6")
 # print a.getInstanceList()[0].isIllegal()

@@ -131,7 +131,7 @@ class ClusterManager():
                     ClusterManager.syncToDatabase()
                 return result
             except Exception as e:
-                message += "add node fail. node not found. (node_name = %s)" + str(e) % node_name_list
+                message += "add node fail. node not found. (node_name = %s)"  % node_name_list +str(e)
                 logging.error(message)
                 # result = {"code": "1", "clusterId": cluster_id, "message": message}
                 result = Response(code="failed",
@@ -159,7 +159,7 @@ class ClusterManager():
                 return result
             except Exception as e:
                 # code = "1"
-                message = "delete node fail. node not found. (node_name = %s)" + str(e) % node_name
+                message = "delete node fail. node not found. (node_name = %s)" % node_name + str(e)
                 logging.error(message)
                 # result = {"code": "1", "clusterId":cluster_id, "message":message}
                 result = Response(code="failed",
@@ -212,8 +212,8 @@ class ClusterManager():
                 return result
             except Exception as e:
                 print str(e)
-                message = "ClusterManager --add the instacne fail.instance_id : %s , cluster_id : %s" + str(e) % (
-                    instance_id, cluster_id)
+                message = "ClusterManager --add the instacne fail.instance_id : %s , cluster_id : %s"  % (
+                    instance_id, cluster_id) + str(e)
                 logging.error(message)
                 # result = {"code": "1", "clusterId": cluster_id, "message": message}
                 result = Response(code="failed",
@@ -241,7 +241,7 @@ class ClusterManager():
             except Exception as e:
                 #logging.error(str(e))
                 print str(e)
-                message = "ClusterManager--delete instance failed. this instance is not being protected (instance_id = %s)"+str(e) % instance_id
+                message = "ClusterManager--delete instance failed. this instance is not being protected (instance_id = %s)" % instance_id +str(e)
                 logging.error(message)
                 # result = {"code": "1", "clusterId":cluster_id, "message":message}
                 result = Response(code="failed",
@@ -298,7 +298,7 @@ class ClusterManager():
                                   data={"clusterId": cluster_id})
                 return result
         except Exception as e:
-            message = "ClusterManager - createCluster._addToCluster fail,cluster id : %s" + str(e) % cluster_id
+            message = "ClusterManager - createCluster._addToCluster fail,cluster id : %s" % cluster_id + str(e)
             logging.error(message)
             # result = {"code": "1","clusterId":cluster_id, "message": message}
             result = Response(code="failed",
