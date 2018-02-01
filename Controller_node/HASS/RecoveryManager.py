@@ -32,6 +32,7 @@ class RecoveryManager(object):
                                  State.SERVICE_FAIL: self.recoverServiceFail,
                                  State.POWER_FAIL: self.recoverPowerOff,
                                  State.SENSOR_FAIL: self.recoverSensorCritical,
+                                 State.SENSOR_CONFIG_FAIL: self.recoverSensorByLiveMigrate,
                                  State.OS_FAIL: self.recoverOSHanged}
         self.iii_support = self.config.getboolean("iii", "iii_support")
         self.iii_database = None
@@ -116,18 +117,19 @@ class RecoveryManager(object):
         print "end recovery vm"
         return self.recoverNodeByShutoff(fail_node)
 
+    def recoverSensorByLiveMigrate(self):
+        pass
+
     def recoverServiceFail(self, cluster_id, fail_node_name):
         cluster = ClusterManager.getCluster(cluster_id)
         if not cluster:
             logging.error("RecoverManager : cluster not found")
             return
         fail_node = cluster.getNodeByName(fail_node_name)
-
         port = int(self.config.get("detection", "polling_port"))
         version = int(self.config.get("version", "version"))
         detector = Detector(fail_node, port)
         fail_services = detector.getFailServices()
-
         status = True
         if "agents" in fail_services:
             status = self.restartDetectionService(fail_node, version)
@@ -135,7 +137,7 @@ class RecoveryManager(object):
             status = self.restartServices(fail_node, fail_services, version)
 
         if not status:  # restart service fail
-            print "start recovery"
+            print "start recovery service fail"
             print "fail node is %s" % fail_node.name
             print "start recovery vm"
             self.recoverVM(cluster, fail_node)

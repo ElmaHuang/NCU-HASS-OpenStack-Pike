@@ -13,8 +13,8 @@ import logging
 import uuid
 
 from Cluster import Cluster
-from NovaClient import NovaClient
 from DatabaseManager import DatabaseManager
+from NovaClient import NovaClient
 from Response import Response
 
 
@@ -181,11 +181,16 @@ class ClusterManager():
         result = None
         try:
             cluster = ClusterManager.getCluster(cluster_id)
-            node_list = cluster.getAllNodeInfo()
-            message = "ClusterManager-listNode--get all node info finish"
-            data = {"cluster_id": cluster_id, "node_list": node_list}
-            result = ClusterManager.successResult(message, data)
-            logging.info(message)
+            if not cluster:
+                message = "ClusterManager--Add the instance to cluster failed. The cluster is not found. (cluster_id = %s)" % cluster_id
+                data = {"cluster_id": cluster_id}
+                result = ClusterManager.failResult(message, data)
+            else:
+                node_list = cluster.getAllNodeInfo()
+                message = "ClusterManager-listNode--get all node info finish"
+                data = {"cluster_id": cluster_id, "node_list": node_list}
+                result = ClusterManager.successResult(message, data)
+                logging.info(message)
             # result = Response(code="succeed",
             #                   message=message,
             #                   data={"cluster_id": cluster_id, "node_list": node_list})
@@ -303,12 +308,12 @@ class ClusterManager():
     @staticmethod
     def _addToClusterList(cluster_name, cluster_id=None):
         result = None
-        data = {"cluster_id": cluster_id}
         try:
             if cluster_id:
                 cluster = Cluster(id=cluster_id, name=cluster_name)
                 ClusterManager._cluster_dict[cluster_id] = cluster
                 message = "ClusterManager -syncofromDB-- createCluster._addToCluster success,cluster id = %s" % cluster_id
+                data = {"cluster_id": cluster_id}
                 result = ClusterManager.successResult(message, data)
                 logging.info(message)
                 # result = Response(code="succeed",
@@ -317,6 +322,7 @@ class ClusterManager():
             else:
                 # create a new cluster
                 cluster_id = str(uuid.uuid4())
+                data = {"cluster_id": cluster_id}
                 cluster = Cluster(id=cluster_id, name=cluster_name)
                 ClusterManager._cluster_dict[cluster_id] = cluster
                 message = "ClusterManager - createCluster._addToClusterList success,cluster id = %s" % cluster_id

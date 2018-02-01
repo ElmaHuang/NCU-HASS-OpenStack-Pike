@@ -11,12 +11,13 @@
 ##########################################################
 
 
+import ConfigParser
+import logging
 import socket
 import subprocess
-import State
 import time
-import logging
-import ConfigParser
+
+import State
 from IPMIModule import IPMIManager
 
 
@@ -98,6 +99,14 @@ class Detector(object):
         if status == "OK":
             return State.HEALTH
         return State.OS_FAIL
+
+    def checkSensorStatusByConfig(self):
+        if not self.ipmi_status:
+            return State.HEALTH
+        status = self.ipmi_manager.getSensorStatusByConfig(self.node)
+        if status == "OK":
+            return State.HEALTH
+        return State.SENSOR_CONFIG_FAIL
 
     def checkSensorStatus(self):
         if not self.ipmi_status:

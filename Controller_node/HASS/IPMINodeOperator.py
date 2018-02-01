@@ -12,14 +12,15 @@
 #   This is a class maintains IPMI command operation.
 ##########################################################
 
-# from NovaClient import NovaClient
-from IPMIModule import IPMIManager
-from ClusterManager import ClusterManager
-from Response import Response
-import time
 import ConfigParser
 import logging
 import socket
+import time
+
+from ClusterManager import ClusterManager
+# from NovaClient import NovaClient
+from IPMIModule import IPMIManager
+from Response import Response
 
 
 class Operator(object):
@@ -157,6 +158,7 @@ class Operator(object):
         # is IPMI PC
         ipmistatus = self.ipmi_module._getIPMIStatus(node_name)
         if not ipmistatus:
+            logging.info(" node is not IPMI PC. The node is %s." % node_name)
             return False
         # is in computing pool
         if ClusterManager.nova.isInComputePool(node_name):
@@ -173,6 +175,7 @@ class Operator(object):
             cluster = ClusterManager.getCluster(cluster_id)
             node_list = cluster.getAllNodeStr()
             if node_name in node_list:
+                logging.error(" node is in HA cluster. The node is %s, cluster id is %s" % (node_name, cluster_id))
                 return False
         return True
 

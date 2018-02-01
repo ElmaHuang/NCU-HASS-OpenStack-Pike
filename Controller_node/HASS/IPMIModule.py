@@ -29,8 +29,6 @@ class IPMIManager(object):
         self.config.read('hass.conf')
         self.ip_dict = dict(self.config._sections['ipmi'])
         self.user_dict = dict(self.config._sections['ipmi_user'])
-        # self.TEMP_LOWER_CRITICAL = 10
-        # self.TEMP_UPPER_CRITICAL = 80
 
     def rebootNode(self, node_name):
         code = ""
@@ -110,7 +108,8 @@ class IPMIManager(object):
                               data={"node": node_name})
             return result
 
-    def getTempInfoByNode(self, node_name, sensor_type):
+    # for recovery
+    def getRecoverInfoByNode(self, node_name, sensor_type):
         # vendor = self.config.get("ipmi", "vendor")
         base = self._baseCMDGenerate(node_name)
         if base is None:
@@ -124,17 +123,14 @@ class IPMIManager(object):
             p = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
             response, err = p.communicate()
             response = response.split("\n")
-            dataList = self.dataClean(response, "temperature")
-            return int(dataList[2])  # temperature
+            data_list = self._tempDataClean(response)
+            return (data_list[0], data_list[1], data_list[2])  # (value,lower_critical,upper_critical)
         except Exception as e:
             message = "Error! Unable to get computing node : %s's hardware information." % node_name
-            logging.error("IpmiModule getNodeInfo - %s, %s" % (message, e))
+            logging.error("IpmiModule getNodeInfo - %s, %s" % (message, str(e)))
             return "Error"
 
-    def dataClean(self, raw_data, type=None):
-        if type == "temperature":
-            return self._tempDataClean(raw_data)
-
+    def dataClean(self, raw_data):
         sensor_id = raw_data[1].split(":")[1].strip()
         device = raw_data[2].split(":")[1].strip()
         if device == "7.1":
@@ -151,33 +147,19 @@ class IPMIManager(object):
 
         return [sensor_id, device, sensor_type, value, status, lower_critical, lower, upper, upper_critical]
 
+    # for live migration use case
     def _tempDataClean(self, raw_data):
-
-        # data format:
-        # Locating sensor record...
-        # Sensor ID              : 02-CPU 1 (0x4)
-        # Entity ID             : 65.1 (Processor)
-        # Sensor Type (Threshold)  : Temperature (0x01)
-        # Sensor Reading        : 40 (+/- 0) degrees C
-        # Status                : ok
-        # Positive Hysteresis   : Unspecified
-        # Negative Hysteresis   : Unspecified
-        # Minimum sensor range  : 110.000
-        # Maximum sensor range  : Unspecified
-        # Event Message Control : Global Disable Only
-        # Readable Thresholds   : ucr 
-        # Settable Thresholds   : 
-        # Threshold Read Mask   : ucr 
-        # Assertions Enabled    : ucr+ 
-
-        sensor_id = raw_data[1].split(":")[1].strip()
-        device = raw_data[2].split(":")[1].strip()
+        # sensor_id = raw_data[1].split(":")[1].strip()
+        # device = raw_data[2].split(":")[1].strip()
         value = raw_data[4].split(":")[1]
-        value = re.findall("[0-9]+", value)[0].strip()  # use regular expression to filt
-        # lower_critical = self.TEMP_LOWER_CRITICAL
-        # upper_critical = self.TEMP_UPPER_CRITICAL
-        # return [sensor_id, device, value, lower_critical, upper_critical]
-        return [sensor_id, device, value]
+        value = re.findall("[0-9]+", value)[0].strip()  # use regular expression to filter
+        lower_critical = raw_data[7].split(":")[1].strip()
+        lower_critical = lower_critical.split(".")[0].strip()
+        upper_critical = raw_data[10].split(":")[1].strip()
+        upper_critical = upper_critical.split(".")[0].strip()
+
+        return [int(value), int(lower_critical), int(upper_critical)]
+        # return [sensor_id, device, value]
 
     def getNodeInfoByType(self, node_name, sensor_type_list):
         code = ""
@@ -188,7 +170,7 @@ class IPMIManager(object):
             raise Exception("ipmi node not found , node_name : %s" % node_name)
         for sensor_type in sensor_type_list:
             command = base + IPMIConf.NODEINFO_BY_TYPE % sensor_type
-            print command
+            # print command
             try:
                 p = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
                 response, err = p.communicate()
@@ -196,18 +178,15 @@ class IPMIManager(object):
                 # data clean
                 sensor_data = self.dataClean(response)
                 result_list.append(sensor_data)
-                # code = "0"
                 code = "succeed"
-                message = message + "Successfully get computing node : %s's %s information." % (
-                    node_name, sensor_type_list)
+                message = message + "Get computing node : %s's %s information successfully ." % (node_name, sensor_type)
                 logging.info("IpmiModule getNodeInfo - " + message)
             except Exception as e:
                 message = message + "Error! Unable to get computing node : %s's %s information." % (
-                    node_name, sensor_type_list)
-                logging.error("IpmiModule getNodeInfo - %s" % e)
-                # code = "1"
+                    node_name, sensor_type)
+                logging.error("IpmiModule getNodeInfo - %s" % str(e))
                 code = "failed"
-        print result_list
+        # print result_list
         # result = {"code": code, "info": result_list, "message": message}
         result = Response(code=code,
                           message=message,
@@ -265,18 +244,32 @@ class IPMIManager(object):
 
     def getSensorStatus(self, node_name):
         ipmi_watched_sensor_list = json.loads(self.config.get("ipmi_sensor", "ipmi_watched_sensors"))
-        upper_critical = int(self.config.get("ipmi_sensor", "upper_critical"))
-        lower_critical = int(self.config.get("ipmi_sensor", "lower_critical"))
         try:
             for sensor in ipmi_watched_sensor_list:
-                value = self.getTempInfoByNode(node_name, sensor)
+                value = self.getRecoverInfoByNode(node_name, sensor)
                 if value == "Error" and self.getPowerStatus(node_name) != "OK":
                     return "OK"
-                if value > upper_critical or value < lower_critical:
+                if value[0] > value[2] or value[0] < value[1]:
+                    # (value,lower,upper)
                     return "Error"
             return "OK"
         except Exception as e:
             logging.error("IPMIModule-- getSensorStatus fail : %s" % str(e))
+
+    def getSensorStatusByConfig(self, node_name):
+        ipmi_watched_sensor_list = json.loads(self.config.get("ipmi_sensor", "ipmi_watched_sensors"))
+        upper_critical = int(self.config.get("ipmi_sensor", "upper_critical"))
+        lower_critical = int(self.config.get("ipmi_sensor", "lower_critical"))
+        try:
+            for sensor in ipmi_watched_sensor_list:
+                value = self.getRecoverInfoByNode(node_name, sensor)
+                if value == "Error" and self.getPowerStatus(node_name) != "OK":
+                    return "OK"
+                if value[0] > upper_critical or value[0] < lower_critical:
+                    return "Error"
+            return "OK"
+        except Exception as e:
+            logging.error("IPMIModule-- getSensorStatusByConfig fail : %s" % str(e))
 
     def resetWatchDog(self, node_name):
         status = True
