@@ -37,7 +37,7 @@ class Operator(object):
         data = {"node_name": node_name}
         result = None
         try:
-            if self._checkNodeIPMI(node_name):
+            if self._checkNodeIPMI(node_name) and self._checkNodeInComputePool(node_name):
                 message += " IPMIOperator--node is in compute pool . The node is %s." % node_name
                 ipmi_result = self.ipmi_module.startNode(node_name)
                 if ipmi_result.code == "succeed":
@@ -46,8 +46,8 @@ class Operator(object):
                         message += "start node success.The node is %s." % node_name
                         detection = self._checkDetectionAgent(node_name, default_wait_time)
                         if not detection:
-                            message += "detectionagent in computing node is fail."
-                        message += "detectionagent in computing is runnung!"
+                            message += "DetectionAgent in computing node is fail."
+                        message += "DetectionAgent in computing is running!"
                         result = self.successResult(message, data)
                         logging.info(message)
                         # result = Response(code="succeed", message=message, data={"node_name": node_name})
@@ -80,7 +80,7 @@ class Operator(object):
         data = {"node_name": node_name}
         result = None
         try:
-            if self._checkNodeIPMI(node_name) and self._checkNodeNotInCluster(node_name):
+            if self._checkNodeIPMI(node_name) and self._checkNodeInComputePool(node_name) and self._checkNodeNotInCluster(node_name):
                 ipmi_result = self.ipmi_module.shutOffNode(node_name)
                 # check power status in IPMIModule
                 if ipmi_result.code == "succeed":
@@ -111,7 +111,7 @@ class Operator(object):
         data = {"node_name": node_name}
         message = ""
         try:
-            if self._checkNodeIPMI(node_name) and self._checkNodeNotInCluster(node_name):
+            if self._checkNodeIPMI(node_name) and self._checkNodeInComputePool(node_name) and self._checkNodeNotInCluster(node_name):
                 ipmi_result = self.ipmi_module.rebootNode(node_name)
                 if ipmi_result.code == "succeed":
                     message += "reboot node success.The node is %s." % node_name
@@ -158,24 +158,30 @@ class Operator(object):
         # is IPMI PC
         ipmistatus = self.ipmi_module._getIPMIStatus(node_name)
         if not ipmistatus:
-            logging.info(" node is not IPMI PC. The node is %s." % node_name)
-            return False
-        # is in computing pool
-        if ClusterManager.nova.isInComputePool(node_name):
-            message = " node is in compute pool . The node is %s." % node_name
-            logging.info(message)
-            return True
-        else:
-            message = " node is not in compute pool please check again! The node is %s." % node_name
+            message = " node is not IPMI PC please check again! The node is %s." % node_name
             logging.error(message)
-            return False
+        else:
+            message = " node is IPMI PC. node is %s." % node_name
+            logging.info(message)
+        return ipmistatus
+
+    def _checkNodeInComputePool(self, node_name):
+        # is in computing pool
+        result = ClusterManager.nova.isInComputePool(node_name)
+        if result:
+            message = " Node is in compute pool . The node is %s." % node_name
+            logging.info(message)
+        else:
+            message = " Node is not in compute pool please check again! The node is %s." % node_name
+            logging.error(message)
+        return result
 
     def _checkNodeNotInCluster(self, node_name):
         for cluster_id in self.cluster_list:
             cluster = ClusterManager.getCluster(cluster_id)
             node_list = cluster.getAllNodeStr()
             if node_name in node_list:
-                logging.error(" node is in HA cluster. The node is %s, cluster id is %s" % (node_name, cluster_id))
+                logging.error(" Node is in HA cluster. The node is %s, cluster id is %s" % (node_name, cluster_id))
                 return False
         return True
 
@@ -223,7 +229,7 @@ class Operator(object):
                     # print data
                 else:
                     # time.sleep(1)
-                    print "wating:", check_timeout
+                    print "waiting:", check_timeout
                     check_timeout -= 5
             else:
                 # timeout

@@ -291,10 +291,10 @@ class IPMIManager(object):
 
     def getPowerStatus(self, node_name):
         status = "OK"
-        base = self._baseCMDGenerate(node_name)
-        if base is None:
-            raise Exception("node not found , node_name : %s" % node_name)
         try:
+            base = self._baseCMDGenerate(node_name)
+            if base is None:
+                raise Exception("node not found , node_name : %s" % node_name)
             command = base + IPMIConf.POWER_STATUS
             response = subprocess.check_output(command, shell=True)
             if IPMIConf.POWER_STATUS_SUCCESS_MSG not in response:

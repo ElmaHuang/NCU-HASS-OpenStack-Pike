@@ -13,12 +13,13 @@
 #   This is a class maintains Openstack-Nova command operation
 ##############################################################
 
-from keystoneauth1.identity import v3
-from keystoneauth1 import session
-from novaclient import client
 # from ClusterManager import ClusterManager
 import ConfigParser
 import time
+
+from keystoneauth1 import session
+from keystoneauth1.identity import v3
+from novaclient import client
 
 
 class NovaClient(object):
@@ -29,7 +30,7 @@ class NovaClient(object):
         self.config = ConfigParser.RawConfigParser()
         self.config.read('hass.conf')
         self.version = self.config.get("version", "version")
-        if NovaClient._instance != None:
+        if NovaClient._instance is not None:
             raise Exception("This class is a singleton! , cannot initialize twice")
         else:
             self.initializeHelper()
@@ -61,11 +62,11 @@ class NovaClient(object):
         return novaClient
 
     def getComputePool(self):
-        computePool = []
-        hypervisorList = self._getHostList()
-        for hypervisor in hypervisorList:
-            computePool.append(str(hypervisor.hypervisor_hostname))
-        return computePool
+        compute_pool = []
+        hypervisor_list = self._getHostList()
+        for hypervisor in hypervisor_list:
+            compute_pool.append(str(hypervisor.hypervisor_hostname))
+        return compute_pool
 
     def isInComputePool(self, name):
         return name in self.getComputePool()
@@ -138,8 +139,6 @@ class NovaClient(object):
         if power_state != 1:
             return False
         return True
-
-    # return None
 
     def getVolumes(self, id):
         return NovaClient._helper.volumes.get_server_volumes(id)
