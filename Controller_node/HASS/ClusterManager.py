@@ -109,18 +109,17 @@ class ClusterManager():
         message = ""
         try:
             # delete illegal node
-            for node_name in node_name_list[:]:
+            tmp_list = node_name_list[:]
+            for node_name in tmp_list:
                 if not ClusterManager._checkNodeOverlappingForAllCluster(node_name):
                     print "%s is already in a HA cluster. " % node_name
                     message += "%s is overlapping node" % node_name
-                    node_name_list.remove(node_name)
+                    tmp_list.remove(node_name)
             # check node list
-            if not node_name_list:
-                message = "All node in node list are(is) illegal"
+            if not tmp_list:
+                message = "All node(s) in node list are(is) illegal"
                 result = ClusterManager.failResult(message, data)
-                # result = Response(code="failed",
-                #                   message=message,
-                #                   data={"cluster_id": cluster_id})
+                logging.error(message)
             # node list is not empty
             else:
                 cluster = ClusterManager.getCluster(cluster_id)
@@ -131,14 +130,13 @@ class ClusterManager():
                     #                   message=message,
                     #                   data={"cluster_id": cluster_id})
                 else:
-                    result = cluster.addNode(node_name_list)
+                    result = cluster.addNode(tmp_list)
                     logging.info(
-                        "ClusterManager--add node finish.cluster id is %s ,node is %s " % (cluster_id, node_name_list))
-
+                        "ClusterManager--add node finish.cluster id is %s ,node is %s " % (cluster_id, tmp_list))
                     if result.code == "succeed" and write_DB:
                         ClusterManager.syncToDatabase()
         except Exception as e:
-            message += "add node fail. node not found. (node_name = %s).%s" % (node_name_list, str(e))
+            message += "add node fail. node not found. (node_name = %s).%s" % (tmp_list, str(e))
             result = ClusterManager.failResult(message, data)
             logging.error(message)
             # result = Response(code="failed",

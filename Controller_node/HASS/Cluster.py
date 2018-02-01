@@ -43,7 +43,7 @@ class Cluster(ClusterInterface):
             # no node be added into node_list
             if result is None:
                 data = {"cluster_id": self.id}
-                self.failResult(message, data)
+                result = self.failResult(message, data)
         except Exception as e:
             message = "Cluster-- add node function fail.%s" % str(e)
             data = {"cluster_id": self.id}
