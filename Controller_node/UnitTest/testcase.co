@@ -1,0 +1,63 @@
+# test case sample:
+# test_case_name	description
+#===============Auth===================
+UT_Correct_Auth    HAIPMI-TC-01
+UT_Wrong_Auth    HAIPMI-TC-01
+UT_Without_Auth    HAIPMI-TC-01
+#==============Cluster==================
+UT_Create_Cluster    HAIPMI-TC-03
+UT_Create_Duplicate_Cluster    HAIPMI-TC-03
+UT_Delete_Cluster    HAIPMI-TC-04
+UT_Delete_Wrong_Cluster    HAIPMI-TC-04
+UT_List_Cluster    HAIPMI-TC-05
+#================Node====================
+UT_Add_Node    HAIPMI-TC-06
+UT_Add_Wrong_Node    HAIPMI-TC-06
+UT_Add_Duplicate_Node    HAIPMI-TC-06
+UT_Add_Node_Wrong_Cluster_ID    HAIPMI-TC-06
+UT_Delete_Node    HAIPMI-TC-07
+UT_Delete_Wrong_Node_Name    HAIPMI-TC-07
+UT_Delete_Node_Wrong_Cluster_ID    HAIPMI-TC-07
+UT_List_Node    HAIPMI-TC-08
+UT_List_Node_IPMI_Status    HAIPMI-TC-32
+UT_List_Node_Wrong_Cluster_ID    HAIPMI-TC-08
+#================Instance=================
+UT_Add_Instance    HAIPMI-TC-09
+UT_Add_Wrong_Instance    HAIPMI-TC-09
+UT_Add_Duplicate_Instance    HAIPMI-TC-09
+UT_Add_Instance_Wrong_Cluster_ID    HAIPMI-TC-09
+UT_Delete_Instance    HAIPMI-TC-10
+UT_Delete_Instance_Wrong_ID    HAIPMI-TC-10
+UT_Delete_Instance_Wrong_Cluster_ID    HAIPMI-TC-10
+UT_List_Instance    HAIPMI-TC-11
+UT_List_Instance_Wrong_Cluster_ID    HAIPMI-TC-11
+#==================Detect====================
+#UT_Detect_Network    HAIPMI-TC-20
+#UT_Detect_OS    HAIPMI-TC-20
+#UT_Detect_Power    HAIPMI-TC-20
+#UT_Detect_Service    HAIPMI-TC-20
+UT_Get_OS_Status    HAIPMI-TC-15
+UT_Get_Power_Status    HAIPMI-TC-16
+UT_Get_Sensor_Status    HAIPMI-TC-17
+#==================Operator===================
+UT_Reboot_Node    HAIPMI-TC-12
+UT_Reboot_Wrong_Node    HAIPMI-TC-12
+UT_Reboot_Node_In_Cluster    HAIPMI-TC-12
+#UT_ShutOff_Node    HAIPMI-TC-13
+UT_ShutOff_Wrong_Node    HAIPMI-TC-13
+UT_ShutOff_Node_In_Cluster    HAIPMI-TC-13
+#UT_Start_Node    HAIPMI-TC-14
+UT_Start_Wrong_Node    HAIPMI-TC-14
+UT_Get_Sensor_Value_By_Type    HAIPMI-TC-18
+#UT_Get_Sensor_Value_Wrong_Type    HAIPMI-TC-18
+#UT_Get_Sensor_Value_Wrong_Node    HAIPMI-TC-18
+#UT_Get_All_Sensor_Value    HAIPMI-TC-19
+#UT_Get_All_Sensor_Value_Wrong_Node    HAIPMI-TC-19
+#==================Recover===================
+#UT_Recover_Network_Isolation    HAIPMI-TC-24
+#UT_Recover_OS_Hang    HAIPMI-TC-25
+#UT_Recover_Sensor_Fail    HAIPMI-TC-26
+#UT_Recover_Power_Status    HAIPMI-TC-27
+#UT_Recover_Qemu-KVM_Service    HAIPMI-TC-28
+#UT_Evacuate    description:
+#UT_Live_Migration    description:

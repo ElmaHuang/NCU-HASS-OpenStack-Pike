@@ -25,7 +25,6 @@ from Response import Response
 
 class Operator(object):
     def __init__(self):
-        # self.nova_client = NovaClient.getInstance()
         self.ipmi_module = IPMIManager()
         self.cluster_list = ClusterManager.getClusterList()
         self.config = ConfigParser.RawConfigParser()
@@ -80,7 +79,8 @@ class Operator(object):
         data = {"node_name": node_name}
         result = None
         try:
-            if self._checkNodeIPMI(node_name) and self._checkNodeInComputePool(node_name) and self._checkNodeNotInCluster(node_name):
+            if self._checkNodeIPMI(node_name) and self._checkNodeInComputePool(
+                    node_name) and self._checkNodeNotInCluster(node_name):
                 ipmi_result = self.ipmi_module.shutOffNode(node_name)
                 # check power status in IPMIModule
                 if ipmi_result.code == "succeed":
@@ -111,14 +111,15 @@ class Operator(object):
         data = {"node_name": node_name}
         message = ""
         try:
-            if self._checkNodeIPMI(node_name) and self._checkNodeInComputePool(node_name) and self._checkNodeNotInCluster(node_name):
+            if self._checkNodeIPMI(node_name) and self._checkNodeInComputePool(
+                    node_name) and self._checkNodeNotInCluster(node_name):
                 ipmi_result = self.ipmi_module.rebootNode(node_name)
                 if ipmi_result.code == "succeed":
                     message += "reboot node success.The node is %s." % node_name
                     detection = self._checkDetectionAgent(node_name, default_wait_time)
                     if not detection:
-                        message += "detectionagent in computing node is fail."
-                    message += "detectionagent in computing is runnung!"
+                        message += "DetectionAgent in computing node is fail."
+                    message += "DetectionAgent in computing is running!"
                     result = self.successResult(message, data)
                     logging.info(message)
                     # result = Response(code="succeed", message=message, data={"node_name": node_name})
@@ -132,7 +133,6 @@ class Operator(object):
                 logging.error(message)
                 # result = Response(code="failed", message=message, data={"node_name": node_name})
         except Exception as e:
-            # shut off fail
             message += "IPMIOperator--reboot node fail.The node is %s.%s" % (node_name, str(e))
             result = self.failResult(message, data)
             logging.error(message)
@@ -149,24 +149,22 @@ class Operator(object):
 
     def getNodeInfoByType(self, node_name, sensor_type):
         try:
-            data = self.ipmi_module.getNodeInfoByType(node_name, sensor_type)
-            return data
+            result = self.ipmi_module.getNodeInfoByType(node_name, sensor_type)
+            return result
         except Exception as e:
             logging.error("IPMIOperator get %s sensor info of node fail.%s" % (sensor_type, str(e)))
 
     def _checkNodeIPMI(self, node_name):
-        # is IPMI PC
         ipmistatus = self.ipmi_module._getIPMIStatus(node_name)
         if not ipmistatus:
-            message = " node is not IPMI PC please check again! The node is %s." % node_name
+            message = " Node is not IPMI PC please check again! The node is %s." % node_name
             logging.error(message)
         else:
-            message = " node is IPMI PC. node is %s." % node_name
+            message = " Node is IPMI PC. node is %s." % node_name
             logging.info(message)
         return ipmistatus
 
     def _checkNodeInComputePool(self, node_name):
-        # is in computing pool
         result = ClusterManager.nova.isInComputePool(node_name)
         if result:
             message = " Node is in compute pool . The node is %s." % node_name
@@ -177,13 +175,16 @@ class Operator(object):
         return result
 
     def _checkNodeNotInCluster(self, node_name):
-        for cluster_id in self.cluster_list:
-            cluster = ClusterManager.getCluster(cluster_id)
-            node_list = cluster.getAllNodeStr()
-            if node_name in node_list:
-                logging.error(" Node is in HA cluster. The node is %s, cluster id is %s" % (node_name, cluster_id))
-                return False
-        return True
+        result = True
+        if self.cluster_list is None:
+            pass
+        else:
+            for cluster_id, cluster in self.cluster_list.iteritems():
+                node_list = cluster.getAllNodeStr()
+                if node_name in node_list:
+                    logging.error(" Node is in HA cluster. The node is %s, cluster id is %s" % (node_name, cluster_id))
+                    result = False
+        return result
 
     def _checkNodeBootSuccess(self, nodeName, check_timeout):
         # check power statue in IPMIModule

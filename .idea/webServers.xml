@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="14d65d01-363a-451b-b775-fad3865e5d15" name="openstack_pike_controller" url="http://140.115.53.34">
+        <fileTransfer host="140.115.53.34" port="5560" rootFolder="/home/controller/Desktop" accessType="SFTP">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" />
+          </advancedOptions>
+          <option name="port" value="5560" />
+        </fileTransfer>
+      </webServer>
+      <webServer id="8567b25d-d4b8-40df-8c46-e3b997aa31ff" name="openstack_pike_compute2" url="http://140.115.53.34">
+        <fileTransfer host="140.115.53.34" port="5561" rootFolder="/home/compute2/Desktop" accessType="SFTP">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" />
+          </advancedOptions>
+          <option name="port" value="5561" />
+        </fileTransfer>
+      </webServer>
+      <webServer id="0f7fe14d-26eb-4d2d-a830-17cadc2e4145" name="openstack_newton_controller" url="http://140.115.53.34">
+        <fileTransfer host="140.115.53.34" port="5555" accessType="SFTP">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" />
+          </advancedOptions>
+          <option name="port" value="5555" />
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>

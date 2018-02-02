@@ -1,31 +1,76 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="dbfb63cd-65e2-44a5-b436-409b2486cd17" name="Default" comment="">
-      <change type="DELETED" beforePath="$USER_HOME$/Desktop/temp/.idea/misc.xml" afterPath="" />
-      <change type="DELETED" beforePath="$USER_HOME$/Desktop/temp/.idea/modules.xml" afterPath="" />
-      <change type="DELETED" beforePath="$USER_HOME$/Desktop/temp/.idea/refactor-HASS.iml" afterPath="" />
-      <change type="DELETED" beforePath="$USER_HOME$/Desktop/temp/.idea/workspace.xml" afterPath="" />
-      <change type="MODIFICATION" beforePath="$USER_HOME$/Desktop/temp/Cluster.py" afterPath="$USER_HOME$/Desktop/temp/Cluster.py" />
-      <change type="MODIFICATION" beforePath="$USER_HOME$/Desktop/temp/ClusterInterface.py" afterPath="$USER_HOME$/Desktop/temp/ClusterInterface.py" />
-      <change type="MODIFICATION" beforePath="$USER_HOME$/Desktop/temp/ClusterManager.py" afterPath="$USER_HOME$/Desktop/temp/ClusterManager.py" />
-      <change type="MODIFICATION" beforePath="$USER_HOME$/Desktop/temp/DatabaseManager.py" afterPath="$USER_HOME$/Desktop/temp/DatabaseManager.py" />
-      <change type="MODIFICATION" beforePath="$USER_HOME$/Desktop/temp/Hass.py" afterPath="$USER_HOME$/Desktop/temp/Hass.py" />
-      <change type="MODIFICATION" beforePath="$USER_HOME$/Desktop/temp/HassAPI.py" afterPath="$USER_HOME$/Desktop/temp/HassAPI.py" />
-      <change type="MODIFICATION" beforePath="$USER_HOME$/Desktop/temp/IPMIModule.py" afterPath="$USER_HOME$/Desktop/temp/IPMIModule.py" />
-      <change type="MODIFICATION" beforePath="$USER_HOME$/Desktop/temp/Node.py" afterPath="$USER_HOME$/Desktop/temp/Node.py" />
-      <change type="MODIFICATION" beforePath="$USER_HOME$/Desktop/temp/NodeInterface.py" afterPath="$USER_HOME$/Desktop/temp/NodeInterface.py" />
-      <change type="MODIFICATION" beforePath="$USER_HOME$/Desktop/temp/hass.conf" afterPath="$USER_HOME$/Desktop/temp/hass.conf" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../HASS-Newton-106/.idea/Hass-Newton.iml" afterPath="$PROJECT_DIR$/../HASS-Newton-106/.idea/Hass-Newton.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../HASS-Newton-106/.idea/modules.xml" afterPath="$PROJECT_DIR$/../HASS-Newton-106/.idea/modules.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../HASS-Newton-106/.idea/vcs.xml" afterPath="$PROJECT_DIR$/../HASS-Newton-106/.idea/vcs.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../HASS-Newton-106/.idea/workspace.xml" afterPath="$PROJECT_DIR$/../HASS-Newton-106/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Cluster.py" afterPath="$PROJECT_DIR$/Cluster.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ClusterManager.py" afterPath="$PROJECT_DIR$/ClusterManager.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Hass.py" afterPath="$PROJECT_DIR$/Hass.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/IPMIModule.py" afterPath="$PROJECT_DIR$/IPMIModule.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/IPMINodeOperator.py" afterPath="$PROJECT_DIR$/IPMINodeOperator.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Node.py" afterPath="$PROJECT_DIR$/Node.py" />
+    <list default="true" id="dbfb63cd-65e2-44a5-b436-409b2486cd17" name="Default" comment="path">
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/codeStyles/codeStyleConfig.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/Controller_node/UnitTest/tests/UT_IPMIManager_Reboot_Node.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/Controller_node/UnitTest/tests/UT_IPMIManager_ShutOff_Node.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/Controller_node/UnitTest/tests/UT_IPMIManager_Start_Node.py" />
+      <change beforePath="$PROJECT_DIR$/../HASS-Newton-106/.idea/Hass-Newton.iml" afterPath="$PROJECT_DIR$/../HASS-Newton-106/.idea/Hass-Newton.iml" />
+      <change beforePath="$PROJECT_DIR$/../HASS-Newton-106/.idea/modules.xml" afterPath="$PROJECT_DIR$/../HASS-Newton-106/.idea/modules.xml" />
+      <change beforePath="$PROJECT_DIR$/../HASS-Newton-106/.idea/vcs.xml" afterPath="$PROJECT_DIR$/../HASS-Newton-106/.idea/vcs.xml" />
+      <change beforePath="$PROJECT_DIR$/../HASS-Newton-106/.idea/workspace.xml" afterPath="$PROJECT_DIR$/../HASS-Newton-106/.idea/workspace.xml" />
+      <change beforePath="$PROJECT_DIR$/../HASS-Newton-106/Dashboards/haAdmin/ha_instances/panel.py" afterPath="$PROJECT_DIR$/../HASS-Newton-106/Dashboards/haAdmin/ha_instances/panel.py" />
+      <change beforePath="$PROJECT_DIR$/../HASS-Newton-106/Dashboards/haProject/ha_instances/panel.py" afterPath="$PROJECT_DIR$/../HASS-Newton-106/Dashboards/haProject/ha_instances/panel.py" />
+      <change beforePath="$PROJECT_DIR$/../HASS-Newton-106/testagent.py" afterPath="$PROJECT_DIR$/../HASS-Newton-106/testagent.py" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" afterPath="$PROJECT_DIR$/.idea/modules.xml" />
+      <change beforePath="$PROJECT_DIR$/.idea/refactor-HASS.iml" afterPath="$PROJECT_DIR$/.idea/refactor-HASS.iml" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" afterPath="$PROJECT_DIR$/.idea/vcs.xml" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change beforePath="$PROJECT_DIR$/Controller_node/HASS/IPMIModule.py" afterPath="$PROJECT_DIR$/Controller_node/HASS/IPMIModule.py" />
+      <change beforePath="$PROJECT_DIR$/Controller_node/HASS/IPMINodeOperator.py" afterPath="$PROJECT_DIR$/Controller_node/HASS/IPMINodeOperator.py" />
+      <change beforePath="$PROJECT_DIR$/Controller_node/HASS/Instance.py" afterPath="$PROJECT_DIR$/Controller_node/HASS/Instance.py" />
+      <change beforePath="$PROJECT_DIR$/UnitTest/Config.py" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/UnitTest/Instance.py" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/UnitTest/Oracle.py" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/UnitTest/Postprocess.py" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/UnitTest/Preprocess.py" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/UnitTest/foo.py" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/UnitTest/testcase.co" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/UnitTest/tests/UT_Add_Duplicate_Instance.py" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/UnitTest/tests/UT_Add_Duplicate_Node.py" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/UnitTest/tests/UT_Add_Instance.py" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/UnitTest/tests/UT_Add_Instance_Wrong_Cluster_ID.py" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/UnitTest/tests/UT_Add_Node.py" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/UnitTest/tests/UT_Add_Node_Wrong_Cluster_ID.py" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/UnitTest/tests/UT_Add_Wrong_Node.py" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/UnitTest/tests/UT_Correct_Auth.py" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/UnitTest/tests/UT_Create_Cluster.py" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/UnitTest/tests/UT_Delete_Cluster.py" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/UnitTest/tests/UT_Delete_Instance.py" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/UnitTest/tests/UT_Delete_Instance_Wrong_Cluster_ID.py" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/UnitTest/tests/UT_Delete_Instance_Wrong_ID.py" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/UnitTest/tests/UT_Delete_Node.py" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/UnitTest/tests/UT_Delete_Node_Wrong_Cluster_ID.py" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/UnitTest/tests/UT_Delete_Wrong_Cluster.py" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/UnitTest/tests/UT_Delete_Wrong_Node_Name.py" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/UnitTest/tests/UT_Detect_Network.py" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/UnitTest/tests/UT_Detect_OS.py" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/UnitTest/tests/UT_Detect_Power.py" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/UnitTest/tests/UT_Detect_Service.py" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/UnitTest/tests/UT_Evacuate.py" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/UnitTest/tests/UT_Get_OS_Status.py" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/UnitTest/tests/UT_Get_Power_Status.py" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/UnitTest/tests/UT_Get_Sensor_Status.py" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/UnitTest/tests/UT_Get_Sensor_Value.py" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/UnitTest/tests/UT_List_Cluster.py" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/UnitTest/tests/UT_List_Instance.py" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/UnitTest/tests/UT_List_Instance_Wrong_Cluster_ID.py" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/UnitTest/tests/UT_List_Node.py" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/UnitTest/tests/UT_List_Node_Wrong_Cluster_ID.py" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/UnitTest/tests/UT_Live_Migration.py" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/UnitTest/tests/UT_Reboot_Node.py" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/UnitTest/tests/UT_ShutOff_Node.py" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/UnitTest/tests/UT_Start_Node.py" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/UnitTest/tests/UT_Without_Auth.py" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/UnitTest/tests/UT_Wrong_Auth.py" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/../Hass-kilo/.idea/HASS-Project-master.iml" afterPath="$PROJECT_DIR$/../Hass-kilo/.idea/HASS-Project-master.iml" />
+      <change beforePath="$PROJECT_DIR$/../Hass-kilo/.idea/modules.xml" afterPath="$PROJECT_DIR$/../Hass-kilo/.idea/modules.xml" />
+      <change beforePath="$PROJECT_DIR$/../Hass-kilo/.idea/vcs.xml" afterPath="$PROJECT_DIR$/../Hass-kilo/.idea/vcs.xml" />
+      <change beforePath="$PROJECT_DIR$/../Hass-kilo/.idea/workspace.xml" afterPath="$PROJECT_DIR$/../Hass-kilo/.idea/workspace.xml" />
+      <change beforePath="$PROJECT_DIR$/../Hass-kilo/AccessDB.py" afterPath="$PROJECT_DIR$/../Hass-kilo/AccessDB.py" />
+      <change beforePath="$PROJECT_DIR$/../MOST/.idea/MOST.iml" afterPath="$PROJECT_DIR$/../MOST/.idea/MOST.iml" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -34,113 +79,103 @@
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
+  <component name="CoverageDataManager">
+    <SUITE FILE_PATH="coverage/HASS$DetectionAgent.coverage" NAME="DetectionAgent Coverage Results" MODIFIED="1516274073462" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/HASS/compute_node" />
+    <SUITE FILE_PATH="coverage/HASS$Hass__1_.coverage" NAME="Hass (1) Coverage Results" MODIFIED="1517310744401" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Controller_node/HASS" />
+    <SUITE FILE_PATH="coverage/HASS$Oracle.coverage" NAME="Oracle Coverage Results" MODIFIED="1517417164590" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Controller_node/UnitTest" />
+    <SUITE FILE_PATH="coverage/HASS$teast_remote.coverage" NAME="teast_remote Coverage Results" MODIFIED="1516262193340" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/HASS" />
+  </component>
+  <component name="DatabaseView">
+    <option name="SHOW_INTERMEDIATE" value="true" />
+    <option name="GROUP_DATA_SOURCES" value="true" />
+    <option name="GROUP_SCHEMA" value="true" />
+    <option name="GROUP_CONTENTS" value="false" />
+    <option name="SORT_POSITIONED" value="false" />
+    <option name="SHOW_TABLE_DETAILS" value="true" />
+    <option name="SHOW_EMPTY_GROUPS" value="false" />
+    <option name="AUTO_SCROLL_FROM_SOURCE" value="false" />
+    <expand />
+    <select />
+  </component>
+  <component name="FavoritesManager">
+    <favorites_list name="HASS" />
+  </component>
   <component name="FileEditorManager">
-    <splitter split-orientation="vertical" split-proportion="0.6959385">
+    <splitter split-orientation="horizontal" split-proportion="0.4769539">
       <split-first>
         <leaf>
-          <file leaf-file-name="HassAPI.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/HassAPI.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="575">
-                  <caret line="65" column="49" lean-forward="true" selection-start-line="65" selection-start-column="49" selection-end-line="65" selection-end-column="49" />
-                  <folding>
-                    <element signature="e#0#16#0" expanded="true" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="Hass.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/Hass.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="1518">
-                  <caret line="133" column="41" lean-forward="true" selection-start-line="133" selection-start-column="41" selection-end-line="133" selection-end-column="41" />
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="ClusterManager.py" pinned="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/ClusterManager.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="475">
-                  <caret line="28" column="47" lean-forward="true" selection-start-line="28" selection-start-column="47" selection-end-line="28" selection-end-column="47" />
-                  <folding>
-                    <element signature="e#0#27#0" expanded="true" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="Cluster.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/Cluster.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="175">
-                  <caret line="7" column="7" lean-forward="false" selection-start-line="7" selection-start-column="6" selection-end-line="7" selection-end-column="7" />
-                  <folding>
-                    <element signature="e#0#45#0" expanded="true" />
-                    <element signature="e#1174#1357#0" expanded="false" />
-                    <element signature="e#1388#1469#0" expanded="false" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
           <file leaf-file-name="RecoveryManager.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/RecoveryManager.py">
+            <entry file="file://$PROJECT_DIR$/Controller_node/HASS/RecoveryManager.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="0">
-                  <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+                <state relative-caret-position="500">
+                  <caret line="35" column="57" lean-forward="false" selection-start-line="35" selection-start-column="57" selection-end-line="35" selection-end-column="57" />
                   <folding />
                 </state>
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="NodeInterface.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/NodeInterface.py">
+          <file leaf-file-name="DatabaseManager.py" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/Controller_node/HASS/DatabaseManager.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="400">
-                  <caret line="16" column="29" lean-forward="true" selection-start-line="16" selection-start-column="29" selection-end-line="16" selection-end-column="29" />
+                <state relative-caret-position="3821">
+                  <caret line="256" column="22" lean-forward="true" selection-start-line="256" selection-start-column="22" selection-end-line="256" selection-end-column="22" />
                   <folding>
-                    <element signature="e#0#33#0" expanded="true" />
+                    <element signature="e#724#878#0" expanded="false" />
+                    <element signature="e#911#1361#0" expanded="false" />
+                    <element signature="e#1474#1548#0" expanded="false" />
+                    <element signature="e#3235#3422#0" expanded="false" />
+                    <element signature="e#6395#6574#0" expanded="false" />
+                    <element signature="e#7784#7929#0" expanded="false" />
+                    <marker date="1517310266461" expanded="true" signature="1723:1977" ph="CREATE TABLE... IF" />
+                    <marker date="1517310266461" expanded="true" signature="2072:2484" ph="CREATE TABLE... IF" />
+                    <marker date="1517310266461" expanded="true" signature="2579:3155" ph="CREATE TABLE... IF" />
+                    <marker date="1517310266461" expanded="true" signature="3515:3539" ph="SELECT * FRO... ha_cluster" />
+                    <marker date="1517310266461" expanded="true" signature="9037:9065" ph="DELETE FROM missing_value" />
+                    <marker date="1517310266461" expanded="true" signature="10631:10770" ph="UPDATE `Resource_Relationship`... " />
+                    <marker date="1517310266461" expanded="true" signature="10954:11009" ph="SELECT * FRO... Resource" />
                   </folding>
                 </state>
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="IPMINodeOperator.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/IPMINodeOperator.py">
+          <file leaf-file-name="Instance.py" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/Controller_node/HASS/Instance.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="1400">
-                  <caret line="59" column="0" lean-forward="false" selection-start-line="59" selection-start-column="0" selection-end-line="59" selection-end-column="0" />
+                <state relative-caret-position="646">
+                  <caret line="30" column="50" lean-forward="false" selection-start-line="30" selection-start-column="50" selection-end-line="30" selection-end-column="50" />
                   <folding>
-                    <element signature="e#43#80#0" expanded="true" />
+                    <element signature="e#948#1401#1" expanded="false" />
                   </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="IPMIModule.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/IPMIModule.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="1325">
-                  <caret line="58" column="51" lean-forward="false" selection-start-line="58" selection-start-column="51" selection-end-line="58" selection-end-column="51" />
-                  <folding />
                 </state>
               </provider>
             </entry>
           </file>
           <file leaf-file-name="Node.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/Node.py">
+            <entry file="file://$PROJECT_DIR$/Controller_node/HASS/Node.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="75">
-                  <caret line="3" column="43" lean-forward="false" selection-start-line="3" selection-start-column="43" selection-end-line="3" selection-end-column="43" />
-                  <folding>
-                    <element signature="e#0#39#0" expanded="true" />
-                    <element signature="e#977#1229#0" expanded="false" />
-                    <element signature="e#1275#1472#0" expanded="false" />
-                  </folding>
+                <state relative-caret-position="400">
+                  <caret line="55" column="37" lean-forward="true" selection-start-line="55" selection-start-column="37" selection-end-line="55" selection-end-column="37" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="Hass.py" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/Controller_node/HASS/Hass.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="475">
+                  <caret line="87" column="23" lean-forward="true" selection-start-line="87" selection-start-column="23" selection-end-line="87" selection-end-column="23" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="testcase.co" pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/Controller_node/UnitTest/testcase.co">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="-250">
+                  <caret line="2" column="39" lean-forward="true" selection-start-line="2" selection-start-column="39" selection-end-line="2" selection-end-column="39" />
+                  <folding />
                 </state>
               </provider>
             </entry>
@@ -149,31 +184,31 @@
       </split-first>
       <split-second>
         <leaf>
-          <file leaf-file-name="Recovery.py" pinned="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/../HASS-Newton-106/Recovery.py">
+          <file leaf-file-name="Oracle.py" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/Controller_node/UnitTest/Oracle.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="131">
-                  <caret line="567" column="39" lean-forward="false" selection-start-line="567" selection-start-column="30" selection-end-line="567" selection-end-column="39" />
+                <state relative-caret-position="425">
+                  <caret line="39" column="3" lean-forward="false" selection-start-line="39" selection-start-column="0" selection-end-line="40" selection-end-column="0" />
                   <folding />
                 </state>
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="IpmiModule.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/../HASS-Newton-106/IpmiModule.py">
+          <file leaf-file-name="Detector.py" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/Controller_node/HASS/Detector.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="-19">
-                  <caret line="41" column="17" lean-forward="false" selection-start-line="41" selection-start-column="8" selection-end-line="41" selection-end-column="17" />
+                <state relative-caret-position="295">
+                  <caret line="86" column="8" lean-forward="false" selection-start-line="86" selection-start-column="8" selection-end-line="86" selection-end-column="8" />
                   <folding />
                 </state>
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="Hass.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/../HASS-Newton-106/Hass.py">
+          <file leaf-file-name="DetectionThread.py" pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/Controller_node/HASS/DetectionThread.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="56">
-                  <caret line="140" column="17" lean-forward="false" selection-start-line="140" selection-start-column="8" selection-end-line="140" selection-end-column="17" />
+                <state relative-caret-position="275">
+                  <caret line="33" column="51" lean-forward="false" selection-start-line="33" selection-start-column="51" selection-end-line="33" selection-end-column="51" />
                   <folding />
                 </state>
               </provider>
@@ -183,50 +218,162 @@
       </split-second>
     </splitter>
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>_cluster_dict</find>
-      <find>logging.</find>
-      <find>logging</find>
-      <find>node_list</find>
-      <find>getNode</find>
-      <find>getInfo</find>
-      <find>addN</find>
-      <find>getNodeList</find>
-      <find>isInComputePool</find>
-      <find>id</find>
-      <find>startNode</find>
-      <find>ipmi_module</find>
+      <find>self.args</find>
+      <find>HASS_result</find>
+      <find>TABLE</find>
+      <find>import Po</find>
+      <find>from Controller_node.UnitTest import Postprocess, Preprocess</find>
+      <find>Table</find>
+      <find>self.OK_color</find>
+      <find>self.ERROR_color</find>
+      <find>self.END_color</find>
+      <find>compute4</find>
+      <find>UT_G</find>
+      <find>UT_Reb</find>
+      <find>exce</find>
+      <find>444</find>
+      <find>node_name_list</find>
+      <find>description:</find>
+      <find>Sensor</find>
+      <find>getPower</find>
+      <find>getAllNodeIn</find>
+      <find>print</find>
+      <find>remove</find>
+      <find>len</find>
+      <find>Op</find>
+      <find>self.nova</find>
+      <find>nova</find>
+      <find>isIn</find>
+      <find>ClusterManager.n</find>
+      <find>cluster_list</find>
+      <find>getClusterL</find>
+      <find>ClusterManager</find>
     </findStrings>
+    <replaceStrings>
+      <replace>cluster_id</replace>
+      <replace>instance_list</replace>
+      <replace>/HASS/Controller_node/HASS/hass.conf</replace>
+      <replace>/home/controller/HASS/Controller_node/HASS/hass.conf</replace>
+      <replace>/home/controller/Desktop/HASS/Controller_node/HASS/hass.conf</replace>
+      <replace>authUrl = &quot;http://&quot; + config.get(&quot;rpc&quot;, &quot;rpc_username&quot;) + &quot;:&quot; + config.get(&quot;rpc&quot;,&quot;rpc_password&quot;) + &quot;@127.0.0.1:&quot; + config.get(&quot;rpc&quot;, &quot;rpc_bind_port&quot;)</replace>
+      <replace>args</replace>
+      <replace>pymysql</replace>
+      <replace>hass_result</replace>
+      <replace>import Postprocess, Preprocess</replace>
+      <replace>Result</replace>
+      <replace>Result.OK_color</replace>
+      <replace>Result.ERROR_color</replace>
+      <replace>compute2</replace>
+      <replace>tmp</replace>
+      <replace>Result.END_color</replace>
+    </replaceStrings>
+    <dirStrings>
+      <dir>C:\Users\Elma\Documents\GitHub\Hass-kilo</dir>
+      <dir>C:\Users\Elma\Documents\GitHub\HASS\HASS\Dashboards\haAdmin</dir>
+      <dir>C:\Users\Elma\Documents\GitHub\HASS\HASS\Dashboards</dir>
+      <dir>C:\Users\Elma\Documents\GitHub\HASS\HASS</dir>
+      <dir>C:\Users\Elma\Documents\GitHub\HASS\HASS\compute_node</dir>
+      <dir>C:\Users\Elma\Documents\GitHub\HASS\Controller_node\UnitTest</dir>
+      <dir>C:\Users\Elma\Documents\GitHub\MOST\HASS\Dashboards</dir>
+      <dir>C:\Users\Elma\Documents\GitHub\HASS\Controller_node</dir>
+      <dir>C:\Users\Elma\Documents\GitHub\MOST\HASS</dir>
+      <dir>C:\Users\Elma\Documents\GitHub\HASS\Controller_node\Dashboards</dir>
+      <dir>C:\Users\Elma\Documents\GitHub\HASS-Newton-106\Dashboards\haAdmin\ha_ipmi</dir>
+      <dir>C:\Users\Elma\Documents\GitHub\HASS\Controller_node\Dashboards\haAdmin\ha_ipmi</dir>
+      <dir>C:\Users\Elma\Documents\GitHub\HASS\Controller_node\HASS</dir>
+      <dir>C:\Users\Elma\Documents\GitHub\HASS\Controller_node\UnitTest\tests</dir>
+    </dirStrings>
   </component>
   <component name="Git.Settings">
+    <option name="PREVIOUS_COMMIT_AUTHORS">
+      <list>
+        <option value="ElmaHuang &lt;huanghuei0206@gmail.com&gt;" />
+      </list>
+    </option>
+    <option name="ROOT_SYNC" value="DONT_SYNC" />
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$USER_HOME$/Desktop/temp/Cluster.py" />
-        <option value="$USER_HOME$/Desktop/temp/ClusterInterface.py" />
-        <option value="$USER_HOME$/Desktop/temp/NodeInterface.py" />
-        <option value="$PROJECT_DIR$/DatabaseManager.py" />
-        <option value="$PROJECT_DIR$/NodeInterface.py" />
-        <option value="$PROJECT_DIR$/HassAPI.py" />
-        <option value="$PROJECT_DIR$/ClusterManager.py" />
-        <option value="$PROJECT_DIR$/Hass.py" />
-        <option value="$PROJECT_DIR$/IPMIModule.py" />
-        <option value="$PROJECT_DIR$/Node.py" />
-        <option value="$PROJECT_DIR$/IPMINodeOperator.py" />
-        <option value="$PROJECT_DIR$/Cluster.py" />
+        <option value="$PROJECT_DIR$/Controller_node/UnitTest/tests/UT_Recover_Network_Isolation.py" />
+        <option value="$PROJECT_DIR$/Controller_node/UnitTest/tests/UT_Recover_OS_Hang.py" />
+        <option value="$PROJECT_DIR$/Controller_node/UnitTest/tests/UT_Recover_Power_Status.py" />
+        <option value="$PROJECT_DIR$/Controller_node/UnitTest/tests/UT_Recover_Qemu-KVM_Service.py" />
+        <option value="$PROJECT_DIR$/Controller_node/UnitTest/tests/UT_Detect_Service.py" />
+        <option value="$PROJECT_DIR$/Controller_node/UnitTest/tests/UT_Detect_Network.py" />
+        <option value="$PROJECT_DIR$/Controller_node/UnitTest/tests/UT_Detect_Power.py" />
+        <option value="$PROJECT_DIR$/Controller_node/UnitTest/tests/UT_Detect_OS.py" />
+        <option value="$PROJECT_DIR$/Controller_node/UnitTest/tests/UT_Add_Node.py" />
+        <option value="$PROJECT_DIR$/Controller_node/UnitTest/tests/UT_Add_Wrong_Node.py" />
+        <option value="$PROJECT_DIR$/Controller_node/UnitTest/tests/UT_Add_Node_Wrong_Cluster_ID.py" />
+        <option value="$PROJECT_DIR$/Controller_node/UnitTest/tests/UT_List_Node.py" />
+        <option value="$PROJECT_DIR$/Controller_node/HASS/DetectionThread.py" />
+        <option value="$PROJECT_DIR$/Controller_node/UnitTest/tests/UT_Wrong_Auth.py" />
+        <option value="$PROJECT_DIR$/Controller_node/UnitTest/tests/UT_Add_Duplicate_Node.py" />
+        <option value="$PROJECT_DIR$/Controller_node/HASS/Cluster.py" />
+        <option value="$PROJECT_DIR$/Controller_node/UnitTest/tests/UT_List_Node_IPMI_Status.py" />
+        <option value="$PROJECT_DIR$/Controller_node/UnitTest/tests/UT_List_Node_Wrong_Cluster_ID.py" />
+        <option value="$PROJECT_DIR$/Controller_node/UnitTest/tests/UT_Add_Wrong_Instance.py" />
+        <option value="$PROJECT_DIR$/Controller_node/UnitTest/tests/UT_Add_Instance_Wrong_Cluster_ID.py" />
+        <option value="$PROJECT_DIR$/Controller_node/UnitTest/tests/UT_Add_Duplicate_Instance.py" />
+        <option value="$PROJECT_DIR$/Controller_node/UnitTest/tests/UT_Add_Instance.py" />
+        <option value="$PROJECT_DIR$/Controller_node/UnitTest/tests/UT_Delete_Instance_Wrong_ID.py" />
+        <option value="$PROJECT_DIR$/Controller_node/UnitTest/tests/UT_List_Instance_Wrong_Cluster_ID.py" />
+        <option value="$PROJECT_DIR$/Controller_node/UnitTest/tests/UT_Delete_Instance.py" />
+        <option value="$PROJECT_DIR$/Controller_node/UnitTest/tests/UT_Delete_Instance_Wrong_Cluster_ID.py" />
+        <option value="$PROJECT_DIR$/Controller_node/UnitTest/tests/UT_List_Instance.py" />
+        <option value="$PROJECT_DIR$/Controller_node/UnitTest/tests/UT_IPMIManager_Start_Node.py" />
+        <option value="$PROJECT_DIR$/Controller_node/UnitTest/tests/UT_IPMIManager_ShutOff_Node.py" />
+        <option value="$PROJECT_DIR$/Controller_node/UnitTest/tests/UT_Reboot_Wrong_Node.py" />
+        <option value="$PROJECT_DIR$/../MOST/HASS/NovaClient.py" />
+        <option value="$PROJECT_DIR$/../MOST/HASS/ClusterManager.py" />
+        <option value="$PROJECT_DIR$/Controller_node/HASS/NovaClient.py" />
+        <option value="$PROJECT_DIR$/Controller_node/UnitTest/tests/UT_Start_Wrong_Node.py" />
+        <option value="$PROJECT_DIR$/Controller_node/UnitTest/tests/UT_ShutOff_Wrong_Node.py" />
+        <option value="$PROJECT_DIR$/Controller_node/UnitTest/tests/UT_ShutOff_Node_In_Cluster.py" />
+        <option value="$PROJECT_DIR$/../MOST/HASS/IPMINodeOperator.py" />
+        <option value="$PROJECT_DIR$/Controller_node/UnitTest/tests/UT_Get_Sensor_Value_By_Type.py" />
+        <option value="$PROJECT_DIR$/Controller_node/HASS/ClusterManager.py" />
+        <option value="$PROJECT_DIR$/Controller_node/UnitTest/tests/UT_Reboot_Node_In_Cluster.py" />
+        <option value="$PROJECT_DIR$/Controller_node/HASS/IPMINodeOperator.py" />
+        <option value="$PROJECT_DIR$/Controller_node/UnitTest/tests/UT_Reboot_Node.py" />
+        <option value="$PROJECT_DIR$/Controller_node/HASS/IPMIModule.py" />
+        <option value="$PROJECT_DIR$/Controller_node/UnitTest/tests/UT_Start_Node.py" />
+        <option value="$PROJECT_DIR$/Controller_node/UnitTest/tests/UT_ShutOff_Node.py" />
+        <option value="$PROJECT_DIR$/Controller_node/UnitTest/testcase.co" />
+        <option value="$PROJECT_DIR$/Controller_node/UnitTest/Oracle_test.py" />
+        <option value="$PROJECT_DIR$/Controller_node/UnitTest/UT_Correct_Auth.py" />
+        <option value="$PROJECT_DIR$/Controller_node/HASS/UT_Correct_Auth.py" />
+        <option value="$PROJECT_DIR$/Controller_node/HASS/Oracle_test.py" />
+        <option value="$PROJECT_DIR$/Controller_node/HASS/Instance.py" />
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds">
-    <option name="x" value="-9" />
-    <option name="y" value="-9" />
-    <option name="width" value="1938" />
-    <option name="height" value="1048" />
+  <component name="JsBuildToolGruntFileManager" detection-done="true" sorting="DEFINITION_ORDER" />
+  <component name="JsBuildToolPackageJson" detection-done="true" sorting="DEFINITION_ORDER" />
+  <component name="JsGulpfileManager">
+    <detection-done>true</detection-done>
+    <sorting>DEFINITION_ORDER</sorting>
   </component>
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="-8" />
+    <option name="y" value="-8" />
+    <option name="width" value="1936" />
+    <option name="height" value="1096" />
+  </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectView">
     <navigator currentView="ProjectPane" proportions="" version="1">
       <flattenPackages />
@@ -242,27 +389,56 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
-      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="refactor-HASS" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="refactor-HASS" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
+          <expand>
+            <path>
+              <item name="HASS" type="b2602c69:ProjectViewProjectNode" />
+              <item name="HASS" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="HASS" type="b2602c69:ProjectViewProjectNode" />
+              <item name="HASS" type="462c0819:PsiDirectoryNode" />
+              <item name="Controller_node" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="HASS" type="b2602c69:ProjectViewProjectNode" />
+              <item name="HASS" type="462c0819:PsiDirectoryNode" />
+              <item name="Controller_node" type="462c0819:PsiDirectoryNode" />
+              <item name="HASS" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
         </subPane>
       </pane>
+      <pane id="Scratches" />
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
+    <property name="settings.editor.selected.configurable" value="editor.preferences.fonts.default" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/../HASS-Newton-106" />
+    <property name="WebServerToolWindowFactoryState" value="true" />
+    <property name="two.files.diff.last.used.folder" value="$PROJECT_DIR$/HASS" />
+    <property name="WebServerToolWindowPanel.toolwindow.show.size" value="false" />
+    <property name="WebServerToolWindowPanel.toolwindow.show.date" value="false" />
+    <property name="WebServerToolWindowPanel.toolwindow.show.permissions" value="false" />
+    <property name="WebServerToolWindowPanel.toolwindow.highlight.symlinks" value="true" />
+    <property name="WebServerToolWindowPanel.toolwindow.highlight.mappings" value="true" />
+    <property name="com.intellij.database.dataSource.DataSourceTemplate" value="MySQL" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Elma\Documents\GitHub\HASS\Controller_node\HASS" />
+      <recent name="C:\Users\Elma\Documents\GitHub\HASS\Controller_node\UnitTest" />
+      <recent name="C:\Users\Elma\Documents\GitHub\HASS\Controller_node\UnitTest\tests" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Elma\Documents\GitHub\HASS\Compute_node\HASS" />
+      <recent name="C:\Users\Elma\Documents\GitHub\HASS\Compute_node\UnitTest" />
+      <recent name="C:\Users\Elma\Documents\GitHub\HASS" />
+      <recent name="C:\Users\Elma\Documents\GitHub\HASS\Controller" />
+    </key>
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -276,7 +452,130 @@
       </list>
     </option>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Python.Oracle">
+    <configuration name="openstack_newton" type="PyRemoteDebugConfigurationType" factoryName="Python Remote Debug">
+      <module name="" />
+      <option name="PORT" value="5556" />
+      <option name="HOST" value="140.115.53.34" />
+      <PathMappingSettings>
+        <option name="pathMappings">
+          <list>
+            <mapping local-root="$PROJECT_DIR$" remote-root="/home/compute1/Desktop/HASS" />
+          </list>
+        </option>
+      </PathMappingSettings>
+      <option name="REDIRECT_OUTPUT" value="true" />
+      <option name="SUSPEND_AFTER_CONNECT" value="true" />
+    </configuration>
+    <configuration name="openstack_pike_controller" type="PyRemoteDebugConfigurationType" factoryName="Python Remote Debug">
+      <module name="" />
+      <option name="PORT" value="5560" />
+      <option name="HOST" value="140.115.53.34" />
+      <PathMappingSettings>
+        <option name="pathMappings">
+          <list>
+            <mapping local-root="$PROJECT_DIR$" remote-root="/home/controller/Desktop/HASS" />
+          </list>
+        </option>
+      </PathMappingSettings>
+      <option name="REDIRECT_OUTPUT" value="true" />
+      <option name="SUSPEND_AFTER_CONNECT" value="true" />
+    </configuration>
+    <configuration name="Cluster" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Controller_node/HASS" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="refactor-HASS" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Controller_node/HASS/Cluster.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+    </configuration>
+    <configuration name="DetectionAgent" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/HASS/compute_node" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="refactor-HASS" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/HASS/compute_node/DetectionAgent.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+    </configuration>
+    <configuration name="Hass (1)" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Controller_node/HASS" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="refactor-HASS" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Controller_node/HASS/Hass.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+    </configuration>
+    <configuration name="Oracle" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Controller_node/UnitTest" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="refactor-HASS" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Controller_node/UnitTest/Oracle.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+    </configuration>
+    <configuration name="teast_remote" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/HASS" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="refactor-HASS" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/HASS/teast_remote.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+    </configuration>
     <configuration default="true" type="PythonConfigurationType" factoryName="Python">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -336,14 +635,35 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <module name="refactor-HASS" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
       <option name="_new_target" value="&quot;.&quot;" />
       <option name="_new_targetType" value="&quot;PATH&quot;" />
-      <method />
     </configuration>
+    <list size="7">
+      <item index="0" class="java.lang.String" itemvalue="Python Remote Debug.openstack_newton" />
+      <item index="1" class="java.lang.String" itemvalue="Python Remote Debug.openstack_pike_controller" />
+      <item index="2" class="java.lang.String" itemvalue="Python.teast_remote" />
+      <item index="3" class="java.lang.String" itemvalue="Python.DetectionAgent" />
+      <item index="4" class="java.lang.String" itemvalue="Python.Hass (1)" />
+      <item index="5" class="java.lang.String" itemvalue="Python.Cluster" />
+      <item index="6" class="java.lang.String" itemvalue="Python.Oracle" />
+    </list>
+    <recent_temporary>
+      <list size="5">
+        <item index="0" class="java.lang.String" itemvalue="Python.Oracle" />
+        <item index="1" class="java.lang.String" itemvalue="Python.Cluster" />
+        <item index="2" class="java.lang.String" itemvalue="Python.Hass (1)" />
+        <item index="3" class="java.lang.String" itemvalue="Python.DetectionAgent" />
+        <item index="4" class="java.lang.String" itemvalue="Python.teast_remote" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="ShelveChangesManager" show_recycled="false">
     <option name="remove_strategy" value="false" />
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -353,43 +673,176 @@
       <option name="presentableId" value="Default" />
       <updated>1505735715465</updated>
     </task>
+    <task id="LOCAL-00001" summary="fix PRC server">
+      <created>1516274461002</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1516274461002</updated>
+    </task>
+    <task id="LOCAL-00002" summary="add updateAllCluster()">
+      <created>1516484145043</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1516484145043</updated>
+    </task>
+    <task id="LOCAL-00003" summary="detection agent daemon">
+      <created>1516698394026</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1516698394026</updated>
+    </task>
+    <task id="LOCAL-00004" summary="fix dashboard HA IPMI">
+      <created>1517397504108</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1517397504108</updated>
+    </task>
+    <task id="LOCAL-00005" summary="path">
+      <created>1517482966298</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1517482966298</updated>
+    </task>
+    <task id="LOCAL-00006" summary="path">
+      <created>1517483123666</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1517483123666</updated>
+    </task>
+    <task id="LOCAL-00007" summary="fix addNode bug">
+      <created>1517488276568</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1517488276568</updated>
+    </task>
+    <task id="LOCAL-00008" summary="fix IPMIOperator NovaClient">
+      <created>1517495315360</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1517495315360</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
+  <component name="TodoView" selected-index="1">
+    <todo-panel id="selected-file">
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="true" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+  </component>
   <component name="ToolWindowManager">
-    <frame x="-9" y="-9" width="1938" height="1048" extended-state="6" />
-    <editor active="true" />
+    <frame x="-8" y="-8" width="1936" height="1096" extended-state="6" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.128125" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3295099" sideWeight="0.49626866" order="12" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39937434" sideWeight="0.5063966" order="8" side_tool="true" content_ui="tabs" />
+      <window_info id="File Transfer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.13868614" sideWeight="0.49573562" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3274244" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3295099" sideWeight="0.4936034" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.19358289" sideWeight="0.4968017" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3295099" sideWeight="0.4978678" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="Remote Host" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.18710022" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.20202559" sideWeight="0.49455675" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Docker" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32995737" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32941177" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="SciView" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32995737" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Data View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
-      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.13113007" sideWeight="0.5054432" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39937434" sideWeight="0.4936034" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="5" side_tool="false" content_ui="combo" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Concurrent Activities Diagram" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3295099" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Data View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
     </layout>
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="RECENTLY_FILTERED_USER_GROUPS">
+                <collection />
+              </option>
+              <option name="RECENTLY_FILTERED_BRANCH_GROUPS">
+                <collection />
+              </option>
+              <option name="COLUMN_ORDER">
+                <list>
+                  <option value="0" />
+                  <option value="1" />
+                  <option value="2" />
+                  <option value="3" />
+                </list>
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
   </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="fix PRC server" />
+    <MESSAGE value="add updateAllCluster()" />
+    <MESSAGE value="detection agent daemon" />
+    <MESSAGE value="fix dashboard HA IPMI" />
+    <MESSAGE value="path" />
+    <MESSAGE value="fix addNode bug" />
+    <MESSAGE value="fix IPMIOperator NovaClient" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix IPMIOperator NovaClient" />
+  </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="4" />
+      <default-breakpoints>
+        <breakpoint type="python-exception">
+          <properties notifyOnTerminate="true" exception="BaseException">
+            <option name="notifyOnTerminate" value="true" />
+          </properties>
+        </breakpoint>
+      </default-breakpoints>
+      <option name="time" value="14" />
     </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/RecoveryManager.py">
+    <entry file="file://$PROJECT_DIR$/Controller_node/UnitTest/tests/UT_IPMIManager_ShutOff_Node.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="100">
+          <caret line="5" column="0" lean-forward="false" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Controller_node/UnitTest/tests/UT_List_Cluster.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="450">
+          <caret line="18" column="26" lean-forward="false" selection-start-line="18" selection-start-column="26" selection-end-line="18" selection-end-column="26" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Controller_node/UnitTest/tests/UT_IPMIManager_Reboot_Node.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
@@ -397,133 +850,230 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/IPMINodeOperator.py">
+    <entry file="file://$PROJECT_DIR$/Controller_node/UnitTest/tests/UT_Add_Node.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        <state relative-caret-position="175">
+          <caret line="7" column="0" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="24" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/Desktop/temp/Cluster.py">
+    <entry file="file://$PROJECT_DIR$/../MOST/HASS/ClusterInterface.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="225">
-          <caret line="9" column="47" lean-forward="true" selection-start-line="9" selection-start-column="47" selection-end-line="9" selection-end-column="47" />
+        <state relative-caret-position="300">
+          <caret line="12" column="23" lean-forward="false" selection-start-line="12" selection-start-column="23" selection-end-line="12" selection-end-column="23" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../MOST/HASS/Cluster.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="809">
+          <caret line="109" column="50" lean-forward="false" selection-start-line="109" selection-start-column="46" selection-end-line="109" selection-end-column="50" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../MOST/HASS/NovaClient.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="315">
+          <caret line="137" column="0" lean-forward="true" selection-start-line="137" selection-start-column="0" selection-end-line="137" selection-end-column="0" />
           <folding>
-            <element signature="e#0#45#0" expanded="false" />
+            <element signature="e#409#446#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/Desktop/temp/ClusterInterface.py">
+    <entry file="file://$PROJECT_DIR$/../MOST/HASS/ClusterManager.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="320">
+          <caret line="324" column="42" lean-forward="true" selection-start-line="324" selection-start-column="42" selection-end-line="324" selection-end-column="42" />
+          <folding>
+            <element signature="e#355#369#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Controller_node/UnitTest/tests/UT_Start_Wrong_Node.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="400">
+          <caret line="16" column="30" lean-forward="false" selection-start-line="16" selection-start-column="30" selection-end-line="16" selection-end-column="30" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Controller_node/UnitTest/tests/UT_ShutOff_Wrong_Node.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="450">
+          <caret line="18" column="0" lean-forward="true" selection-start-line="18" selection-start-column="0" selection-end-line="18" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../MOST/HASS/IPMINodeOperator.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="278">
+          <caret line="90" column="66" lean-forward="false" selection-start-line="90" selection-start-column="66" selection-end-line="90" selection-end-column="66" />
+          <folding>
+            <element signature="e#387#420#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../MOST/HASS/IPMIModule.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="78">
+          <caret line="181" column="8" lean-forward="false" selection-start-line="181" selection-start-column="8" selection-end-line="181" selection-end-column="8" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Controller_node/HASS/NovaClient.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="295">
+          <caret line="63" column="8" lean-forward="false" selection-start-line="63" selection-start-column="8" selection-end-line="63" selection-end-column="8" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Controller_node/UnitTest/tests/UT_Reboot_Node_In_Cluster.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="700">
+          <caret line="28" column="75" lean-forward="false" selection-start-line="28" selection-start-column="75" selection-end-line="28" selection-end-column="75" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Controller_node/UnitTest/tests/UT_Reboot_Node.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <caret line="0" column="10" lean-forward="true" selection-start-line="0" selection-start-column="10" selection-end-line="0" selection-end-column="10" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Controller_node/UnitTest/tests/UT_Get_Sensor_Value_By_Type.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="525">
+          <caret line="21" column="0" lean-forward="false" selection-start-line="21" selection-start-column="0" selection-end-line="21" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Controller_node/HASS/ClusterManager.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-150">
+          <caret line="6" column="21" lean-forward="true" selection-start-line="6" selection-start-column="21" selection-end-line="6" selection-end-column="21" />
           <folding>
-            <element signature="e#0#33#0" expanded="false" />
+            <element signature="e#1184#1218#0" expanded="false" />
+            <element signature="e#2050#2084#0" expanded="false" />
+            <element signature="e#2644#2678#0" expanded="false" />
+            <element signature="e#3089#3124#0" expanded="false" />
+            <element signature="e#3574#3608#0" expanded="false" />
+            <element signature="e#5228#5262#0" expanded="false" />
+            <element signature="e#5973#6007#0" expanded="false" />
+            <element signature="e#6250#7543#0" expanded="false" />
+            <element signature="e#6637#6671#0" expanded="false" />
+            <element signature="e#7352#7386#0" expanded="false" />
+            <element signature="e#7601#8947#0" expanded="false" />
+            <element signature="e#8311#8346#0" expanded="false" />
+            <element signature="e#8756#8790#0" expanded="false" />
+            <element signature="e#9428#9462#0" expanded="false" />
+            <element signature="e#10816#12186#0" expanded="false" />
+            <element signature="e#12264#14176#0" expanded="false" />
+            <element signature="e#14262#16036#0" expanded="false" />
+            <element signature="e#14747#14782#0" expanded="false" />
+            <element signature="e#15845#15879#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/Desktop/temp/NodeInterface.py">
+    <entry file="file://$PROJECT_DIR$/Compute_node/HASS/HAInstance.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        <state relative-caret-position="-365">
+          <caret line="27" column="70" lean-forward="false" selection-start-line="27" selection-start-column="58" selection-end-line="27" selection-end-column="70" />
           <folding>
-            <element signature="e#0#33#0" expanded="false" />
+            <element signature="e#0#17#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/DatabaseManager.py">
+    <entry file="file://$PROJECT_DIR$/Controller_node/UnitTest/tests/UT_List_Instance_Wrong_Cluster_ID.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="193">
-          <caret line="99" column="49" lean-forward="true" selection-start-line="99" selection-start-column="49" selection-end-line="99" selection-end-column="49" />
+        <state relative-caret-position="521">
+          <caret line="23" column="13" lean-forward="true" selection-start-line="23" selection-start-column="13" selection-end-line="23" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Controller_node/UnitTest/tests/UT_Reboot_Wrong_Node.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="150">
+          <caret line="6" column="0" lean-forward="true" selection-start-line="6" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Controller_node/UnitTest/tests/UT_ShutOff_Node_In_Cluster.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="175">
+          <caret line="7" column="24" lean-forward="false" selection-start-line="7" selection-start-column="24" selection-end-line="7" selection-end-column="24" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Controller_node/HASS/IPMIConf.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="303">
+          <caret line="20" column="0" lean-forward="false" selection-start-line="20" selection-start-column="0" selection-end-line="20" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Controller_node/HASS/Cluster.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="303">
+          <caret line="247" column="8" lean-forward="false" selection-start-line="247" selection-start-column="8" selection-end-line="247" selection-end-column="8" />
+          <folding>
+            <element signature="e#1919#1953#0" expanded="false" />
+            <element signature="e#2154#3497#0" expanded="false" />
+            <element signature="e#2706#2741#0" expanded="false" />
+            <element signature="e#3290#3324#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Compute_node/HASS/InstanceFailures.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-825">
+          <caret line="30" column="73" lean-forward="false" selection-start-line="30" selection-start-column="60" selection-end-line="30" selection-end-column="73" />
           <folding>
             <element signature="e#0#14#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/ClusterInterface.py">
+    <entry file="file://$PROJECT_DIR$/Controller_node/UnitTest/tests/UT_Start_Node.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="200">
-          <caret line="8" column="13" lean-forward="false" selection-start-line="8" selection-start-column="13" selection-end-line="8" selection-end-column="13" />
+        <state relative-caret-position="300">
+          <caret line="12" column="32" lean-forward="false" selection-start-line="12" selection-start-column="0" selection-end-line="13" selection-end-column="0" />
           <folding>
-            <element signature="e#0#33#0" expanded="true" />
+            <element signature="e#0#10#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/hass.conf">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/HassAPI.py">
+    <entry file="file://$PROJECT_DIR$/Controller_node/UnitTest/tests/UT_ShutOff_Node.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="575">
-          <caret line="65" column="49" lean-forward="true" selection-start-line="65" selection-start-column="49" selection-end-line="65" selection-end-column="49" />
+          <caret line="23" column="27" lean-forward="false" selection-start-line="23" selection-start-column="27" selection-end-line="23" selection-end-column="27" />
           <folding>
-            <element signature="e#0#16#0" expanded="true" />
+            <element signature="e#0#10#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../HASS-Newton-106/Hass.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="56">
-          <caret line="140" column="17" lean-forward="false" selection-start-line="140" selection-start-column="8" selection-end-line="140" selection-end-column="17" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../HASS-Newton-106/IpmiModule.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-19">
-          <caret line="41" column="17" lean-forward="false" selection-start-line="41" selection-start-column="8" selection-end-line="41" selection-end-column="17" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../HASS-Newton-106/Recovery.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="131">
-          <caret line="567" column="39" lean-forward="false" selection-start-line="567" selection-start-column="30" selection-end-line="567" selection-end-column="39" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/DetectionThread.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-4299">
-          <caret line="10" column="11" lean-forward="true" selection-start-line="10" selection-start-column="11" selection-end-line="10" selection-end-column="11" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/NodeInterface.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="400">
-          <caret line="16" column="29" lean-forward="true" selection-start-line="16" selection-start-column="29" selection-end-line="16" selection-end-column="29" />
-          <folding>
-            <element signature="e#0#33#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Hass.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1518">
-          <caret line="133" column="41" lean-forward="true" selection-start-line="133" selection-start-column="41" selection-end-line="133" selection-end-column="41" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/RecoveryManager.py">
+    <entry file="file://$PROJECT_DIR$/Controller_node/UnitTest/tests/UT_Get_OS_Status.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
@@ -531,55 +1081,242 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/IPMINodeOperator.py">
+    <entry file="file://$PROJECT_DIR$/Controller_node/UnitTest/tests/UT_Get_Power_Status.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1400">
-          <caret line="59" column="0" lean-forward="false" selection-start-line="59" selection-start-column="0" selection-end-line="59" selection-end-column="0" />
-          <folding>
-            <element signature="e#43#80#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/IPMIModule.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1325">
-          <caret line="58" column="51" lean-forward="false" selection-start-line="58" selection-start-column="51" selection-end-line="58" selection-end-column="51" />
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Cluster.py">
+    <entry file="file://$PROJECT_DIR$/Controller_node/UnitTest/tests/UT_Get_Sensor_Status.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="175">
-          <caret line="7" column="7" lean-forward="false" selection-start-line="7" selection-start-column="6" selection-end-line="7" selection-end-column="7" />
-          <folding>
-            <element signature="e#0#45#0" expanded="true" />
-            <element signature="e#1174#1357#0" expanded="false" />
-            <element signature="e#1388#1469#0" expanded="false" />
-          </folding>
+        <state relative-caret-position="350">
+          <caret line="14" column="13" lean-forward="true" selection-start-line="14" selection-start-column="13" selection-end-line="14" selection-end-column="13" />
+          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Node.py">
+    <entry file="file://$PROJECT_DIR$/Controller_node/UnitTest/UT_Add_Duplicate_Instance.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="75">
-          <caret line="3" column="43" lean-forward="false" selection-start-line="3" selection-start-column="43" selection-end-line="3" selection-end-column="43" />
+          <caret line="3" column="12" lean-forward="true" selection-start-line="3" selection-start-column="12" selection-end-line="3" selection-end-column="12" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Controller_node/HASS/IPMINodeOperator.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-2690">
+          <caret line="25" column="23" lean-forward="false" selection-start-line="25" selection-start-column="23" selection-end-line="25" selection-end-column="23" />
           <folding>
-            <element signature="e#0#39#0" expanded="true" />
-            <element signature="e#977#1229#0" expanded="false" />
-            <element signature="e#1275#1472#0" expanded="false" />
+            <element signature="n#!!doc" expanded="false" />
+            <element signature="e#387#406#0" expanded="false" />
+            <element signature="e#3421#4574#0" expanded="false" />
+            <element signature="e#3580#4214#0" expanded="false" />
+            <element signature="e#3755#4026#0" expanded="false" />
+            <element signature="e#4069#4214#0" expanded="false" />
+            <element signature="e#4249#4574#0" expanded="false" />
+            <element signature="e#4618#4913#0" expanded="false" />
+            <element signature="e#6906#7116#0" expanded="false" />
+            <element signature="e#6923#6998#0" expanded="false" />
+            <element signature="e#7183#7425#0" expanded="false" />
+            <element signature="e#8800#9262#0" expanded="false" />
+            <element signature="e#8896#9240#0" expanded="false" />
+            <element signature="e#8934#9192#0" expanded="false" />
+            <element signature="e#9140#9192#0" expanded="false" />
+            <element signature="e#9333#10403#0" expanded="false" />
+            <element signature="e#9333#9369#0" expanded="false" />
+            <element signature="e#9468#9636#0" expanded="false" />
+            <element signature="e#9754#10356#0" expanded="false" />
+            <element signature="e#9818#10282#0" expanded="false" />
+            <element signature="e#9843#9927#0" expanded="false" />
+            <element signature="e#10054#10133#0" expanded="false" />
+            <element signature="e#10176#10282#0" expanded="false" />
+            <element signature="e#10317#10356#0" expanded="false" />
+            <element signature="e#10457#10592#0" expanded="false" />
+            <element signature="e#10643#10777#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/ClusterManager.py">
+    <entry file="file://$PROJECT_DIR$/Controller_node/HASS/IPMIModule.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1728">
+          <caret line="70" column="28" lean-forward="false" selection-start-line="70" selection-start-column="28" selection-end-line="70" selection-end-column="28" />
+          <folding>
+            <element signature="e#384#403#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Controller_node/UnitTest/tests/UT_Detect_Network.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="350">
+          <caret line="14" column="28" lean-forward="true" selection-start-line="14" selection-start-column="28" selection-end-line="14" selection-end-column="28" />
+          <folding>
+            <element signature="e#0#13#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Controller_node/UnitTest/Postprocess.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Controller_node/UnitTest/UT_Correct_Auth.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="150">
+          <caret line="6" column="30" lean-forward="true" selection-start-line="6" selection-start-column="30" selection-end-line="6" selection-end-column="30" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Controller_node/UnitTest/Oracle_test.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="325">
+          <caret line="53" column="33" lean-forward="false" selection-start-line="53" selection-start-column="33" selection-end-line="53" selection-end-column="33" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Controller_node/HASS/testagent.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2295">
+          <caret line="127" column="37" lean-forward="true" selection-start-line="127" selection-start-column="37" selection-end-line="127" selection-end-column="37" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Controller_node/HASS/UT_Get_Sensor_Value_Wrong_Type.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Controller_node/HASS/UT_Correct_Auth.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="550">
+          <caret line="22" column="37" lean-forward="false" selection-start-line="22" selection-start-column="15" selection-end-line="22" selection-end-column="37" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.PyCharm2017.3/system/python_stubs/349975800/__builtin__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="303">
+          <caret line="3371" column="8" lean-forward="false" selection-start-line="3371" selection-start-column="8" selection-end-line="3371" selection-end-column="8" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Controller_node/UnitTest/Oracle.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="425">
+          <caret line="39" column="3" lean-forward="false" selection-start-line="39" selection-start-column="0" selection-end-line="40" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Controller_node/HASS/Detector.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="295">
+          <caret line="86" column="8" lean-forward="false" selection-start-line="86" selection-start-column="8" selection-end-line="86" selection-end-column="8" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Controller_node/HASS/DetectionThread.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="275">
+          <caret line="33" column="51" lean-forward="false" selection-start-line="33" selection-start-column="51" selection-end-line="33" selection-end-column="51" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Controller_node/HASS/testcase.co">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Controller_node/HASS/Oracle_test.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="300">
+          <caret line="12" column="25" lean-forward="true" selection-start-line="12" selection-start-column="25" selection-end-line="12" selection-end-column="25" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Controller_node/HASS/RecoveryManager.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="500">
+          <caret line="35" column="57" lean-forward="false" selection-start-line="35" selection-start-column="57" selection-end-line="35" selection-end-column="57" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Controller_node/HASS/Node.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="400">
+          <caret line="55" column="37" lean-forward="true" selection-start-line="55" selection-start-column="37" selection-end-line="55" selection-end-column="37" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Controller_node/HASS/Hass.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="475">
-          <caret line="28" column="47" lean-forward="true" selection-start-line="28" selection-start-column="47" selection-end-line="28" selection-end-column="47" />
+          <caret line="87" column="23" lean-forward="true" selection-start-line="87" selection-start-column="23" selection-end-line="87" selection-end-column="23" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Controller_node/HASS/DatabaseManager.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3821">
+          <caret line="256" column="22" lean-forward="true" selection-start-line="256" selection-start-column="22" selection-end-line="256" selection-end-column="22" />
           <folding>
-            <element signature="e#0#27#0" expanded="true" />
+            <element signature="e#724#878#0" expanded="false" />
+            <element signature="e#911#1361#0" expanded="false" />
+            <element signature="e#1474#1548#0" expanded="false" />
+            <element signature="e#3235#3422#0" expanded="false" />
+            <element signature="e#6395#6574#0" expanded="false" />
+            <element signature="e#7784#7929#0" expanded="false" />
+            <marker date="1517310266461" expanded="true" signature="1723:1977" ph="CREATE TABLE... IF" />
+            <marker date="1517310266461" expanded="true" signature="2072:2484" ph="CREATE TABLE... IF" />
+            <marker date="1517310266461" expanded="true" signature="2579:3155" ph="CREATE TABLE... IF" />
+            <marker date="1517310266461" expanded="true" signature="3515:3539" ph="SELECT * FRO... ha_cluster" />
+            <marker date="1517310266461" expanded="true" signature="9037:9065" ph="DELETE FROM missing_value" />
+            <marker date="1517310266461" expanded="true" signature="10631:10770" ph="UPDATE `Resource_Relationship`... " />
+            <marker date="1517310266461" expanded="true" signature="10954:11009" ph="SELECT * FRO... Resource" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Controller_node/HASS/Instance.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="646">
+          <caret line="30" column="50" lean-forward="false" selection-start-line="30" selection-start-column="50" selection-end-line="30" selection-end-column="50" />
+          <folding>
+            <element signature="e#948#1401#1" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Controller_node/UnitTest/testcase.co">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-250">
+          <caret line="2" column="39" lean-forward="true" selection-start-line="2" selection-start-column="39" selection-end-line="2" selection-end-column="39" />
+          <folding />
         </state>
       </provider>
     </entry>

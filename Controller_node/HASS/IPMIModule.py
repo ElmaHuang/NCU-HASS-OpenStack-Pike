@@ -67,12 +67,12 @@ class IPMIManager(object):
             response = subprocess.check_output(command, shell=True)
             if IPMIConf.STARTNODE_SUCCESS_MSG in response:
                 message = "The Computing Node %s is started." % node_name
-                logging.info("IpmiModule startNode - The Computing Node %s is started." % node_name)
+                logging.info("IPMIModule startNode - The Computing Node %s is started." % node_name)
                 # code = "0"
                 code = "succeed"
         except Exception as e:
             message = "The Computing Node %s can not be started." % node_name
-            logging.error("IpmiModule startNode - %s" % e)
+            logging.error("IPMIModule startNode - %s" % e)
             # code = "1"
             code = "failed"
         finally:

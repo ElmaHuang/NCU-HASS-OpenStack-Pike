@@ -3,5 +3,8 @@
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/../HASS-Newton-106" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../Hass-kilo" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../MOST" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../openstack-manuals" vcs="Git" />
   </component>
 </project>

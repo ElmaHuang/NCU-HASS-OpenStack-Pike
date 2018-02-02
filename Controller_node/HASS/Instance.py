@@ -27,8 +27,8 @@ class Instance(object):
         try:
             self.updateInfo()
             return [self.id, self.name, self.host, self.status, self.network]
-        except:
-            print "instance--getInfo-fail"
+        except Exception as e:
+            print "instance--getInfo-fail" + str(e)
 
     '''
     def sendUpdate(self):
