@@ -17,7 +17,7 @@ ipmi_manager = IPMIManager()
 def run():
     try:
         client = _create_ssh_client(HOST)
-        cmd = "sudo sh /home/" + HOST + "/Desktop/Compute_Node/UnitTest/os_hang.sh"
+        cmd = "sudo sh /home/" + HOST + "/Desktop/HASS/Compute_node/UnitTest/os_hang.sh"
         # cmd = "kill -SEGV 1 & ; kill -SEGV 1"
         # cmd = "sudo sh /home/compute2/Desktop/test.sh"
         stdin, stdout, stderr = _remote_exec(client, cmd)

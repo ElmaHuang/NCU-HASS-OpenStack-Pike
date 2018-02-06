@@ -332,7 +332,7 @@ class Hass(object):
         except:
             logging.error("HASS--add Instance fail")
 
-    def deleteInstance(self, clusterId, instanceId):
+    def deleteInstance(self, clusterId, instanceId, send_flag=True):
         """
                 The function for delete a instance from HA cluster.
                 Put the cluster uuid and instance id to this function, it will delete instance from HA cluster.
@@ -345,7 +345,7 @@ class Hass(object):
                     {"code" : "1","message": message} -> fail.
                 """
         try:
-            result = ClusterManager.deleteInstance(clusterId, instanceId)
+            result = ClusterManager.deleteInstance(clusterId, instanceId, send_flag)
             logging.info("HASS--delete instance success")
             return result
         except:
@@ -407,7 +407,7 @@ class Hass(object):
         try:
             ClusterManager.updateAllCluster()
         except Exception as e:
-            logging.error(str(e))
+            logging.error("HASS--updateAllCluster fail :" + str(e))
 
     '''
     def check_vm_protected(self,instance_name):

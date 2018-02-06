@@ -222,7 +222,9 @@ class ClusterManager():
                     result = ClusterManager.failResult(message, data)
                 else:
                     result = cluster.addInstance(instance_id, send_flag)
-                if result.code == "succeed" and write_DB:
+                if write_DB:
+                    # if result.code == "succeed" and write_DB:
+                    # when synco from db, but instance state already change
                     ClusterManager.syncToDatabase()
                 logging.info("ClusterManager--Add instance finish, instance_id : %s , cluster_id : %s" % (
                     instance_id, cluster_id))
@@ -280,12 +282,12 @@ class ClusterManager():
                 # if illegal_instance:
                 #     for instance in illegal_instance:
                 #         ClusterManager.deleteInstance(cluster_id, instance[0], send_flag=False)
-                # send update host of legal instance and prev_host of illegal instance
-                # if send_flag:
-                #     for instance in instance_list[:]:
-                #         cluster.sendUpdateInstance(instance[2])  # info[2]
-                #     for instance in illegal_instance[:]:
-                #         cluster.sendUpdateInstance(instance[1])  # prev_host
+                # if user live migration vm by openstack
+                if send_flag:
+                    for instance in instance_list[:]:
+                        cluster.sendUpdateInstance(instance[2])  # info[2]
+                    # for instance in illegal_instance[:]:
+                    #     cluster.sendUpdateInstance(instance[1])  # prev_host
                 message = "ClusterManager--listInstance,getInstanceList success,instanceList is %s" % instance_list
                 data["instance_list"] = instance_list
                 result = ClusterManager.successResult(message, data)

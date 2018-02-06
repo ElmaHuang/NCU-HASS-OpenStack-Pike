@@ -1,8 +1,19 @@
+import logging
 import subprocess
+
+from enum import Enum
 
 from HAInstance import HAInstance
 from NovaClient import NovaClient
 from RPCServer import RPCServer
+
+
+class Failure(Enum):
+    OS_CRASH = "Crash"
+    OS_HANGED = "Watchdog"
+    MIGRATED = "Migration"
+    SHUTOFF_OR_DELETED = "Delete"
+    NETWORK_ISOLATION = "Network"
 
 
 class RecoveryInstance(object):
@@ -11,32 +22,38 @@ class RecoveryInstance(object):
         self.server = RPCServer.getRPCServer()
         self.vm_name = None
         self.failed_info = None
-        self.recovery_type = None
+        self.recovery_type = ""
 
     def recoverInstance(self, fail_vm):
+
         # fail_vm = ['instance-00000344', 'Failed',State]
         self.vm_name = fail_vm[0]
         self.failed_info = fail_vm[1]
         self.recovery_type = fail_vm[2]
         result = False
-        if "Crash" or "Watchdog" in self.recovery_type:
+        print "start recover:" + self.recovery_type
+        print Failure.SHUTOFF_OR_DELETED.value
+        if self.recovery_type in Failure.OS_CRASH.value or self.recovery_type in Failure.OS_HANGED.value:
             result = self.hardRebootInstance(self.vm_name)
-
-        elif "Migration" in self.recovery_type:
+        elif self.recovery_type in Failure.MIGRATED.value:
             result = self.updateDB()
-
-        elif "Delete" in self.recovery_type:
+        elif self.recovery_type in Failure.SHUTOFF_OR_DELETED.value:
             result = self.deleteInstance(self.vm_name)
-
-        elif "Network" in self.recovery_type:
+        elif self.recovery_type in Failure.NETWORK_ISOLATION.value:
             result = self.softRebootInstance(self.vm_name)
             if result:
                 print "soft reboot successfully"
                 result = self.pingInstance(self.vm_name)
                 if result:
-                    print "ping vm successfully"
+                    message = "ping vm successfully"
+                    print message
+                    logging.info(message)
                 else:
-                    print "ping vm fail"
+                    message = "ping vm fail"
+                    print message
+                    logging.error(message)
+        if result:
+            self._updateHAInstance()
         return result
 
     def hardRebootInstance(self, fail_instance_name):
@@ -56,15 +73,20 @@ class RecoveryInstance(object):
         try:
             self.server.updateAllCluster()
             return True
-        except:
+        except Exception as e:
+            logging.error("RecoveryInstance updateDB--except:" + str(e))
             return False
 
     def deleteInstance(self, fail_instance_name):
-        instance = self.getHAInstance(fail_instance_name)
-        result = self.server.deleteInstance(instance.cluster_id, instance.id, False)
-        if result["code"] == "succeed":
-            return True
-        return False
+        try:
+            instance = self.getHAInstance(fail_instance_name)
+            result = self.server.deleteInstance(instance.cluster_id, instance.id, False)
+            if result["code"] == "succeed":
+                return True
+            return False
+        except Exception as e:
+            print str(e)
+            logging.error("RecoveryInstance deleteInstance--except:" + str(e))
 
     def pingInstance(self, name):
         instance = self.getHAInstance(name)
@@ -88,3 +110,8 @@ class RecoveryInstance(object):
             else:
                 check_timeout -= 1
         return False
+
+    def _updateHAInstance(self):
+        HAInstance.init()
+        HAInstance.getInstanceFromController()
+        print "update HA Instance"

@@ -194,9 +194,9 @@ class IPMIManager(object):
         return result
 
     def getAllInfoByNode(self, node_name):
-        AllTemp = ["Temp", "Inlet Temp", "Fan1", "Fan2"]
+        ipmi_node_sensors_list = json.loads(self.config.get("ipmi_sensor", "ipmi_node_sensors"))
         try:
-            result = self.getNodeInfoByType(node_name, AllTemp)
+            result = self.getNodeInfoByType(node_name, ipmi_node_sensors_list)
             logging.info("IPMIModule--getAllInfoMoudle finish %s" % result.message)
             return result
         except Exception as e:

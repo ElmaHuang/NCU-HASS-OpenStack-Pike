@@ -56,7 +56,7 @@ class NovaClient(object):
                            project_domain_name=self.config.get("openstack", "openstack_project_domain_id"))
         sess = session.Session(auth=auth)
         if self.version == "16":
-            novaClient = client.Client(2.29, session=sess)
+            novaClient = client.Client(2.30, session=sess)
         else:
             novaClient = client.Client(2.25, session=sess)
         return novaClient
@@ -156,9 +156,9 @@ class NovaClient(object):
         return NovaClient._helper.services.force_down(node.name, "nova-compute", True)
 
     def liveMigrateVM(self, instance_id, target_host):
-        # print ""
         instance = self.getVM(instance_id)
-        # if instance == None:return None
+        # if self.version == "16":
+        #   NovaClient._helper.servers.live_migrate(instance,host = target_host, force=True)
         instance.live_migrate(host=target_host)
         return self.getInstanceHost(instance_id)
 

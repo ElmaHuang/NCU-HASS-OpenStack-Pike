@@ -32,7 +32,7 @@ class HAInstance():
                     HAInstance.addInstance(cluster_id, instance)
             # return host_instance
         except Exception as e:
-            print "getInstanceFromController-e:", str(e)
+            print "HAInstance getInstanceFromController Except:", str(e)
 
     @staticmethod
     def _getHAInstance(clusterId):

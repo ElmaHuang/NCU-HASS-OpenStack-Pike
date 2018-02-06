@@ -12,7 +12,7 @@ Event_string = (
 
 Event_failed = (Event_string[5][2], Event_string[5][5])
 Event_destroyed = (Event_string[5][0], Event_string[5][1])
-Event_migrated = (Event_string[4][1])
+Event_migrated = (Event_string[5][3], Event_string[4][1])
 
 Event_watchdog_action = (
     libvirt.VIR_DOMAIN_EVENT_WATCHDOG_NONE,  # = 0, No action, watchdog ignored

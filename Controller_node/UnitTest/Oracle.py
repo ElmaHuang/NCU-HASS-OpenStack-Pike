@@ -90,7 +90,7 @@ def generate_result_table(test_list):
 
     for test_case in test_list:
         total_case += 1
-        if test_case.result == True:
+        if test_case.result :
             pass_case += 1
         else:
             fail_case += 1

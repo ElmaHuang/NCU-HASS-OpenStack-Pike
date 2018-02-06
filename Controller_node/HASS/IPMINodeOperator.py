@@ -142,17 +142,24 @@ class Operator(object):
 
     def getAllInfoByNode(self, node_name):
         try:
-            data = self.ipmi_module.getAllInfoByNode(node_name)
-            return data
+            result = self.ipmi_module.getAllInfoByNode(node_name)
         except Exception as e:
+            message = " IPMIOperator--get node info bt type fail. The node is %s." % node_name
+            result = self.failResult(message, [])
             logging.error("IPMIOperator get all sensor info of node fail.%s" % str(e))
+        finally:
+            return result
 
     def getNodeInfoByType(self, node_name, sensor_type):
         try:
             result = self.ipmi_module.getNodeInfoByType(node_name, sensor_type)
-            return result
         except Exception as e:
+            message = " IPMIOperator--get node info bt type fail. The node is %s,sensor type is %s ." % (
+                node_name, sensor_type)
+            result = self.failResult(message, [])
             logging.error("IPMIOperator get %s sensor info of node fail.%s" % (sensor_type, str(e)))
+        finally:
+            return result
 
     def _checkNodeIPMI(self, node_name):
         ipmistatus = self.ipmi_module._getIPMIStatus(node_name)

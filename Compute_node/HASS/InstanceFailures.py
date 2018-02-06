@@ -76,8 +76,9 @@ class InstanceFailure(threading.Thread):
             eventLoopThread.setDaemon(True)
             eventLoopThread.start()
         except Exception as e:
-            mes = "failed to create libvirt detection thread " + str(e)
-            logging.error(mes)
+            message = "failed to create libvirt detection thread " + str(e)
+            print message
+            logging.error(message)
 
     def checkLibvrtConnect(self, connection):
         try:
@@ -99,47 +100,52 @@ class InstanceFailure(threading.Thread):
             else:
                 return connection
         except Exception as e:
-            mes = "failed to open connection --exception" + str(e)
-            logging.error(mes)
+            message = "failed to open connection --exception" + str(e)
+            print message
+            logging.error(message)
 
     def _checkVMState(self, connect, domain, event, detail, opaque):
         # event:cloume,detail:row
         print "domain name :", domain.name(), " domain id :", domain.ID(), "event:", event, "detail:", detail
         event_string = self.transformDetailToString(event, detail)
-        recovery_type = ""
         print "state event string :", event_string
-        if self._check_vm_crash(event_string):
-            recovery_type = "Crash"
-            # self.failed_instances.append([domain.name(), event_string, recovery_type])
-        elif self._check_vm_crash(event_string):
-            recovery_type = "Delete"
-            # self.failed_instances.append([domain.name(), event_string, recovery_type])
-        elif self._check_vm_migrated(event_string):
-            recovery_type = "Migration"
-            # self.failed_instances.append([domain.name(), event_string, recovery_type])
+        recovery_type = self._findfailure(event_string)
         if recovery_type != "":
             fail_instance = [domain.name(), event_string, recovery_type]
+            logging.info(str(fail_instance))
             result = self.recoverFailedInstance(fail_instance=fail_instance)
-            self.showResult(result)
+            print self.showResult(result)
+
+    def _findfailure(self, event_string):
+        recovery_type = ""
+        if self._check_vm_crash(event_string):
+            recovery_type = "Crash"
+        elif self._check_vm_destroyed(event_string):
+            recovery_type = "Delete"
+        elif self._check_vm_migrated(event_string):
+            recovery_type = "Migration"
+        return recovery_type
 
     def _check_vm_crash(self, event_string):
         failed_string = InstanceEvent.Event_failed
-        if event_string in failed_string:
-            print "state event string :", event_string
+        if event_string == failed_string:
+            print "crash--state event string :", event_string
             return True
         return False
 
     def _check_vm_destroyed(self, event_string):
         destroyed_string = InstanceEvent.Event_destroyed
+        print destroyed_string
         if event_string in destroyed_string:
-            print "state event string :", event_string
+            print "vm be shut off"
+            print "destroy--state event string :", event_string
             return True
         return False
 
     def _check_vm_migrated(self, event_string):
         migrated_string = InstanceEvent.Event_migrated
-        if event_string in migrated_string:
-            print "state event string :", event_string
+        if "Migrated" in event_string and event_string in migrated_string:
+            print "migrate--state event string :", event_string
             return True
         return False
 
@@ -162,7 +168,7 @@ class InstanceFailure(threading.Thread):
         if action in watchdog_string:
             fail_instance = [domain.name(), action, recovery_type]
             result = self.recoverFailedInstance(fail_instance=fail_instance)
-            self.showResult(result)
+            print self.showResult(result)
             # self.failed_instances.append([domain.name(), action, recovery_type])
 
     def transformDetailToString(self, event, detail):
@@ -172,31 +178,28 @@ class InstanceFailure(threading.Thread):
     def recoverFailedInstance(self, fail_instance):
         print "get ha vm"
         result = False
-        ha_instance = HAInstance.getInstanceList()
+        ha_instance_list = HAInstance.getInstanceList()
         # check instance is protected
-        check = self.checkRecoveryVM(fail_instance, ha_instance)
+        check = self.checkRecoveryVM(fail_instance, ha_instance_list)
         if check:
-            # any instance shoule be recovery
-            # if self.failed_instances != []:
-            #     for fail_instance in self.failed_instances:
             try:
                 result = self.recovery_vm.recoverInstance(fail_instance)
-                # return result
             except Exception as e:
-                logging.error("recoverFailedInstance fail" + str(e))
+                logging.error("InstanceFailures recoverFailedInstance Except:" + str(e))
                 print str(e)
-            return result
+            finally:
+                return result
         elif not check:
             # not ha vm
             return check
 
-    def checkRecoveryVM(self, failed_instance, ha_instance):
+    def checkRecoveryVM(self, failed_instance, ha_instance_list):
         # find all fail_vm in self.failed_instances is ha vm or not
         result = None
-        if not ha_instance:
+        if not ha_instance_list:
             return result
-        for id, instance in ha_instance.iteritems():
-            if failed_instance[0] in instance.name:
+        for ha_instance in ha_instance_list:
+            if failed_instance[0] in ha_instance.name:
                 result = True
         return result
 
