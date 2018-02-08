@@ -10,13 +10,13 @@
 #   This is a class which detects whether computing nodes happens error or not.
 ##########################################################
 
+import ConfigParser
+import logging
 import threading
 import time
-import logging
-import ConfigParser
 import xmlrpclib
-import State
 
+import State
 from Detector import Detector
 
 

@@ -58,7 +58,8 @@ class IndexView(tables.DataTableView):
             hypervisors = nova.hypervisor_list(self.request)
             hypervisors.sort(key=utils.natural_sort('hypervisor_hostname'))
         except Exception:
-            exceptions.handle(self.request, _('Unable to retrieve hypervisor Controller_node/Dashboards/haAdmin/ha_ipmi/views.py:61information.'))
+            exceptions.handle(self.request, _(
+                'Unable to retrieve hypervisor Controller_node/Dashboards/haAdmin/ha_ipmi/views.py:61information.'))
         return hypervisors
 
 
@@ -67,6 +68,7 @@ class DetailView(tables.MultiTableView):
     template_name = 'haAdmin/ha_ipmi/detail.html'
     page_title = _("IPMI-based Node : {{node_id}}")
     result = None
+
     def get_IPMI_Temp_data(self):
         authUrl = "http://" + config.get("rpc", "rpc_username") + ":" + config.get("rpc",
                                                                                    "rpc_password") + "@127.0.0.1:" + config.get(
@@ -118,7 +120,8 @@ class DetailView(tables.MultiTableView):
                 upper = data[7]
                 upper_critical = data[8]
                 if "Fan" in sensor_type:
-                    fan_data.append(Fan(table_index, sensor_id, device, sensor_type, value, status, lower_critical, lower,
-                                     upper, upper_critical))
+                    fan_data.append(
+                        Fan(table_index, sensor_id, device, sensor_type, value, status, lower_critical, lower,
+                            upper, upper_critical))
                     table_index += 1
         return fan_data

@@ -10,6 +10,8 @@ from horizon import tables
 
 config = ConfigParser.RawConfigParser()
 config.read('/home/controller/Desktop/HASS/Controller_node/HASS/hass.conf')
+
+
 # user = config.get("rpc", "rpc_username")
 # password = config.get("rpc", "rpc_password")
 # port = config.get("rpc", "rpc_bind_port")
@@ -33,7 +35,9 @@ class DeleteHACluster(tables.DeleteAction):
         )
 
     def handle(self, table, request, obj_ids):
-        authUrl = "http://" + config.get("rpc", "rpc_username") + ":" + config.get("rpc","rpc_password") + "@127.0.0.1:" + config.get("rpc", "rpc_bind_port")
+        authUrl = "http://" + config.get("rpc", "rpc_username") + ":" + config.get("rpc",
+                                                                                   "rpc_password") + "@127.0.0.1:" + config.get(
+            "rpc", "rpc_bind_port")
         server = xmlrpclib.ServerProxy(authUrl)
         name = []
         for uuid in obj_ids:
@@ -66,7 +70,9 @@ class DeleteComputingNode(tables.DeleteAction):
         )
 
     def handle(self, table, request, obj_ids):
-        authUrl = "http://" + config.get("rpc", "rpc_username") + ":" + config.get("rpc","rpc_password") + "@127.0.0.1:" + config.get("rpc", "rpc_bind_port")
+        authUrl = "http://" + config.get("rpc", "rpc_username") + ":" + config.get("rpc",
+                                                                                   "rpc_password") + "@127.0.0.1:" + config.get(
+            "rpc", "rpc_bind_port")
         server = xmlrpclib.ServerProxy(authUrl)
         cluster_id = self.table.kwargs["cluster_id"]
         node_names = []

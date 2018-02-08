@@ -54,13 +54,13 @@
 #UT_Get_All_Sensor_Value    HAIPMI-TC-19
 #UT_Get_All_Sensor_Value_Wrong_Node    HAIPMI-TC-19
 #==================Recover===================
-#UT_Evacuate    description:
+UT_Evacuate    description:
 UT_Live_Migration    description:
+#UT_Recover_Service_by_Evacuate    HAIPMI-TC-28
 #UT_Recover_Network_Isolation    HAIPMI-TC-24
 #UT_Recover_OS_Hang    HAIPMI-TC-25
 #UT_Recover_Sensor_Fail    HAIPMI-TC-26
 #UT_Recover_Power_Status    HAIPMI-TC-27
-#UT_Recover_Service_by_Evacuate.py
 #UT_Recover_Qemu-KVM_Service    HAIPMI-TC-28
 #UT_Recover_Nova-Compute_Service    HAIPMI-TC-28
 #UT_Recover_Libvirt_Service    HAIPMI-TC-28

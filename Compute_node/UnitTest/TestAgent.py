@@ -2,6 +2,7 @@
 import imp
 import os
 from datetime import datetime
+
 from prettytable import PrettyTable
 
 TEST_CASE_DIR = os.path.dirname(os.path.abspath(__file__))

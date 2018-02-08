@@ -53,7 +53,7 @@ class Detector(object):
                                                    stderr=subprocess.STDOUT, universal_newlines=True)
                 fail = False
             except Exception as e:
-                logging.error("transient network fail")
+                logging.error("transient network fail" + str(e))
                 fail = True
                 pass
             finally:
@@ -79,7 +79,8 @@ class Detector(object):
                 print "[" + self.node + "]Receive:" + data
             return State.SERVICE_FAIL
         except Exception as e:
-            fail_services = "agents"
+            # fail_services = "agents"
+            logging.error("Detector checkServiceStatus Except:" + str(e))
             print "[" + self.node + "] connection failed"
             self.sock.connect((self.node, self.port))
             return State.SERVICE_FAIL
@@ -123,5 +124,7 @@ class Detector(object):
             data, addr = self.sock.recvfrom(1024)
             if data != "OK":
                 return data
+            return None
         except Exception as e:
+            logging.error("Detector getFailServices--Except :" + str(e))
             return "agents"

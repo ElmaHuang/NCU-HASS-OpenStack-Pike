@@ -130,12 +130,14 @@ class RecoveryManager(object):
         version = int(self.config.get("version", "version"))
         detector = Detector(fail_node, port)
         fail_services = detector.getFailServices()
-        status = True
+        if fail_services is None:
+            logging.info("get fail service equals to None, abort recover service fail")
+            return True
+        # status = True
         if "agents" in fail_services:
             status = self.restartDetectionService(fail_node, version)
         else:
             status = self.restartServices(fail_node, fail_services, version)
-
         if not status:  # restart service fail
             print "start recovery service fail"
             print "fail node is %s" % fail_node.name
@@ -171,12 +173,12 @@ class RecoveryManager(object):
                 print "start evacuate"
                 cluster.evacuate(instance, target_host, fail_node)
             except Exception as e:
-                print str(e)
+                print "RecoveryManager recoverVM --Except:" + str(e)
                 logging.error("RecoverManager - The instance %s evacuate failed" % instance.id)
 
         print "check instance status"
         status = self.checkInstanceNetworkStatus(fail_node, cluster)
-        if status == False:
+        if not status:
             logging.error("RecoverManager : check vm network status false")
         print "update instance"
         cluster.updateInstance()
@@ -188,8 +190,9 @@ class RecoveryManager(object):
                 try:
                     self.iii_database.updateInstance(instance.id, target_host.name)
                 except Exception as e:
-                    print str(e)
-                    logging.error("%s" % str(e))
+                    message = "RecoveryManager recoverVM for iii --Except:" + str(e)
+                    print message
+                    logging.error(message)
             print "end modify iii database"
 
     def recoverNodeByReboot(self, fail_node):
@@ -258,7 +261,7 @@ class RecoveryManager(object):
                 return True
             return False
         except Exception as e:
-            print str(e)
+            print "RecoveryManager restartDetectionService --Except:" + str(e)
             return False
 
     def restartServices(self, fail_node, fail_services, version, check_timeout=60):
@@ -272,26 +275,36 @@ class RecoveryManager(object):
                     cmd = "systemctl restart %s" % fail_service
                 else:
                     cmd = "sudo service %s restart" % fail_service
-                print cmd
+                # print cmd
                 stdin, stdout, stderr = fail_node.remote_exec(cmd)  # restart service
 
                 while check_timeout > 0:
                     if version == 14:
                         cmd = "service %s status" % fail_service
                     elif version == 16:
-                        cmd = "systemctl status %s | grep active" % fail_service
+                        cmd = "systemctl status %s | grep dead" % fail_service
                     stdin, stdout, stderr = fail_node.remote_exec(cmd)  # check service active or not
-
-                    if not stdout.read():
-                        print "The node %s service %s still doesn't work" % (fail_node.name, fail_service)
-                    else:
-                        print "The node %s service %s successfully restart" % (fail_node.name, fail_service)
-                        return True  # recover all the fail service
                     time.sleep(1)
+                    res = stdout.read()
+                    # for version 14
+                    if version == 14:
+                        if not res:
+                            print "The node %s service %s still doesn't work" % (fail_node.name, fail_service)
+                        else:
+                            print "The node %s service %s successfully restart" % (fail_node.name, fail_service)
+                            return True  # recover all the fail service
+                    else:
+                        # for version 16
+                        if res:
+                            print "The node %s service %s still doesn't work" % (fail_node.name, fail_service)
+                        else:
+                            print "The node %s service %s successfully restart" % (fail_node.name, fail_service)
+                            return True  # recover all the fail service
+
                     check_timeout -= 1
                 return False
         except Exception as e:
-            print str(e)
+            print "RecoveryManager restartServices --Except:" + str(e)
             return False
 
     def checkInstanceNetworkStatus(self, fail_node, cluster, check_timeout=60):
@@ -342,7 +355,7 @@ class RecoveryManager(object):
                 if detector.checkServiceStatus() == State.HEALTH:
                     return True
             except Exception as e:
-                print str(e)
+                print "RecoveryManager checkNodeBootSuccess --Except:" + str(e)
             finally:
                 time.sleep(1)
                 check_timeout -= 1

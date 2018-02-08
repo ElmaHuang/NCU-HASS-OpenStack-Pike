@@ -46,7 +46,7 @@ def get_ips(instance):
 
         for address in addresses:
             if ('OS-EXT-IPS:type' in address and
-                        address['OS-EXT-IPS:type'] == "floating"):
+                    address['OS-EXT-IPS:type'] == "floating"):
                 ip_groups[ip_group]["floating"].append(address)
             else:
                 ip_groups[ip_group]["non_floating"].append(address)

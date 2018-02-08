@@ -9,10 +9,12 @@
 #:Description:
 #   This is a class maintains node data structure.
 ##########################################################
-from NodeInterface import NodeInterface
 import logging
+
 import paramiko
+
 from Instance import Instance
+from NodeInterface import NodeInterface
 
 
 class Node(NodeInterface):

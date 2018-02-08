@@ -22,7 +22,7 @@ def run():
         else:
             return False
     except Exception as e:
-        print "UT_Add_Duplicate_Instance Except:"+str(e)
+        print "UT_Add_Duplicate_Instance Except:" + str(e)
         return False
     finally:
         ClusterManager.deleteNode(cluster_id, NODE_NAME[0], write_DB=False)

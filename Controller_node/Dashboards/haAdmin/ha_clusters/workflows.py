@@ -22,6 +22,8 @@ from openstack_dashboard import api
 
 config = ConfigParser.RawConfigParser()
 config.read('/home/controller/Desktop/HASS/Controller_node/HASS/hass.conf')
+
+
 # user = config.get("rpc", "rpc_username")
 # password = config.get("rpc", "rpc_password")
 # port = config.get("rpc", "rpc_bind_port")
@@ -158,7 +160,9 @@ class CreateHAClusterWorkflow(workflows.Workflow):
     default_steps = (SetHAClusterInfoStep, AddHostsToHAClusterStep)
 
     def handle(self, request, context):
-        authUrl = "http://" + config.get("rpc", "rpc_username") + ":" + config.get("rpc","rpc_password") + "@127.0.0.1:" + config.get("rpc", "rpc_bind_port")
+        authUrl = "http://" + config.get("rpc", "rpc_username") + ":" + config.get("rpc",
+                                                                                   "rpc_password") + "@127.0.0.1:" + config.get(
+            "rpc", "rpc_bind_port")
         server = xmlrpclib.ServerProxy(authUrl)
         context_computing_nodes = context['computing_nodes']
         name = context['name']
@@ -184,7 +188,9 @@ class AddComputingNodeWorkflow(workflows.Workflow):
     default_steps = (AddComputingNodesToHAClusterStep,)
 
     def handle(self, request, context):
-        authUrl = "http://" + config.get("rpc", "rpc_username") + ":" + config.get("rpc","rpc_password") + "@127.0.0.1:" + config.get("rpc", "rpc_bind_port")
+        authUrl = "http://" + config.get("rpc", "rpc_username") + ":" + config.get("rpc",
+                                                                                   "rpc_password") + "@127.0.0.1:" + config.get(
+            "rpc", "rpc_bind_port")
         server = xmlrpclib.ServerProxy(authUrl)
         context_computing_nodes = context['computing_nodes']
         node_list = []

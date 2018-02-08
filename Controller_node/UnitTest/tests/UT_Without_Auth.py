@@ -15,7 +15,7 @@ def run():
             return False
         return True
     except Exception as e:
-        print "UT_Without_Auth Except:"+str(e)
+        print "UT_Without_Auth Except:" + str(e)
         return True
     finally:
         Postprocess.server_stop(False)

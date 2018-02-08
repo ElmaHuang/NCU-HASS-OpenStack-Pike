@@ -3,7 +3,7 @@ import time
 
 sys.path.insert(0, '..')
 from HASS.IPMINodeOperator import Operator
-from HASS.IPMIModule import  IPMIManager
+from HASS.IPMIModule import IPMIManager
 
 HOST = "compute2"
 

@@ -14,6 +14,8 @@ from openstack_dashboard.dashboards.haAdmin.ha_instances import tables as projec
 
 config = ConfigParser.RawConfigParser()
 config.read('/home/controller/Desktop/HASS/Controller_node/HASS/hass.conf')
+
+
 # user = config.get("rpc", "rpc_username")
 # password = config.get("rpc", "rpc_password")
 # port = config.get("rpc", "rpc_bind_port")
@@ -70,7 +72,9 @@ class IndexView(tables.DataTableView):
     # return self._more
 
     def get_data(self):
-        authUrl = "http://" + config.get("rpc", "rpc_username") + ":" + config.get("rpc","rpc_password") + "@127.0.0.1:" + config.get("rpc", "rpc_bind_port")
+        authUrl = "http://" + config.get("rpc", "rpc_username") + ":" + config.get("rpc",
+                                                                                   "rpc_password") + "@127.0.0.1:" + config.get(
+            "rpc", "rpc_bind_port")
         server = xmlrpclib.ServerProxy(authUrl)
         clusters = server.listCluster()
         instances = []

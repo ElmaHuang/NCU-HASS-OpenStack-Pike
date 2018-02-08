@@ -27,8 +27,6 @@ class HAInstance():
             host_instance = HAInstance._getInstanceByNode(HAInstance.ha_instance_list)
             for cluster_id, instance_list in host_instance.iteritems():
                 for instance in instance_list:
-                    # print cluster_id
-                    # print instance
                     HAInstance.addInstance(cluster_id, instance)
             # return host_instance
         except Exception as e:

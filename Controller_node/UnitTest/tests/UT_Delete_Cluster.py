@@ -18,5 +18,5 @@ def run():
         else:
             return False
     except Exception as e:
-        print "UT_Delete_Cluster Except:"+str(e)
+        print "UT_Delete_Cluster Except:" + str(e)
         return False

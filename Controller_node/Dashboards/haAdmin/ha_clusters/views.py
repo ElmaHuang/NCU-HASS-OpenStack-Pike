@@ -9,6 +9,8 @@ from openstack_dashboard.dashboards.haAdmin.ha_clusters import workflows as ha_c
 
 config = ConfigParser.RawConfigParser()
 config.read('/home/controller/Desktop/HASS/Controller_node/HASS/hass.conf')
+
+
 # user = config.get("rpc", "rpc_username")
 # password = config.get("rpc", "rpc_password")
 # port = config.get("rpc", "rpc_bind_port")
@@ -67,7 +69,9 @@ class DetailView(tables.DataTableView):
     page_title = _("HA Cluster (uuid:{{cluster_id}})")
 
     def get_data(self):
-        authUrl = "http://" + config.get("rpc", "rpc_username") + ":" + config.get("rpc","rpc_password") + "@127.0.0.1:" + config.get("rpc", "rpc_bind_port")
+        authUrl = "http://" + config.get("rpc", "rpc_username") + ":" + config.get("rpc",
+                                                                                   "rpc_password") + "@127.0.0.1:" + config.get(
+            "rpc", "rpc_bind_port")
         server = xmlrpclib.ServerProxy(authUrl)
         result = server.listNode(self.kwargs["cluster_id"])
         if result["code"] == "succeed":  # Success

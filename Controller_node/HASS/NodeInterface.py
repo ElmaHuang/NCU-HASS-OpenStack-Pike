@@ -9,11 +9,12 @@
 #:Description:
 #   This is a interface for node data structure.
 #########################################################
-from NovaClient import NovaClient
-from DetectionThread import DetectionThread
-from IPMIModule import IPMIManager
 import ConfigParser
 import socket
+
+from DetectionThread import DetectionThread
+from IPMIModule import IPMIManager
+from NovaClient import NovaClient
 
 
 class NodeInterface(object):

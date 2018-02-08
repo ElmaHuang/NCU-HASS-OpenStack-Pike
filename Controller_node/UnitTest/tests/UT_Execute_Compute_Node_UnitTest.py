@@ -3,11 +3,12 @@ import subprocess
 # import sys
 import time
 
+import Postprocess
+import Preprocess
 import paramiko
 
 # sys.path.insert(0, '/home/controller/Desktop/MOST/HASS')
 from Controller_node.HASS.ClusterManager import ClusterManager
-import Postprocess, Preprocess
 
 CLUSTER_NAME = "cluster01"
 NODE_NAME = ["compute1"]
