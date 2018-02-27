@@ -48,7 +48,7 @@ class RecoveryManager(object):
         fail_node = cluster.getNodeByName(fail_node_name)
         print "fail node is %s" % fail_node.name
         print "start recovery vm"
-        self.recoverVM(cluster, fail_node)
+        self.recoverVMByEvacuate(cluster, fail_node)
         print "end recovery vm"
         return self.recoverNodeByReboot(fail_node)
 
@@ -60,10 +60,11 @@ class RecoveryManager(object):
         fail_node = cluster.getNodeByName(fail_node_name)
         print "fail node is %s" % fail_node.name
         print "start recovery vm"
-        self.recoverVM(cluster, fail_node)
+        self.recoverVMByEvacuate(cluster, fail_node)
         print "end recovery vm"
         return self.recoverNodeByStart(fail_node)
 
+    # no use
     def recoverNodeCrash(self, cluster_id, fail_node_name):
         cluster = ClusterManager.getCluster(cluster_id)
         if not cluster:
@@ -72,7 +73,7 @@ class RecoveryManager(object):
         fail_node = cluster.getNodeByName(fail_node_name)
         print "fail node is %s" % fail_node.name
         print "start recovery vm"
-        self.recoverVM(cluster, fail_node)
+        self.recoverVMByEvacuate(cluster, fail_node)
         print "end recovery vm"
         return self.recoverNodeByShutoff(fail_node)
 
@@ -101,7 +102,7 @@ class RecoveryManager(object):
         else:
             print "fail node is %s" % fail_node.name
             print "start recovery vm"
-            self.recoverVM(cluster, fail_node)
+            self.recoverVMByEvacuate(cluster, fail_node)
             print "end recovery vm"
             return self.recoverNodeByReboot(fail_node)
 
@@ -113,12 +114,19 @@ class RecoveryManager(object):
         fail_node = cluster.getNodeByName(fail_node_name)
         print "fail node is %s" % fail_node.name
         print "start recovery vm"
-        self.recoverVM(cluster, fail_node)
-        print "end recovery vm"
+        self.recoverVMByEvacuate(cluster, fail_node)
+        print "end evacuate vm"
         return self.recoverNodeByShutoff(fail_node)
 
-    def recoverSensorByLiveMigrate(self):
-        pass
+    def recoverSensorByLiveMigrate(self, cluster_id, fail_node_name):
+        cluster = ClusterManager.getCluster(cluster_id)
+        if not cluster:
+            logging.error("RecoverManager : cluster not found")
+            return
+        fail_node = cluster.getNodeByName(fail_node_name)
+        self.recoverVMByLiveMigrate(cluster, fail_node)
+        print "end live migrate vm"
+        return self.recoverNodeByReboot(fail_node)
 
     def recoverServiceFail(self, cluster_id, fail_node_name):
         cluster = ClusterManager.getCluster(cluster_id)
@@ -142,13 +150,31 @@ class RecoveryManager(object):
             print "start recovery service fail"
             print "fail node is %s" % fail_node.name
             print "start recovery vm"
-            self.recoverVM(cluster, fail_node)
+            self.recoverVMByEvacuate(cluster, fail_node)
             print "end recovery vm"
             return self.recoverNodeByReboot(fail_node)
         else:
             return status  # restart service success
 
-    def recoverVM(self, cluster, fail_node):
+    def recoverVMByLiveMigrate(self, cluster, fail_node):
+        if len(cluster.getNodeList()) < 2:
+            logging.error("RecoverManager : evacuate fail, cluster only one node")
+            return
+        if not fail_node:
+            logging.error("RecoverManager : not found the fail node")
+            return
+        protected_instance_list = cluster.getProtectedInstanceListByNode(fail_node)
+        for instance in protected_instance_list:
+            try:
+                target_host = cluster.liveMigrateInstance(instance.id)
+                if target_host == fail_node.name or target_host not in cluster.getAllNodeStr():
+                    return False
+                return True
+            except Exception as e:
+                print "RecoveryManager recoverVMByLiveMigrate --Except:" + str(e)
+                logging.error("RecoverManager - The instance %s live migrate failed" % instance.id)
+
+    def recoverVMByEvacuate(self, cluster, fail_node):
         if len(cluster.getNodeList()) < 2:
             logging.error("RecoverManager : evacuate fail, cluster only one node")
             return
@@ -159,7 +185,6 @@ class RecoveryManager(object):
         print "target_host : %s" % target_host.name
         if not target_host:
             logging.error("RecoverManager : not found the target_host %s" % target_host)
-
         protected_instance_list = cluster.getProtectedInstanceListByNode(fail_node)
         print "protected list : %s" % protected_instance_list
         for instance in protected_instance_list:
@@ -168,14 +193,12 @@ class RecoveryManager(object):
                 print "start undefine instance in %s" % target_host.name
                 target_host.undefineInstance(instance)
                 print "end undefine instance"
-
             try:
                 print "start evacuate"
                 cluster.evacuate(instance, target_host, fail_node)
             except Exception as e:
-                print "RecoveryManager recoverVM --Except:" + str(e)
+                print "RecoveryManager recoverVMByEvacuate --Except:" + str(e)
                 logging.error("RecoverManager - The instance %s evacuate failed" % instance.id)
-
         print "check instance status"
         status = self.checkInstanceNetworkStatus(fail_node, cluster)
         if not status:
@@ -226,7 +249,7 @@ class RecoveryManager(object):
         print "start recover node by start"
         result = fail_node.start()
         print "boot node result : %s" % result.message
-        message = "RecoveryManager recover network isolation"
+        message = "RecoveryManager recover node by start"
         if result.code == "succeed":
             logging.info(message + result.message)
             boot_up = self.checkNodeBootSuccess(fail_node)
@@ -241,6 +264,9 @@ class RecoveryManager(object):
             return False
 
     def restartDetectionService(self, fail_node, version):
+        #kill crash thread
+
+        #start
         print "Start service failure recovery by starting Detection Agent"
         agent_path = self.config.get("path", "agent_path")
         cmd = "cd /home/%s/%s/ ; python DetectionAgent.py" % (fail_node.name, agent_path)  # not daemon
@@ -312,15 +338,16 @@ class RecoveryManager(object):
         fail = False
         protected_instance_list = cluster.getProtectedInstanceListByNode(fail_node)
         for instance in protected_instance_list:
-            openstack_instance = self.nova_client.getVM(instance.id)
+            ip = instance.ext_net
             try:
-                if "provider" in openstack_instance.networks:
-                    ip = str(openstack_instance.networks['provider'][0])
+                if ip is None:
+                    print "vm : %s has no floating network, abort ping process!" % instance.name
+                    status = True
                 else:
-                    ip = str(openstack_instance.networks['selfservice'][1])
-                status = self._pingInstance(ip, check_timeout)
+                    ip = str(ip)
+                    status = self._pingInstance(ip, check_timeout)
             except Exception as e:
-                print "vm : %s has no floating network, abort ping process!" + str(e) % instance.name
+                print str(e)
                 continue
             if not status:
                 fail = True
@@ -347,7 +374,7 @@ class RecoveryManager(object):
     def checkNodeBootSuccess(self, node, check_timeout=300):
         port = int(self.config.get("detection", "polling_port"))
         detector = Detector(node, port)
-        print "waiting node to reboot"
+        print "waiting node to boot up"
         time.sleep(5)
         print "start check node booting"
         while check_timeout > 0:

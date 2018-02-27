@@ -56,7 +56,7 @@ class NovaClient(object):
                            project_domain_name=self.config.get("openstack", "openstack_project_domain_id"))
         sess = session.Session(auth=auth)
         if self.version == "16":
-            novaClient = client.Client(2.30, session=sess)
+            novaClient = client.Client(2.29, session=sess)
         else:
             novaClient = client.Client(2.25, session=sess)
         return novaClient
@@ -119,12 +119,18 @@ class NovaClient(object):
             print "NovaClient getInstanceHost fail,time out and state is not ACTIVE"
         return getattr(instance, "OS-EXT-SRV-ATTR:host")
 
-    # return None
-
     def getInstanceNetwork(self, instance_id):
         instance = self.getVM(instance_id)
         network = getattr(instance, "networks")
         return network
+
+    def getInstanceExternalNetwork(self, ip):
+        ext_ip = self.config.get("openstack", "openstack_external_network_gateway_ip").split(".")
+        ext_ip = ext_ip[0:-1]
+        check_ip = ip.split(".")
+        if all(x in check_ip for x in ext_ip):
+            return ip
+        return None
 
     def isInstanceExist(self, instance_id):
         try:

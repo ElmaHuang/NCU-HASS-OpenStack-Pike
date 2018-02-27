@@ -232,11 +232,16 @@ class Cluster(ClusterInterface):
         return self.node_list
 
     def sendUpdateInstance(self, host_name):
-        # print host_name
+        print "send mesg to ", host_name
         host = self.getNodeByName(host_name)
-        host.sendUpdateInstance()
+        if host is None:
+            print "%s is not in cluster" % host_name
+        else:
+            result = host.sendUpdateInstance()
+            if not result:
+                print "%s host send update instance mesg fail" % host_name
 
-    # be deleteNode called
+    # be deleteNode/RecoveryManager called
     def getNodeByName(self, name):
         # node_list = self.getNodeList()
         for node in self.node_list:
@@ -328,7 +333,6 @@ class Cluster(ClusterInterface):
         target_host = self.findTargetHost(host)
         print "start live migrate vm from ", host, "to ", target_host.name
         final_host = self.nova_client.liveMigrateVM(instance_id, target_host.name)
-        # print final_host
         return final_host
 
     def evacuate(self, instance, target_host, fail_node):

@@ -62,11 +62,17 @@ class NodeInterface(object):
         return [self.name, self.cluster_id, self.ipmi_status]
 
     def sendUpdateInstance(self):
-        so = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        so.connect((self.name, 5001))
-        # ip = so.recv(1024)
-        so.send("update instance")
-        so.close()
+        try:
+            so = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            so.connect((self.name, 5001))
+            # ip = so.recv(1024)
+            so.send("update instance")
+            so.close()
+            return True
+        except Exception as e:
+            #host is power off
+            print str(e)
+            return False
 
 
 if __name__ == "__main__":

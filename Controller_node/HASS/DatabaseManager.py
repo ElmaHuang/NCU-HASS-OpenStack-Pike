@@ -76,7 +76,7 @@ class DatabaseManager(object):
                             below_cluster char(36),
                             host          char(18),
                             status        char(18),
-                            network       char(36),
+                            network       char(255),
                             PRIMARY KEY(instance_id),
                             FOREIGN KEY(below_cluster)
                             REFERENCES ha_cluster(cluster_uuid)
@@ -176,7 +176,7 @@ class DatabaseManager(object):
 
     def _insertCMD(self, table_index, value):
         # "INSERT INTO ha_cluster (cluster_uuid,cluster_name) VALUES (%(cluster_uuid)s, %(cluster_name)s);"
-        cmd = "INSERT INTO " + table_index + " VALUES" + value + " ;"
+        cmd = "INSERT INTO " + table_index + " VALUES " + value + ";"
         return cmd
 
     def _selectCMD(self, table, index, id):
