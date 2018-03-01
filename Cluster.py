@@ -74,7 +74,7 @@ class Cluster(ClusterInterface):
                               message=message,
                               data={"clusterId": self.id, "node": node_name})
         except Exception as e:
-            print str(e)
+            logging.error(str(e))
             message = "Cluster delete node fail , node maybe not in compute pool please check again! node is %s  The node list is %s." % (
                 node_name, self.getAllNodeStr())
             logging.error(message)

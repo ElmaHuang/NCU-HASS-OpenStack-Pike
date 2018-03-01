@@ -385,6 +385,7 @@ class Hass(object):
             return result
         except Exception as e:
             print str(e)
+            logging.error(str(e))
             logging.error("HASS--recover node %s fail" % node_name)
 
     def updateDB(self):

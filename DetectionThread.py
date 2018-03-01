@@ -19,6 +19,7 @@ import argparse
 import xmlrpclib
 import json
 import State
+import prctl
 
 from Detector import Detector
 

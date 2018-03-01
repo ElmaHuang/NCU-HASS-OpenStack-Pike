@@ -54,15 +54,16 @@ ipmitool_install() {
 }
 
 dashboard_setting() {
-    OPENSTACK_DASHBOARD_DIR=/usr/share/openstack-dashboard/openstack_dashboard/dashboards/
-    OPENSTACK_ENABLE_DIR=/usr/share/openstack-dashboard/openstack_dashboard/enabled/
-    rm -rf $OPENSTACK_DASHBOARD_DIR haAdmin
-    rm -rf $OPENSTACK_DASHBOARD_DIR haProject
+    OPENSTACK_DASHBOARD_DIR=/usr/share/openstack-dashboard/openstack_dashboard/dashboards
+    OPENSTACK_ENABLE_DIR=/usr/share/openstack-dashboard/openstack_dashboard/enabled
+    rm -rf $OPENSTACK_DASHBOARD_DIR/haAdmin
+    rm -rf $OPENSTACK_DASHBOARD_DIR/haProject
     cp -r /mnt/drbd/HASS/Dashboards/haAdmin $OPENSTACK_DASHBOARD_DIR
     cp -r /mnt/drbd/HASS/Dashboards/haProject $OPENSTACK_DASHBOARD_DIR
     cp /mnt/drbd/HASS/Dashboards/_2400_haProject.py $OPENSTACK_ENABLE_DIR
     cp /mnt/drbd/HASS/Dashboards/_2600_haAdmin.py $OPENSTACK_ENABLE_DIR
-    service apache2 restart
+    service apache2 restart >> $LOG_FILE
+    start_HASS_service
 }
 
 start_HASS_service() {

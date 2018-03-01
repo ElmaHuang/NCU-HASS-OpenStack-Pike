@@ -138,6 +138,7 @@ class RecoveryManager(object):
         else:
             status = self.restartServices(fail_node, fail_services, version)
 
+
         if not status:  # restart service fail
             print "start recovery"
             print "fail node is %s" % fail_node.name

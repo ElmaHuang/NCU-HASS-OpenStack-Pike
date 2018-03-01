@@ -109,12 +109,13 @@ class ClusterManager():
     @staticmethod
     def addNode(cluster_id, node_name_list, write_DB=True):
         message = ""
-        for node_name in node_name_list[:]:
+        tmp = node_name_list[:]
+        for node_name in tmp:
             if not ClusterManager._checkNodeOverlappingForAllCluster(node_name):
                 print "%s is already in a HA cluster. " % node_name
                 message += "%s is overlapping node" % node_name
-                node_name_list.remove(node_name)
-        if node_name_list == []: raise Exception("all node in node list are(is) illegal")
+                tmp.remove(node_name)
+        if tmp == []: raise Exception("all node in node list are(is) illegal")
         cluster = ClusterManager.getCluster(cluster_id)
         if not cluster:
             message += "ClusterManager--Add the node to cluster failed. The cluster is not found. (cluster_id = %s)" % cluster_id
@@ -125,13 +126,13 @@ class ClusterManager():
             return result
         else:
             try:
-                result = cluster.addNode(node_name_list)
-                logging.info("ClusterManager--add node success.cluster id is %s ,node is %s " % (cluster_id, node_name_list))
+                result = cluster.addNode(tmp)
+                logging.info("ClusterManager--add node success.cluster id is %s ,node is %s " % (cluster_id, tmp))
                 if result.code == "succeed" and write_DB:
                     ClusterManager.syncToDatabase()
                 return result
             except Exception as e:
-                message += "add node fail. node not found. (node_name = %s)"  % node_name_list +str(e)
+                message += "add node fail. node not found. (node_name = %s)"  % tmp +str(e)
                 logging.error(message)
                 # result = {"code": "1", "clusterId": cluster_id, "message": message}
                 result = Response(code="failed",
