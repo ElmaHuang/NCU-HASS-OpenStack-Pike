@@ -17,7 +17,9 @@ class Instance(object):
         print "update net"
         # {'selfservice':", "['192.168.1.8',", "'192.168.0.212']}
         if "selfservice" in self.network:
-            self.network_self = self.network["selfservice"]
+            self.network_self = self.network["selfservice"][0]
+            if self.network["selfservice"] >1:
+                self.network_provider = self.network["selfservice"][0]
         if "provider" in self.network:
             self.network_provider = self.network["provider"]
             # self.network

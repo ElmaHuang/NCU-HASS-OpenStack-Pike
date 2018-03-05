@@ -67,3 +67,9 @@ class HAInstance():
         for instance in HAInstance.instance_list:
             if instance.name == name:
                 return instance
+
+    @staticmethod
+    def updateHAInstance():
+        HAInstance.init()
+        HAInstance.getInstanceFromController()
+        print "update HA Instance"

@@ -32,7 +32,7 @@ class RecoveryInstance(object):
         self.recovery_type = fail_vm[2]
         result = False
         print "start recover:" + self.recovery_type
-        print Failure.SHUTOFF_OR_DELETED.value
+        #print Failure.SHUTOFF_OR_DELETED.value
         if self.recovery_type in Failure.OS_CRASH.value or self.recovery_type in Failure.OS_HANGED.value:
             result = self.hardRebootInstance(self.vm_name)
         elif self.recovery_type in Failure.MIGRATED.value:
@@ -53,7 +53,7 @@ class RecoveryInstance(object):
                     print message
                     logging.error(message)
         if result:
-            self._updateHAInstance()
+            HAInstance.updateHAInstance()
         return result
 
     def hardRebootInstance(self, fail_instance_name):
@@ -111,7 +111,3 @@ class RecoveryInstance(object):
                 check_timeout -= 1
         return False
 
-    def _updateHAInstance(self):
-        HAInstance.init()
-        HAInstance.getInstanceFromController()
-        print "update HA Instance"
