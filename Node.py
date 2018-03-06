@@ -13,6 +13,7 @@
 from NodeInterface import NodeInterface
 import logging
 import paramiko
+import time
 from Instance import Instance
 
 
@@ -54,13 +55,15 @@ class Node(NodeInterface):
         return stdout.read()
 
     def remote_exec(self, cmd):
+        if not self.check_connection():
+            logging.error("ssh connection lost")
+            logging.error("wait 10 seconds and re-establish ssh tunnel")
+            time.sleep(10)
+            self.client = self._create_ssh_client()
+            logging.info("ssh connection re-established")
         if not self.client:
             logging.error("RecoveryManager : cannot create ssh connection")
             return
-        if not self.check_connection():
-            logging.error("ssh connection lost")
-            self.client = self._create_ssh_client()
-            logging.info("ssh connection re-established")
         stdin, stdout, stderr = self.client.exec_command(cmd, timeout=5)
         return stdin, stdout, stderr
 
@@ -71,6 +74,7 @@ class Node(NodeInterface):
             client.connect(self.name, username='root', timeout=default_timeout)
             return client
         except Exception as e:
+            logging.error("Excpeption : %s" % str(e))
             print "Excpeption : %s" % str(e)
             return None
 
@@ -80,6 +84,7 @@ class Node(NodeInterface):
             return True
         except Exception as e:
             print "Connection lost : %s" % str(e)
+            logging.error("%s Connection lost : %s" % (self.name ,str(e)) )
             return False
 
 
@@ -89,8 +94,3 @@ if __name__ == "__main__":
     # print a.undefineInstance(b)
     i, out, err = a.remote_exec("echo 123")
     print out.read()
-# print a.remote_exec("cd /home/compute2/Desktop/Hass-Newton/computing_node/ ;python DetectionAgent.py")
-# q,w,e =  a.remote_exec("ps -aux")
-# print w.read()
-# q,w,e =  a.remote_exec("echo 123")
-# print w.read()

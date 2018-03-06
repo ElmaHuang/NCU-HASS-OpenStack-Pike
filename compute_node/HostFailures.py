@@ -12,7 +12,7 @@ class HostFailures(asyncore.dispatcher):
         config.read('hass_node.conf')
         self.host = None
         self.port = int(config.get("polling", "listen_port"))
-        self.version = int(config.get("version", "version"))
+        self.version = int(config.get("ubuntu_os_version", "version"))
         self.create_socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.set_reuse_addr()
         self.bind(('', self.port))

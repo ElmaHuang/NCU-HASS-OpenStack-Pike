@@ -289,11 +289,9 @@ class Cluster(ClusterInterface):
 
     def liveMigrateInstance(self, instance_id):
         host = self.nova_client.getInstanceHost(instance_id)
-        # for node in self.node_list:
-        # if host == node.name:
-        # return host
+        host = self.getNodeByName(host)
         target_host = self.findTargetHost(host)
-        print "start live migrate vm from ", host, "to ", target_host.name
+        print "start live migrate vm from ", host.name, "to ", target_host.name
         final_host = self.nova_client.liveMigrateVM(instance_id, target_host.name)
         # print final_host
         return final_host
@@ -315,45 +313,5 @@ class Cluster(ClusterInterface):
 
 if __name__ == "__main__":
     a = Cluster("123", "name")
-    list = ["compute3"]
-    a.addNode(list)
-    host = a.findNodeByInstance("0e0ce568-4ae3-4ade-b072-74edeb3ae58c")
-    # print "h:",host
-    '''
-    def _isNodeDuplicate(self , unchecked_node_name):
-        for node in self.node_list:
-            if node.name == unchecked_node_name:
-                return True
-        return False
-
-    #addNode call
-    def _getIPMIStatus(self, node_name):
-        config = ConfigParser.RawConfigParser()
-        config.read('hass.conf')
-        ip_dict = dict(config._sections['ipmi'])
-        return node_name in ip_dict
-
-    def _nodeIsIllegal(self , unchecked_node_name):
-        if not self._isInComputePool(unchecked_node_name):
-            return True
-        #if self._isNodeDuplicate(unchecked_node_name):
-            #return True
-        return False		
-    '''
-    '''
-     def sendToLocal(self,ip):
-         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-         s.bind(('192.168.0.112', 5001))
-         s.listen(5)
-         # s.settimeout(5)
-         while True:
-             cs, addr = s.accept()
-             print "addr:", addr
-             cs.send(ip)
-             d = cs.recv(1024)
-             # print d
-             if d == "get":
-                 cs.close()
-             else:
-                 continue
-     '''
+    a.addNode(["compute1","compute2"])
+    a.liveMigrateInstance("02ed0527-84d3-4178-9795-810b7d4e7010")

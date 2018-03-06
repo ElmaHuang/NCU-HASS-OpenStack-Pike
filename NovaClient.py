@@ -46,17 +46,17 @@ class NovaClient(object):
         NovaClient._helper = self.getHelper()
 
     def getHelper(self):
-        auth = v3.Password(auth_url='http://controller:5000/v3',
+        auth = v3.Password(auth_url='http://%s:%s/v3' % (self.config.get("keytstone_auth","url"), self.config.get("keytstone_auth","port")),
                            username=self.config.get("openstack", "openstack_admin_account"),
                            password=self.config.get("openstack", "openstack_admin_password"),
                            project_name=self.config.get("openstack", "openstack_project_name"),
                            user_domain_name=self.config.get("openstack", "openstack_user_domain_id"),
                            project_domain_name=self.config.get("openstack", "openstack_project_domain_id"))
         sess = session.Session(auth=auth)
-        if self.version == "16":
-            novaClient = client.Client(2.29, session=sess)
-        else:
+        if self.version == "mitaka":
             novaClient = client.Client(2.25, session=sess)
+        else:
+            novaClient = client.Client(2.29, session=sess)
         return novaClient
 
     def getComputePool(self):

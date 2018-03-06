@@ -164,11 +164,18 @@ class RecoveryManager(object):
         protected_instance_list = cluster.getProtectedInstanceListByNode(fail_node)
         print "protected list : %s" % protected_instance_list
         for instance in protected_instance_list:
-            if target_host.instanceOverlappingInLibvirt(instance):
-                print "instance %s overlapping in %s" % (instance.name, target_host.name)
-                print "start undefine instance in %s" % target_host.name
-                target_host.undefineInstance(instance)
-                print "end undefine instance"
+            try:
+                if target_host.instanceOverlappingInLibvirt(instance):
+                    print "instance %s overlapping in %s" % (instance.name, target_host.name)
+                    print "start undefine instance in %s" % target_host.name
+                    target_host.undefineInstance(instance)
+                    print "end undefine instance"
+            except Exception as e:
+                logging.error("instance overlapping in libvirt exception")
+                logging.error(str(e))
+                logging.info("undefineInstance second chance")
+                if target_host.instanceOverlappingInLibvirt(instance):
+                    target_host.undefineInstance(instance)
 
             try:
                 print "start evacuate"
@@ -176,12 +183,13 @@ class RecoveryManager(object):
                 cluster.evacuate(instance, target_host, fail_node)
             except Exception as e:
                 print str(e)
+                logging.error(str(e))
                 logging.error("RecoverManager - The instance %s evacuate failed" % instance.id)
 
-        print "check instance status"
-        status = self.checkInstanceNetworkStatus(fail_node, cluster)
-        if status == False:
-            logging.error("RecoverManager : check vm status false")
+        # print "check instance status"
+        # status = self.checkInstanceNetworkStatus(fail_node, cluster)
+        # if status == False:
+        #     logging.error("RecoverManager : check vm status false")
 
         print "update instance"
         cluster.updateInstance()

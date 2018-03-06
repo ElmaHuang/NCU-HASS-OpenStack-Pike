@@ -43,6 +43,7 @@ class DetectionThread(threading.Thread):
         self.server = xmlrpclib.ServerProxy(self.authUrl)
 
     def run(self):
+        prctl.set_name(self.node.name)
         while not self.loop_exit:
             state = self.detect()
             print "[" + self.node.name + "] " + state
