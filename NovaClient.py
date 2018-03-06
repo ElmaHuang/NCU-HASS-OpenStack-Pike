@@ -27,7 +27,7 @@ class NovaClient(object):
     def __init__(self):
         self.config = ConfigParser.RawConfigParser()
         self.config.read('hass.conf')
-        self.version = self.config.get("version", "version")
+        self.version = self.config.get("openstack_version", "version")
         if NovaClient._instance != None:
             raise Exception("This class is a singleton! , cannot initialize twice")
         else:
@@ -46,7 +46,7 @@ class NovaClient(object):
         NovaClient._helper = self.getHelper()
 
     def getHelper(self):
-        auth = v3.Password(auth_url='http://%s:%s/v3' % (self.config.get("keytstone_auth","url"), self.config.get("keytstone_auth","port")),
+        auth = v3.Password(auth_url='http://%s:%s/v3' % (self.config.get("keystone_auth","url"), self.config.get("keystone_auth","port")),
                            username=self.config.get("openstack", "openstack_admin_account"),
                            password=self.config.get("openstack", "openstack_admin_password"),
                            project_name=self.config.get("openstack", "openstack_project_name"),
@@ -158,10 +158,3 @@ class NovaClient(object):
 
 if __name__ == "__main__":
     a = NovaClient.getInstance()
-    b = a.getInstanceNetwork("a1f64ff2-ad44-4c84-8c77-75295a8c3f77")
-    print b["ext-net"][0]
-# print a.getVM("4df5a97d-9cf2-4d47-99a2-cf68e107acf6")
-# print a.isInstanceExist("4df5a97d-9cf2-4d47-99a2-cf68e107acf6")
-# print a.getInstanceList()[0].isIllegal()
-# print a.getAllInstanceList()
-# print a.getInstanceListByNode("compute1")
