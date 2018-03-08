@@ -15,6 +15,7 @@
 
 # from ClusterManager import ClusterManager
 import ConfigParser
+import logging
 import time
 
 from keystoneauth1 import session
@@ -104,19 +105,24 @@ class NovaClient(object):
         # if instance == None:return None
         return getattr(instance, "OS-EXT-SRV-ATTR:instance_name")
 
-    def getInstanceHost(self, instance_id, check_timeout=60):
+    def checkInstanceStatus(self, instance_id, check_timeout=60):
         status = None
-        # if instance == None:return None
+        instance = self.getVM(instance_id)
         while status != "ACTIVE" and check_timeout > 0:
-            instance = self.getVM(instance_id)
             status = self.getInstanceState(instance_id)
-            print "getInstanceHost in nova-client : %s , %s" % (status, getattr(instance, "name"))
+            print "checkInstanceStatus in nova-client : %s , %s" % (status, getattr(instance, "name"))
             check_timeout -= 1
             time.sleep(1)
-        # state == ACTIVE or timeout
-        instance = self.getVM(instance_id)
+        # timeout
         if status != "ACTIVE":
-            print "NovaClient getInstanceHost fail,time out and state is not ACTIVE"
+            message = "NovaClient checkInstanceStatus fail,time out and state is not ACTIVE.instance_id = %s" % instance_id
+            print message
+            logging.error(message)
+            return False
+        return True
+
+    def getInstanceHost(self, instance_id):
+        instance = self.getVM(instance_id)
         return getattr(instance, "OS-EXT-SRV-ATTR:host")
 
     def getInstanceNetwork(self, instance_id):
@@ -136,7 +142,9 @@ class NovaClient(object):
         try:
             NovaClient._helper.servers.get(instance_id)
             return True
-        except:
+        except Exception as e:
+            message = "NovaClient isInstanceExist get instance fail" + str(e)
+            logging.error(message)
             return False
 
     def isInstancePowerOn(self, id):
@@ -151,7 +159,7 @@ class NovaClient(object):
 
     def isInstanceGetVolume(self, id):
         volume = self.getVolumes(id)
-        if volume == []:
+        if not volume:
             return False
         return True
 
@@ -162,26 +170,34 @@ class NovaClient(object):
         return NovaClient._helper.services.force_down(node.name, "nova-compute", True)
 
     def liveMigrateVM(self, instance_id, target_host):
-        instance = self.getVM(instance_id)
-        # if self.version == "16":
-        #   NovaClient._helper.servers.live_migrate(instance,host = target_host, force=True)
-        instance.live_migrate(host=target_host)
-        return self.getInstanceHost(instance_id)
+        try:
+            instance = self.getVM(instance_id)
+            instance.live_migrate(host=target_host)
+            status = self.checkInstanceStatus(instance_id)
+            if status:
+                return self.getInstanceHost(instance_id)
+            raise Exception("Instance Status is not ACTIVE .instance id = %s" % instance_id)
+        except Exception as e:
+            message = "NovaClient live migration fail" + str(e)
+            logging.error(message)
 
     def evacuate(self, instance, target_host, fail_node):
-        self.novaServiceDown(fail_node)
-        openstack_instance = self.getVM(instance.id)
-        if self.version == "16":
-            NovaClient._helper.servers.evacuate(openstack_instance, target_host.name, force=True)
-        else:
-            NovaClient._helper.servers.evacuate(openstack_instance, target_host.name)
-        self.novaServiceUp(fail_node)
+        try:
+            self.novaServiceDown(fail_node)
+            openstack_instance = self.getVM(instance.id)
+            if self.version == "16":
+                NovaClient._helper.servers.evacuate(openstack_instance, target_host.name, force=True)
+            else:
+                NovaClient._helper.servers.evacuate(openstack_instance, target_host.name)
+            self.novaServiceUp(fail_node)
+            status = self.checkInstanceStatus(instance.id)
+            if status:
+                return self.getInstanceHost(instance.id)
+            raise Exception("Instance Status is not ACTIVE .instance id = %s" % instance.id)
+        except Exception as e:
+            message = "NovaClient evacuate fail" + str(e)
+            logging.error(message)
 
 
 if __name__ == "__main__":
     a = NovaClient.getInstance()
-# print a.getVM("4df5a97d-9cf2-4d47-99a2-cf68e107acf6")
-# print a.isInstanceExist("4df5a97d-9cf2-4d47-99a2-cf68e107acf6")
-# print a.getInstanceList()[0].isIllegal()
-# print a.getAllInstanceList()
-# print a.getInstanceListByNode("compute1")

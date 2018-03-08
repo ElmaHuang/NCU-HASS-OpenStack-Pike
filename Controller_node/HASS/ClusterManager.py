@@ -401,7 +401,7 @@ class ClusterManager():
                 if cluster["node_list"]:
                     ClusterManager.addNode(cluster["cluster_id"], cluster["node_list"], write_DB=False)
                 for instance in cluster["instance_list"]:
-                    ClusterManager.addInstance(cluster["cluster_id"], instance)
+                    ClusterManager.addInstance(cluster["cluster_id"], instance, write_DB=False)
             logging.info("ClusterManager--synco from DB finish")
         except Exception as e:
             logging.error("ClusterManagwer--synco from DB fail.%s" % str(e))

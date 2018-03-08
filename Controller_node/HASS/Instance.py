@@ -33,6 +33,7 @@ class Instance(object):
             print "instance--getInfo-fail" + str(e)
 
     def getExternalNetwork(self, network):
+        ext_ip = None
         for router_name, ip_list in network.iteritems():
             for ip in ip_list:
                 ext_ip = self.nova_client.getInstanceExternalNetwork(ip)

@@ -166,13 +166,24 @@ class RecoveryManager(object):
         protected_instance_list = cluster.getProtectedInstanceListByNode(fail_node)
         for instance in protected_instance_list:
             try:
+                print "start live migration"
                 target_host = cluster.liveMigrateInstance(instance.id)
                 if target_host == fail_node.name or target_host not in cluster.getAllNodeStr():
-                    return False
-                return True
+                    print "live migration fail"
+                    logging.error(
+                        "RecoveryManager recoverVMByLiveMigrate live migration fail .cluster_id = %s ,instance_id =%s" % (
+                            cluster.id, instance.id))
+                else:
+                    print "live migration success"
+                    print "check instance network status"
+                    status = self.checkInstanceNetworkStatus(fail_node, cluster)
+                    if not status:
+                        logging.error("RecoverManager : check vm network status false")
             except Exception as e:
                 print "RecoveryManager recoverVMByLiveMigrate --Except:" + str(e)
                 logging.error("RecoverManager - The instance %s live migrate failed" % instance.id)
+            print "update instance"
+            cluster.updateInstance()
 
     def recoverVMByEvacuate(self, cluster, fail_node):
         if len(cluster.getNodeList()) < 2:
@@ -195,16 +206,23 @@ class RecoveryManager(object):
                 print "end undefine instance"
             try:
                 print "start evacuate"
-                cluster.evacuate(instance, target_host, fail_node)
+                final_host = cluster.evacuate(instance, target_host, fail_node)
+                if final_host == fail_node.name:
+                    print "evacuate fail"
+                    logging.error(
+                        "RecoveryManager recoverVMByEvacuate evacuate fail .cluster_id = %s ,instance_id =%s" % (
+                            cluster.id, instance.id))
+                else:
+                    print "evacuate success"
+                    print "check instance network status"
+                    status = self.checkInstanceNetworkStatus(fail_node, cluster)
+                    if not status:
+                        logging.error("RecoverManager : check vm network status false")
             except Exception as e:
                 print "RecoveryManager recoverVMByEvacuate --Except:" + str(e)
                 logging.error("RecoverManager - The instance %s evacuate failed" % instance.id)
-        print "check instance status"
-        status = self.checkInstanceNetworkStatus(fail_node, cluster)
-        if not status:
-            logging.error("RecoverManager : check vm network status false")
-        print "update instance"
-        cluster.updateInstance()
+            print "update instance"
+            cluster.updateInstance()
 
         if self.iii_support:
             self.iii_database = IIIDatabaseManager()
@@ -264,9 +282,9 @@ class RecoveryManager(object):
             return False
 
     def restartDetectionService(self, fail_node, version):
-        #kill crash thread
+        # kill crash thread
 
-        #start
+        # start
         print "Start service failure recovery by starting Detection Agent"
         agent_path = self.config.get("path", "agent_path")
         cmd = "cd /home/%s/%s/ ; python DetectionAgent.py" % (fail_node.name, agent_path)  # not daemon
@@ -301,8 +319,8 @@ class RecoveryManager(object):
                     cmd = "systemctl restart %s" % fail_service
                 else:
                     cmd = "sudo service %s restart" % fail_service
-                # print cmd
                 stdin, stdout, stderr = fail_node.remote_exec(cmd)  # restart service
+                time.sleep(1)
 
                 while check_timeout > 0:
                     if version == 14:
@@ -310,7 +328,6 @@ class RecoveryManager(object):
                     elif version == 16:
                         cmd = "systemctl status %s | grep dead" % fail_service
                     stdin, stdout, stderr = fail_node.remote_exec(cmd)  # check service active or not
-                    time.sleep(1)
                     res = stdout.read()
                     # for version 14
                     if version == 14:
@@ -335,7 +352,6 @@ class RecoveryManager(object):
 
     def checkInstanceNetworkStatus(self, fail_node, cluster, check_timeout=60):
         status = False
-        fail = False
         protected_instance_list = cluster.getProtectedInstanceListByNode(fail_node)
         for instance in protected_instance_list:
             ip = instance.ext_net
@@ -348,11 +364,13 @@ class RecoveryManager(object):
                     status = self._pingInstance(ip, check_timeout)
             except Exception as e:
                 print str(e)
-                continue
+                # continue
             if not status:
-                fail = True
+                print "ping vm fail"
                 logging.error("vm %s cannot ping %s" % (instance.name, ip))
-        return fail
+            else:
+                print "ping vm success"
+        return status
 
     def _pingInstance(self, ip, check_timeout):
         status = False

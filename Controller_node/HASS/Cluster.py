@@ -203,19 +203,19 @@ class Cluster(ClusterInterface):
             # return legal_instance, illegal_instance
             return instance_info
 
-    def _checkInstance(self, instance):
-        try:
-            instance_info = instance.getInfo()
-            host = instance_info[2]
-            if "SHUTOFF" in instance_info:
-                return False
-            elif host not in self.getAllNodeStr():
-                return False
-            else:
-                return True
-        except Exception as e:
-            print "Cluster--_checkInstance-exception--" + str(e)
-            return False
+    # def _checkInstance(self, instance):
+    #     try:
+    #         instance_info = instance.getInfo()
+    #         host = instance_info[2]
+    #         if "SHUTOFF" in instance_info:
+    #             return False
+    #         elif host not in self.getAllNodeStr():
+    #             return False
+    #         else:
+    #             return True
+    #     except Exception as e:
+    #         print "Cluster--_checkInstance-exception--" + str(e)
+    #         return False
 
     # cluster.addInstance
     def findNodeByInstance(self, instance_id):
@@ -301,7 +301,8 @@ class Cluster(ClusterInterface):
         return False
 
     def isInstanceInCluster(self, instance):
-        node_list = self.getNodeList()
+        node_list = self.getAllNodeStr()
+        print "isInstance in cluster --host:", instance.host
         if instance.host in node_list:
             return True
         return False
@@ -309,6 +310,7 @@ class Cluster(ClusterInterface):
     def findTargetHost(self, fail_node):
         import random
         target_list = [node for node in self.node_list if node != fail_node]
+        # print target_list
         target_host = random.choice(target_list)
         return target_host
 
@@ -329,14 +331,23 @@ class Cluster(ClusterInterface):
         return None
 
     def liveMigrateInstance(self, instance_id):
-        host = self.nova_client.getInstanceHost(instance_id)
+        host_name = self.nova_client.getInstanceHost(instance_id)
+        host = self.getNodeByName(host_name)
         target_host = self.findTargetHost(host)
-        print "start live migrate vm from ", host, "to ", target_host.name
-        final_host = self.nova_client.liveMigrateVM(instance_id, target_host.name)
-        return final_host
+        print "start live migrate vm from ", host.name, "to ", target_host.name
+        try:
+            final_host = self.nova_client.liveMigrateVM(instance_id, target_host.name)
+            # final_host = self.nova_client.getInstanceHost(instance_id)
+            return final_host
+        except Exception as e:
+            logging.error("Cluster--liveMigrateInstance fail" + str(e))
 
     def evacuate(self, instance, target_host, fail_node):
-        self.nova_client.evacuate(instance, target_host, fail_node)
+        try:
+            final_host = self.nova_client.evacuate(instance, target_host, fail_node)
+            return final_host
+        except Exception as e:
+            logging.error("Cluster--evacuate fail" + str(e))
 
     def getProtectedInstanceList(self):
         return self.instance_list
@@ -364,10 +375,8 @@ class Cluster(ClusterInterface):
 
 if __name__ == "__main__":
     a = Cluster("123", "name")
-    list = ["compute3"]
-    a.addNode(list)
-    # host = a.findNodeByInstance("0e0ce568-4ae3-4ade-b072-74edeb3ae58c")
-    # print "h:",host
+    a.addNode(["compute1", "compute2"])
+    a.liveMigrateInstance("ef554e3d-72a2-46fb-91e1-274f6de85f23")
 
     '''
     def _isNodeDuplicate(self , unchecked_node_name):
