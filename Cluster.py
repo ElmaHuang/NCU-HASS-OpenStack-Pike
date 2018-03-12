@@ -27,7 +27,10 @@ class Cluster(ClusterInterface):
     def addNode(self, node_name_list):
         # create node list
         message = ""
-        if node_name_list == []: raise Exception
+        if node_name_list == []:
+            return Response(code="failed",
+                            message="not enter any node",
+                            data=None)
         try:
             for node_name in node_name_list:
                 if self._isInComputePool(node_name):
@@ -40,7 +43,7 @@ class Cluster(ClusterInterface):
                     # result = {"code": "0","clusterId": self.id,"node":node_name, "message": message}
                     result = Response(code="succeed",
                                       message=message,
-                                      data={"clusterId": self.id, "node": node_name})
+                                      data={"clusterId": self.id, "node": self.getAllNodeList()})
                 else:
                     message += "the node %s is illegal.  " % node_name
                     logging.error(message)
@@ -65,7 +68,10 @@ class Cluster(ClusterInterface):
             self.node_list.remove(node)
             # ret = self.getAllNodeInfo()
             for node in self.node_list:
-                if node.name == node_name: raise Exception
+                if node.name == node_name:
+                    return Response(code="failed",
+                                    message="delete node %s failed" % node_name,
+                                    data={"fail_node":node_name})
             message = "Cluster delete node success! node is %s , node list is %s,cluster id is %s." % (
                 node_name, self.getAllNodeStr(), self.id)
             logging.info(message)
@@ -93,11 +99,17 @@ class Cluster(ClusterInterface):
 
     def addInstance(self, instance_id):
         if not self.checkInstanceExist(instance_id):
-            raise Exception("Not any node have this instance!")
+            return Response(code="failed",
+                            message="instance %s doesn't exist" % instance_id,
+                            data=None)
         elif not self.checkInstanceGetVolume(instance_id):
-            raise Exception("Instance don't have Volume")
+            return Response(code="failed",
+                            message="instance %s doesn't have volume attached" % instance_id,
+                            data=None)
         elif not self.checkInstancePowerOn(instance_id):
-            raise Exception("this instance is power off!")
+            return Response(code="failed",
+                            message="instance %s is not power on" % instance_id,
+                            data=None)
         else:
             try:
                 # Live migration VM to cluster node
@@ -220,6 +232,12 @@ class Cluster(ClusterInterface):
         ret = ""
         for node in self.node_list:
             ret += node.name + " "
+        return ret
+
+    def getAllNodeList(self):
+        ret = []
+        for node in self.node_list:
+            ret.append(node.name)
         return ret
 
     # clustermanager.deletecluster call

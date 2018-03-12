@@ -190,8 +190,9 @@ class AddComputingNodeWorkflow(workflows.Workflow):
 	result = server.addNode(cluster_id,node_list)
 	
 	self.success_url = urlresolvers.reverse(self.success_url, args=[cluster_id])
-	if result["code"] == '1': # error
+	if result["code"] == 'failed': # error
 	    self.failure_message = result["message"]
+        messages.error(request, result["message"])
 	    return False
 	self.success_message = _('Add new Computing Node %s to HA Cluster.' % (",".join(node_list)))
 	messages.success(request, self.success_message )

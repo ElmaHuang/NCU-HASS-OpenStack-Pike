@@ -227,3 +227,13 @@ ipmitool is already the newest version.
 HASSd stop/waiting
 HASSd start/running, process 13826
 ============Thu Feb  1 02:11:22 CST 2018 HASS install script end==================
+ * Restarting web server apache2
+   ...done.
+HASSd stop/waiting
+HASSd start/running, process 18751
+============Tue Mar  6 22:14:46 CST 2018 HASS install script end==================
+ * Restarting web server apache2
+   ...done.
+HASSd stop/waiting
+HASSd start/running, process 27253
+============Tue Mar  6 22:16:50 CST 2018 HASS install script end==================

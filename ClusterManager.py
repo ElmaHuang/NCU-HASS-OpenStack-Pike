@@ -109,13 +109,16 @@ class ClusterManager():
     @staticmethod
     def addNode(cluster_id, node_name_list, write_DB=True):
         message = ""
-        tmp = node_name_list[:]
-        for node_name in tmp:
+        tmp = list(set(node_name_list)) # remove duplicate
+        for node_name in tmp[:]:
             if not ClusterManager._checkNodeOverlappingForAllCluster(node_name):
                 print "%s is already in a HA cluster. " % node_name
                 message += "%s is overlapping node" % node_name
                 tmp.remove(node_name)
-        if tmp == []: raise Exception("all node in node list are(is) illegal")
+        if tmp == []:
+            return Response(code="failed",
+                            message="node overlapping %s" % (str(node_name_list)),
+                            data={"overlapping_node":node_name_list})
         cluster = ClusterManager.getCluster(cluster_id)
         if not cluster:
             message += "ClusterManager--Add the node to cluster failed. The cluster is not found. (cluster_id = %s)" % cluster_id
@@ -203,7 +206,9 @@ class ClusterManager():
         else:
             try:
                 if not ClusterManager._checkInstanceNOTOverlappingForAllCluster(instance_id):
-                    raise Exception("instance already being protected ")
+                    return Response(code="failed",
+                                    message="instance %s is already being protected" % instance_id,
+                                    data={"instance": instance_id})
                 result = cluster.addInstance(instance_id)
                 if write_DB:
                     ClusterManager.syncToDatabase()
@@ -254,7 +259,10 @@ class ClusterManager():
     def listInstance(cluster_id, send_flag=True):
         cluster = ClusterManager.getCluster(cluster_id)
         if not cluster:
-            raise Exception("get instance list fail , not find the cluster %s" % cluster_id)
+            message = "ClusterManager--list the instance failed. The cluster is not found. (cluster_id = %s)" % cluster_id
+            return Response(code="failed",
+                            message=message,
+                            data={"cluster_id": cluster_id})
         try:
             instance_list, illegal_instance = cluster.getAllInstanceInfo()
             if illegal_instance != []:
@@ -376,11 +384,3 @@ class ClusterManager():
 if __name__ == "__main__":
     ClusterManager.init()
     ClusterManager.deleteCluster("8c46ecee-9bd6-4c82-b7c8-6b6d20dc09d7")
-'''
-@staticmethod
-def getProtectedInstanceList(cluster_id):
-    cluster = ClusterManager.getCluster(cluster_id)
-    if not cluster:
-        raise Exception("get instance list fail , not find the cluster %s" % cluster_id)
-    return cluster.getProtectedInstanceList()
-'''

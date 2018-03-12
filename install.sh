@@ -76,5 +76,5 @@ install_script_end() {
     echo "============$DATE HASS install script end==================" >> $LOG_FILE
 }
 
-install_script_start
-#dashboard_setting
+#install_script_start
+dashboard_setting
