@@ -124,7 +124,7 @@ class RecoveryManager(object):
         fail_node = cluster.getNodeByName(fail_node_name)
 
         port = int(self.config.get("detection", "polling_port"))
-        version = int(self.config.get("version", "version"))
+        version = self.config.get("openstack_version", "version")
         detector = Detector(fail_node, port)
         fail_services = detector.getFailServices()
 
@@ -281,17 +281,17 @@ class RecoveryManager(object):
         try:
             for fail_service in fail_service_list:
                 fail_service = service_mapping[fail_service]
-                if version == 16:
-                    cmd = "systemctl restart %s" % fail_service
-                else:
+                if version == "mitaka":
                     cmd = "sudo service %s restart" % fail_service
+                else:
+                    cmd = "systemctl restart %s" % fail_service
                 print cmd
                 stdin, stdout, stderr = fail_node.remote_exec(cmd)  # restart service
 
                 while check_timeout > 0:
-                    if version == 14:
+                    if version == "mitaka":
                         cmd = "service %s status" % fail_service
-                    elif version == 16:
+                    else:
                         cmd = "systemctl status %s | grep active" % fail_service
                     stdin, stdout, stderr = fail_node.remote_exec(cmd)  # check service active or not
 

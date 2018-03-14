@@ -21,6 +21,7 @@ import ConfigParser
 import logging
 import os
 import sys
+import HASS_RESTful
 
 from RecoveryManager import RecoveryManager
 from ClusterManager import ClusterManager
@@ -419,7 +420,12 @@ def main():
                                 allow_none=True, logRequests=False)
     server.register_introspection_functions()
     server.register_multicall_functions()
-    server.register_instance(Hass(), allow_dotted_names=True)
+    HASS = Hass()
+    server.register_instance(HASS, allow_dotted_names=True)
+
+    # a = HASS_RESTful.RESTfulThread(HASS)
+    # a.daemon = True
+    # a.start()
 
     print "HASS Server ready"
     try:
