@@ -46,6 +46,9 @@ class Cluster(ClusterInterface):
                                       data={"clusterId": self.id, "node": self.getAllNodeList()})
                 else:
                     message += "the node %s is illegal.  " % node_name
+                    result = Response(code="failed",
+                                      message=message,
+                                      data={"clusterId": self.id, "node": self.getAllNodeList()})
                     logging.error(message)
         except Exception as e:
             print str(e)
@@ -81,7 +84,7 @@ class Cluster(ClusterInterface):
                               data={"clusterId": self.id, "node": node_name})
         except Exception as e:
             logging.error(str(e))
-            message = "Cluster delete node fail , node maybe not in compute pool please check again! node is %s  The node list is %s." % (
+            message = "Cluster delete node fail , node maybe not in the node list please check again! node is %s  The node list is %s." % (
                 node_name, self.getAllNodeStr())
             logging.error(message)
             # result = {"code": "1", "node":node_name,"clusterId": self.id, "message": message}

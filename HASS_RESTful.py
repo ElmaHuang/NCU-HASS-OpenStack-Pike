@@ -21,10 +21,10 @@ server = xmlrpclib.ServerProxy(auth_url)
 
 @app.errorhandler(400)
 def lack_arguments(error):
-	return make_response(jsonify({'error':"lack some arguments, please check the documentation."}), 400)
+	return make_response(jsonify({'message':"lack some arguments, please check the documentation.","code":"failed","data":None}), 400)
 
 
-@app.route("/api/cluster", methods=['POST'])
+@app.route("/HASS/api/cluster", methods=['POST'])
 def create_cluster():
     if not request.json or \
        "cluster_name" not in request.json:
@@ -33,7 +33,7 @@ def create_cluster():
     res = server.createCluster(cluster_name)
     return jsonify(res)
 
-@app.route("/api/cluster", methods=['DELETE'])
+@app.route("/HASS/api/cluster", methods=['DELETE'])
 def delete_cluster():
     if not request.json or \
        "cluster_id" not in request.json:
@@ -42,12 +42,12 @@ def delete_cluster():
     res = server.deleteCluster(cluster_id)
     return jsonify(res)
 
-@app.route("/api/clusters", methods=['GET'])
+@app.route("/HASS/api/clusters", methods=['GET'])
 def list_cluster():
     cluster_list = server.listCluster()
     return jsonify(cluster_list)
 
-@app.route("/api/node", methods=['POST'])
+@app.route("/HASS/api/node", methods=['POST'])
 def add_node():
     if not request.json or \
        "cluster_id" not in request.json or \
@@ -58,7 +58,7 @@ def add_node():
     res = server.addNode(cluster_id, node_list)
     return jsonify(res)
 
-@app.route("/api/node", methods=['DELETE'])
+@app.route("/HASS/api/node", methods=['DELETE'])
 def delete_node():
     if not request.json or \
        "cluster_id" not in request.json or \
@@ -69,12 +69,12 @@ def delete_node():
     res = server.deleteNode(cluster_id, node_name)
     return jsonify(res)
 
-@app.route("/api/nodes/<string:cluster_id>", methods=['GET'])
+@app.route("/HASS/api/nodes/<string:cluster_id>", methods=['GET'])
 def list_node(cluster_id):
     res = server.listNode(cluster_id)
     return jsonify(res)
 
-@app.route("/api/instance", methods=['POST'])
+@app.route("/HASS/api/instance", methods=['POST'])
 def add_instance():
     if not request.json or \
        "cluster_id" not in request.json or \
@@ -85,7 +85,7 @@ def add_instance():
     res = server.addInstance(cluster_id, instance_id)
     return jsonify(res)
 
-@app.route("/api/instance", methods=['DELETE'])
+@app.route("/HASS/api/instance", methods=['DELETE'])
 def delete_instance():
     if not request.json or \
        "cluster_id" not in request.json or \
@@ -96,13 +96,15 @@ def delete_instance():
     res = server.deleteInstance(cluster_id, instance_id)
     return jsonify(res)
 
-@app.route("/api/instances/<string:cluster_id>", methods=['GET'])
+@app.route("/HASS/api/instances/<string:cluster_id>", methods=['GET'])
 def list_instance(cluster_id):
     res = server.listInstance(cluster_id)
     return jsonify(res)
 
 
 if __name__ == '__main__':
-    port = sys.argv[1] # specified by user
-    host = sys.argv[2] # specified by user
+    host = sys.argv[1] # specified by user
+    port = 9999 # specified by user
+    if len(sys.argv) > 3:
+	port = sys.argv[2]
     app.run(debug=True, port=int(port), host=host)
