@@ -22,15 +22,6 @@ class Node(NodeInterface):
         super(Node, self).__init__(name, cluster_id)
         self.client = self._create_ssh_client()
 
-    def containsInstance(self, instance_id):
-        # node_instance_list = self.nova_client.getInstanceListByNode(self.name)
-        host = self.nova_client.getInstanceHost(instance_id)
-        # print host
-        # print self.name
-        if host == self.name:
-            return True
-        return False
-
     def start(self):
         return self.ipmi.startNode(self.name)
 
@@ -89,8 +80,19 @@ if __name__ == "__main__":
     # print a.undefineInstance(b)
     i, out, err = a.remote_exec("echo 123")
     print out.read()
-# print a.remote_exec("cd /home/compute2/Desktop/Hass-Newton/computing_node/ ;python DetectionAgent.py")
-# q,w,e =  a.remote_exec("ps -aux")
-# print w.read()
-# q,w,e =  a.remote_exec("echo 123")
-# print w.read()
+    # print a.remote_exec("cd /home/compute2/Desktop/Hass-Newton/computing_node/ ;python DetectionAgent.py")
+    # q,w,e =  a.remote_exec("ps -aux")
+    # print w.read()
+    # q,w,e =  a.remote_exec("echo 123")
+    # print w.read()
+
+    '''
+    def containsInstance(self, instance_id):
+        # node_instance_list = self.nova_client.getInstanceListByNode(self.name)
+        host = self.nova_client.getInstanceHost(instance_id)
+        # print host
+        # print self.name
+        if host == self.name:
+            return True
+        return False
+    '''

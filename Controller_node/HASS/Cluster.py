@@ -49,9 +49,6 @@ class Cluster(ClusterInterface):
             data = {"cluster_id": self.id}
             result = self.failResult(message, data)
             logging.error(message)
-            # result = Response(code="failed",
-            #                   message=message,
-            #                   data={"cluster_id": self.id})
         finally:
             return result
 
@@ -68,19 +65,12 @@ class Cluster(ClusterInterface):
             data = {"cluster_id": self.id, "node": node_name}
             result = self.successResult(message, data)
             logging.info(message)
-            # result = Response(code="succeed",
-            #                   message=message,
-            #                   data={"cluster_id": self.id, "node": node_name})
         except Exception as e:
-            # print str(e)
             message = "Cluster--delete node fail , node maybe not in compute pool please check again! node is %s  The node list is %s.%s" % (
                 node_name, self.getAllNodeStr(), str(e))
             data = {"cluster_id": self.id, "node": node_name}
             result = self.failResult(message, data)
             logging.error(message)
-            # result = Response(code="failed",
-            #                   message=message,
-            #                   data={"cluster_id": self.id, "node": node_name})
         finally:
             return result
 
@@ -96,21 +86,18 @@ class Cluster(ClusterInterface):
         try:
             if not self.checkInstanceExist(instance_id):
                 message += "There is no this instance in any node!"
-                # raise Exception("There is no this instance in any node!")
             if not self.checkInstanceGetVolume(instance_id):
                 message += "The instance don't have volume"
-                # raise Exception("The instance don't have volume")
             if not self.checkInstancePowerOn(instance_id):
                 message += "This instance is power off!"
-                # raise Exception("This instance is power off!")
             if message:
                 data = {"cluster_id": self.id, "instance_id": instance_id}
                 result = self.failResult(message, data)
                 logging.error(message)
             else:
                 # Live migration VM to cluster node
-                final_host = self.getInstanceHost(instance_id)
-                if not final_host:
+                final_host = self.nova_client.getInstanceHost(instance_id)
+                if final_host not in self.getAllNodeStr():
                     final_host = self.liveMigrateInstance(instance_id)
                 instance = Instance(id=instance_id,
                                     name=self.nova_client.getInstanceName(instance_id),
@@ -124,18 +111,12 @@ class Cluster(ClusterInterface):
                 data = {"cluster_id": self.id, "node": final_host, "instance_id": instance_id}
                 result = self.successResult(message, data)
                 logging.info(message)
-                # result = Response(code="succeed",
-                #                   message=message,
-                #                   data={"cluster_id": self.id, "node": final_host, "instance_id": instance_id})
         except Exception as e:
             message = "Cluster--Cluster add instance fail ,please check again! The instance id is %s. %s" % (
                 instance_id, str(e))
             data = {"cluster_id": self.id, "instance_id": instance_id}
             result = self.failResult(message, data)
             logging.error(message)
-            # result = Response(code="failed",
-            #                   message=message,
-            #                   data={"cluster_id": self.id, "instance_id": instance_id})
         finally:
             return result
 
@@ -153,28 +134,17 @@ class Cluster(ClusterInterface):
                     data = {"cluster_id": self.id, "instance_id": instance_id}
                     result = self.successResult(message, data)
                     logging.info(message)
-                    # result = Response(code="succeed",
-                    #                   message=message,
-                    #                   data={"cluster_id": self.id, "instance_id": instance_id})
-
             # if instance id not in self.instance_list:
             if result is None:
                 message = "Cluster--delete instance fail. maybe this instance is not in instance_list(instance_id = %s)" % instance_id
                 data = {"cluster_id": self.id, "instance_id": instance_id}
                 result = self.failResult(message, data)
                 logging.error(message)
-                # result = Response(code="failed",
-                #                   message=message,
-                #                   data={"cluster_id": self.id, "instance_id": instance_id})
         except Exception as e:
             message = "Cluster--delete instance fail . The instance id is %s.%s" % (instance_id, str(e))
             data = {"cluster_id": self.id, "instance_id": instance_id}
             result = self.failResult(message, data)
             logging.error(message)
-            # result = {"code": "1", "cluster id": self.id, "instance id": instance_id, "message": message}
-            # result = Response(code="failed",
-            #                   message=message,
-            #                   data={"cluster_id": self.id, "instance_id": instance_id})
         finally:
             return result
 
@@ -203,34 +173,6 @@ class Cluster(ClusterInterface):
             # return legal_instance, illegal_instance
             return instance_info
 
-    # def _checkInstance(self, instance):
-    #     try:
-    #         instance_info = instance.getInfo()
-    #         host = instance_info[2]
-    #         if "SHUTOFF" in instance_info:
-    #             return False
-    #         elif host not in self.getAllNodeStr():
-    #             return False
-    #         else:
-    #             return True
-    #     except Exception as e:
-    #         print "Cluster--_checkInstance-exception--" + str(e)
-    #         return False
-
-    # cluster.addInstance
-    def findNodeByInstance(self, instance_id):
-        for node in self.node_list:
-            if node.containsInstance(instance_id):
-                return node
-        return None
-
-    # def _isInComputePool(self, unchecked_node_name):
-    #     return unchecked_node_name in self.nova_client.getComputePool()
-
-    # be DB called
-    def getNodeList(self):
-        return self.node_list
-
     def sendUpdateInstance(self, host_name):
         print "send mesg to ", host_name
         host = self.getNodeByName(host_name)
@@ -243,7 +185,6 @@ class Cluster(ClusterInterface):
 
     # be deleteNode/RecoveryManager called
     def getNodeByName(self, name):
-        # node_list = self.getNodeList()
         for node in self.node_list:
             if node.name == name:
                 return node
@@ -260,7 +201,6 @@ class Cluster(ClusterInterface):
     def deleteAllNode(self):
         for node in self.node_list[:]:
             self.deleteNode(node.name)
-            # print "node list:",self.node_list
 
     def getClusterInfo(self):
         return [self.id, self.name]
@@ -281,9 +221,7 @@ class Cluster(ClusterInterface):
 
     def checkInstanceExist(self, instance_id):
         # node_list = self.nova_client.getComputePool()
-        # print "node list of all compute node:", node_list
         instance_list = self.nova_client.getAllInstanceList()
-        # print instance_list
         for instance in instance_list:
             if instance.id == instance_id:
                 logging.info("Cluster--addInstance-checkInstanceExist success")
@@ -291,16 +229,7 @@ class Cluster(ClusterInterface):
         logging.error("this instance is not exist. Instance id is %s. " % instance_id)
         return False
 
-    def isProtected(self, instance_id):
-        for instance in self.instance_list[:]:
-            if instance.id == instance_id:
-                return True
-        message = "this instance is  already in the cluster. Instance id is %s. cluster id is %s .instance list is %s" % (
-            instance_id, self.id, self.instance_list)
-        logging.error(message)
-        return False
-
-    def isInstanceInCluster(self, instance):
+    def isInstanceHostInCluster(self, instance):
         node_list = self.getAllNodeStr()
         print "isInstance in cluster --host:", instance.host
         if instance.host in node_list:
@@ -310,51 +239,40 @@ class Cluster(ClusterInterface):
     def findTargetHost(self, fail_node):
         import random
         target_list = [node for node in self.node_list if node != fail_node]
-        # print target_list
         target_host = random.choice(target_list)
         return target_host
 
+    # evacuate or live migration
     def updateInstance(self):
         for instance in self.instance_list:
+            pre_host = instance.host
             instance.updateInfo()
+            self.sendUpdateInstance(pre_host)
+            # instance is already in cluster
+            if instance.host != pre_host and self.isInstanceHostInCluster(instance):
+                self.sendUpdateInstance(instance.host)
             # if instance not in cluster, delete the instance
-            if not self.isInstanceInCluster(instance):
-                self.deleteInstance(instance.id, send_flag=True)
+            if not self.isInstanceHostInCluster(instance):
+                self.deleteInstance(instance.id, send_flag=False)
             print "instance %s update host to %s" % (instance.name, instance.host)
-            # instance.host = host
-
-    def getInstanceHost(self, instance_id):
-        host = self.nova_client.getInstanceHost(instance_id)
-        for node in self.node_list[:]:
-            if host == node.name:
-                return host
-        return None
 
     def liveMigrateInstance(self, instance_id):
         host_name = self.nova_client.getInstanceHost(instance_id)
         host = self.getNodeByName(host_name)
         target_host = self.findTargetHost(host)
         print "start live migrate vm from ", host.name, "to ", target_host.name
-        try:
-            final_host = self.nova_client.liveMigrateVM(instance_id, target_host.name)
-            # final_host = self.nova_client.getInstanceHost(instance_id)
-            return final_host
-        except Exception as e:
-            logging.error("Cluster--liveMigrateInstance fail" + str(e))
+        final_host = self.nova_client.liveMigrateVM(instance_id, target_host.name)
+        return final_host
 
     def evacuate(self, instance, target_host, fail_node):
-        try:
-            final_host = self.nova_client.evacuate(instance, target_host, fail_node)
-            return final_host
-        except Exception as e:
-            logging.error("Cluster--evacuate fail" + str(e))
+        final_host = self.nova_client.evacuate(instance, target_host, fail_node)
+        return final_host
 
     def getProtectedInstanceList(self):
         return self.instance_list
 
     def getProtectedInstanceListByNode(self, node):
         ret = []
-        # protected_instance_list = self.getProtectedInstanceList()
         for instance in self.instance_list:
             if instance.host == node.name:
                 ret.append(instance)
@@ -398,4 +316,48 @@ if __name__ == "__main__":
         #if self._isNodeDuplicate(unchecked_node_name):
             #return True
         return False		
+        
+        def _checkInstance(self, instance):
+            try:
+                instance_info = instance.getInfo()
+                host = instance_info[2]
+                if "SHUTOFF" in instance_info:
+                    return False
+                elif host not in self.getAllNodeStr():
+                    return False
+                else:
+                    return True
+            except Exception as e:
+                print "Cluster--_checkInstance-exception--" + str(e)
+                return False
+        cluster.addInstance
+    
+    def findNodeByInstance(self, instance_id):
+        for node in self.node_list:
+            if node.containsInstance(instance_id):
+                return node
+        return None
+
+    def _isInComputePool(self, unchecked_node_name):
+        return unchecked_node_name in self.nova_client.getComputePool()
+
+    be DB called
+    def getNodeList(self):
+        return self.node_list
+    
+    def getInstanceHost(self, instance_id):
+        host = self.nova_client.getInstanceHost(instance_id)
+        for node in self.node_list[:]:
+            if host == node.name:
+                return host
+        return None
+        
+    def isProtected(self, instance_id):
+        for instance in self.instance_list[:]:
+            if instance.id == instance_id:
+                return True
+        message = "this instance is  already in the cluster. Instance id is %s. cluster id is %s .instance list is %s" % (
+            instance_id, self.id, self.instance_list)
+        logging.error(message)
+        return False
     '''

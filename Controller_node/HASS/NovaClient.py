@@ -83,15 +83,6 @@ class NovaClient(object):
         except Exception as e:
             print "novaclient--getvm-exception:", str(e)
 
-    def getInstanceListByNode(self, node_name):
-        ret = []
-        instance_list = self.getAllInstanceList()
-        for instance in instance_list:
-            name = getattr(instance, "OS-EXT-SRV-ATTR:hypervisor_hostname")
-            if name == node_name:
-                ret.append(instance)
-        return ret
-
     def getInstanceState(self, instance_id):
         instance = self.getVM(instance_id)
         # if instance == None:return None
@@ -137,15 +128,6 @@ class NovaClient(object):
         if all(x in check_ip for x in ext_ip):
             return ip
         return None
-
-    def isInstanceExist(self, instance_id):
-        try:
-            NovaClient._helper.servers.get(instance_id)
-            return True
-        except Exception as e:
-            message = "NovaClient isInstanceExist get instance fail" + str(e)
-            logging.error(message)
-            return False
 
     def isInstancePowerOn(self, id):
         vm = self.getVM(id)
@@ -201,3 +183,22 @@ class NovaClient(object):
 
 if __name__ == "__main__":
     a = NovaClient.getInstance()
+    '''
+    def getInstanceListByNode(self, node_name):
+        ret = []
+        instance_list = self.getAllInstanceList()
+        for instance in instance_list:
+            name = getattr(instance, "OS-EXT-SRV-ATTR:hypervisor_hostname")
+            if name == node_name:
+                ret.append(instance)
+        return ret
+        
+    def isInstanceExist(self, instance_id):
+        try:
+            NovaClient._helper.servers.get(instance_id)
+            return True
+        except Exception as e:
+            message = "NovaClient isInstanceExist get instance fail" + str(e)
+            logging.error(message)
+            return False
+    '''

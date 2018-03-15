@@ -49,7 +49,6 @@ class Operator(object):
                         message += "DetectionAgent in computing is running!"
                         result = self.successResult(message, data)
                         logging.info(message)
-                        # result = Response(code="succeed", message=message, data={"node_name": node_name})
                     else:
                         # boot_up is fail
                         message += "check node boot fail"
@@ -65,12 +64,10 @@ class Operator(object):
                 message += " IPMIOperator--node is not in compute pool or is not a IPMI PC . The node is %s." % node_name
                 result = self.failResult(message, data)
                 logging.error(message)
-                # result = Response(code="failed", message=message, data={"node_name": node_name})
         except Exception as e:
             message += "IPMIOperator--start node fail.The node is %s.%s" % (node_name, str(e))
             result = self.failResult(message, data)
             logging.error(message)
-            # result = Response(code="failed", message=message, data={"node_name": node_name})
         finally:
             return result
 
@@ -87,7 +84,6 @@ class Operator(object):
                     message += "shut off node success.The node is %s." % node_name
                     result = self.successResult(message, data)
                     logging.info(message)
-                    # result = Response(code="succeed", message=message, data={"node_name": node_name})
                 else:
                     message += "IpmiModule shut off node fail"
                     result = self.failResult(message, data)
@@ -96,13 +92,11 @@ class Operator(object):
                 message += " IPMIOperator--node is not in compute pool or is not a IPMI PC or is already be protected. The node is %s." % node_name
                 result = self.failResult(message, data)
                 logging.error(message)
-                # result = Response(code="failed", message=message, data={"node_name": node_name})
         except Exception as e:
             # shut off fail
             message += "IPMIOperator--shut off node fail.The node is %s.%s" % (node_name, str(e))
             result = self.failResult(message, data)
             logging.error(message)
-            # result = Response(code="failed", message=message, data={"node_name": node_name})
         finally:
             return result
 
@@ -122,7 +116,6 @@ class Operator(object):
                     message += "DetectionAgent in computing is running!"
                     result = self.successResult(message, data)
                     logging.info(message)
-                    # result = Response(code="succeed", message=message, data={"node_name": node_name})
                 else:
                     message += "IpmiModule reboot node fail"
                     result = self.failResult(message, data)
@@ -131,12 +124,10 @@ class Operator(object):
                 message += " IPMIOperator--node is not in compute pool or is not a IPMI PC or is already be protected. The node is %s." % node_name
                 result = self.failResult(message, data)
                 logging.error(message)
-                # result = Response(code="failed", message=message, data={"node_name": node_name})
         except Exception as e:
             message += "IPMIOperator--reboot node fail.The node is %s.%s" % (node_name, str(e))
             result = self.failResult(message, data)
             logging.error(message)
-            # result = Response(code="failed", message=message, data={"node_name": node_name})
         finally:
             return result
 
@@ -221,7 +212,6 @@ class Operator(object):
             sock.connect((nodeName, self.port))
         except Exception as e:
             print "create socket fail", str(e)
-
         while not status:
             time.sleep(5)
             if check_timeout > 0:
@@ -230,11 +220,9 @@ class Operator(object):
                     data, addr = sock.recvfrom(2048)
                 except Exception as e:
                     print str(e)
-
                 if "OK" in data:
                     status = True
                     sock.close()
-                    # print data
                 else:
                     # time.sleep(1)
                     print "waiting:", check_timeout

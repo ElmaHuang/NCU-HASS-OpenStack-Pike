@@ -390,13 +390,13 @@ class Hass(object):
 
     def updateDB(self):
         """
-        The function for updating the data structures in the system.
-        Args:
-        Return:
-            (bool) recover success or not.
-            True -> success.
-            False -> fail.
-        """
+                The function for updating the data structures in the system.
+                Args:
+                Return:
+                    (bool) recover success or not.
+                    True -> success.
+                    False -> fail.
+                """
         try:
             result = ClusterManager.syncToDatabase()
             return result
@@ -408,20 +408,6 @@ class Hass(object):
             ClusterManager.updateAllCluster()
         except Exception as e:
             logging.error("HASS--updateAllCluster fail :" + str(e))
-
-    '''
-    def check_vm_protected(self,instance_name):
-        try:
-            result = self.listCluster()
-            for (uuid, name) in result:
-                ha_instance = self.listInstance(uuid)["data"]["instance_list"]
-                for instance in ha_instance:
-                    if instance.name == instance_name:
-                        return True
-            return False
-        except Exception as e:
-            logging.error("HASS--check vm protected fail : %s" % str(e))
-    '''
 
 
 def main():
@@ -449,3 +435,17 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+    '''
+    def check_vm_protected(self,instance_name):
+        try:
+            result = self.listCluster()
+            for (uuid, name) in result:
+                ha_instance = self.listInstance(uuid)["data"]["instance_list"]
+                for instance in ha_instance:
+                    if instance.name == instance_name:
+                        return True
+            return False
+        except Exception as e:
+            logging.error("HASS--check vm protected fail : %s" % str(e))
+    '''

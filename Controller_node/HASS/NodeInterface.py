@@ -28,18 +28,6 @@ class NodeInterface(object):
         self.detection_thread = None
         self.initDetectionThread()
 
-    def setNodeName(self, name):
-        self.name = name
-
-    def getNodeName(self):
-        return self.name
-
-    def setClusterId(self, cluster_id):
-        self.cluster_id = cluster_id
-
-    def getClusterId(self, cluster_id):
-        return self.cluster_id
-
     def initDetectionThread(self):
         config = ConfigParser.RawConfigParser()
         config.read('hass.conf')
@@ -70,7 +58,7 @@ class NodeInterface(object):
             so.close()
             return True
         except Exception as e:
-            #host is power off
+            # host is power off
             print str(e)
             return False
 
@@ -78,5 +66,18 @@ class NodeInterface(object):
 if __name__ == "__main__":
     a = NodeInterface("compute1", "23")
     a.startDetectionThread()
-    while True:
-        pass
+    # while True:
+    #     pass
+    '''
+    def setNodeName(self, name):
+        self.name = name
+
+    def getNodeName(self):
+        return self.name
+
+    def setClusterId(self, cluster_id):
+        self.cluster_id = cluster_id
+
+    def getClusterId(self, cluster_id):
+        return self.cluster_id
+    '''

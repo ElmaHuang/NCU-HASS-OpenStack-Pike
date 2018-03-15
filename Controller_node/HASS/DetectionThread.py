@@ -24,7 +24,7 @@ class DetectionThread(threading.Thread):
     def __init__(self, cluster_id, node, port, polling_interval):
         threading.Thread.__init__(self)
         self.node = node
-        self.cluster_id = node.cluster_id
+        self.cluster_id = cluster_id
         self.ipmi_status = node.ipmi_status
         self.polling_interval = polling_interval
         self.loop_exit = False

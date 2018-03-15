@@ -64,19 +64,6 @@ class RecoveryManager(object):
         print "end recovery vm"
         return self.recoverNodeByStart(fail_node)
 
-    # no use
-    def recoverNodeCrash(self, cluster_id, fail_node_name):
-        cluster = ClusterManager.getCluster(cluster_id)
-        if not cluster:
-            logging.error("RecoverManager : cluster not found")
-            return
-        fail_node = cluster.getNodeByName(fail_node_name)
-        print "fail node is %s" % fail_node.name
-        print "start recovery vm"
-        self.recoverVMByEvacuate(cluster, fail_node)
-        print "end recovery vm"
-        return self.recoverNodeByShutoff(fail_node)
-
     def recoverNetworkIsolation(self, cluster_id, fail_node_name):
         cluster = ClusterManager.getCluster(cluster_id)
         if not cluster:
@@ -157,11 +144,15 @@ class RecoveryManager(object):
             return status  # restart service success
 
     def recoverVMByLiveMigrate(self, cluster, fail_node):
-        if len(cluster.getNodeList()) < 2:
-            logging.error("RecoverManager : evacuate fail, cluster only one node")
+        if len(cluster.node_list) < 2:
+            message = "RecoverManager : evacuate fail, cluster only one node"
+            print message
+            logging.error(message)
             return
         if not fail_node:
-            logging.error("RecoverManager : not found the fail node")
+            message = "RecoverManager : not found the fail node"
+            print message
+            logging.error(message)
             return
         protected_instance_list = cluster.getProtectedInstanceListByNode(fail_node)
         for instance in protected_instance_list:
@@ -186,11 +177,15 @@ class RecoveryManager(object):
             cluster.updateInstance()
 
     def recoverVMByEvacuate(self, cluster, fail_node):
-        if len(cluster.getNodeList()) < 2:
-            logging.error("RecoverManager : evacuate fail, cluster only one node")
+        if len(cluster.node_list) < 2:
+            message = "RecoverManager : evacuate fail, cluster only one node"
+            print message
+            logging.error(message)
             return
         if not fail_node:
-            logging.error("RecoverManager : not found the fail node")
+            message = "RecoverManager : not found the fail node"
+            print message
+            logging.error(message)
             return
         target_host = cluster.findTargetHost(fail_node)
         print "target_host : %s" % target_host.name
@@ -410,3 +405,16 @@ class RecoveryManager(object):
 if __name__ == "__main__":
     r = RecoveryManager()
     # l = r.remote_exec("compute3","virsh list --all")
+    '''
+    def recoverNodeCrash(self, cluster_id, fail_node_name):
+        cluster = ClusterManager.getCluster(cluster_id)
+        if not cluster:
+            logging.error("RecoverManager : cluster not found")
+            return
+        fail_node = cluster.getNodeByName(fail_node_name)
+        print "fail node is %s" % fail_node.name
+        print "start recovery vm"
+        self.recoverVMByEvacuate(cluster, fail_node)
+        print "end recovery vm"
+        return self.recoverNodeByShutoff(fail_node)
+    '''

@@ -35,22 +35,20 @@ class IPMIManager(object):
         message = ""
         base = self._baseCMDGenerate(node_name)
         if base is None:
-            raise Exception("ipmi node not found , node_name : %s" % node_name)
+            message = "ipmi node not found , node_name : %s" % node_name
+            raise Exception(message)
         try:
             command = base + IPMIConf.REBOOTNODE
             response = subprocess.check_output(command, shell=True)
             if IPMIConf.REBOOTNODE_SUCCESS_MSG in response:
                 message = "The Computing Node %s is rebooted." % node_name
                 logging.info("IpmiModule rebootNode - The Computing Node %s is rebooted." % node_name)
-                # code = "0"
                 code = "succeed"
         except Exception as e:
             message = "The Computing Node %s can not be rebooted." % node_name
-            logging.error("IpmiModule rebootNode - %s" % e)
-            # code = "1"
+            logging.error("IpmiModule rebootNode - %s" % str(e))
             code = "failed"
         finally:
-            # result = {"code": code, "node": node_name, "message": message}
             result = Response(code=code,
                               message=message,
                               data={"node": node_name})
@@ -61,22 +59,20 @@ class IPMIManager(object):
         message = ""
         base = self._baseCMDGenerate(node_name)
         if base is None:
-            raise Exception("ipmi node not found , node_name : %s" % node_name)
+            message = "ipmi node not found , node_name : %s" % node_name
+            raise Exception(message)
         try:
             command = base + IPMIConf.STARTNODE
             response = subprocess.check_output(command, shell=True)
             if IPMIConf.STARTNODE_SUCCESS_MSG in response:
                 message = "The Computing Node %s is started." % node_name
                 logging.info("IPMIModule startNode - The Computing Node %s is started." % node_name)
-                # code = "0"
                 code = "succeed"
         except Exception as e:
             message = "The Computing Node %s can not be started." % node_name
-            logging.error("IPMIModule startNode - %s" % e)
-            # code = "1"
+            logging.error("IPMIModule startNode - %s" % str(e))
             code = "failed"
         finally:
-            # result = {"code": code, "node": node_name, "message": message}
             result = Response(code=code,
                               message=message,
                               data={"node": node_name})
@@ -87,22 +83,20 @@ class IPMIManager(object):
         message = ""
         base = self._baseCMDGenerate(node_name)
         if base is None:
-            raise Exception("ipmi node not found , node_name : %s" % node_name)
+            message = "ipmi node not found , node_name : %s" % node_name
+            raise Exception(message)
         try:
             command = base + IPMIConf.SHUTOFFNODE
             response = subprocess.check_output(command, shell=True)
             if IPMIConf.SHUTOFFNODE_SUCCESS_MSG in response:
                 message = "The Computing Node %s is shut down." % node_name
                 logging.info("IpmiModule shutOffNode - The Computing Node %s is shut down." % node_name)
-                # code = "0"
                 code = "succeed"
         except Exception as e:
             message = "The Computing Node %s can not be shut down." % node_name
-            logging.error("IpmiModule shutOffNode - %s" % e)
-            # code = "1"
+            logging.error("IpmiModule shutOffNode - %s" % str(e))
             code = "failed"
         finally:
-            # result = {"code": code, "node": node_name, "message": message}
             result = Response(code=code,
                               message=message,
                               data={"node": node_name})
@@ -144,7 +138,6 @@ class IPMIManager(object):
         lower = raw_data[8].split(":")[1].strip()
         upper = raw_data[9].split(":")[1].strip()
         upper_critical = raw_data[10].split(":")[1].strip()
-
         return [sensor_id, device, sensor_type, value, status, lower_critical, lower, upper, upper_critical]
 
     # for live migration use case
@@ -157,9 +150,7 @@ class IPMIManager(object):
         lower_critical = lower_critical.split(".")[0].strip()
         upper_critical = raw_data[10].split(":")[1].strip()
         upper_critical = upper_critical.split(".")[0].strip()
-
         return [int(value), int(lower_critical), int(upper_critical)]
-        # return [sensor_id, device, value]
 
     def getNodeInfoByType(self, node_name, sensor_type_list):
         code = ""
@@ -170,7 +161,6 @@ class IPMIManager(object):
             raise Exception("ipmi node not found , node_name : %s" % node_name)
         for sensor_type in sensor_type_list:
             command = base + IPMIConf.NODEINFO_BY_TYPE % sensor_type
-            # print command
             try:
                 p = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
                 response, err = p.communicate()
@@ -179,15 +169,13 @@ class IPMIManager(object):
                 sensor_data = self.dataClean(response)
                 result_list.append(sensor_data)
                 code = "succeed"
-                message = message + "Get computing node : %s's %s information successfully ." % (node_name, sensor_type)
+                message += "Get computing node : %s's %s information successfully ." % (node_name, sensor_type)
                 logging.info("IpmiModule getNodeInfo - " + message)
             except Exception as e:
-                message = message + "Error! Unable to get computing node : %s's %s information." % (
+                message += "Error! Unable to get computing node : %s's %s information." % (
                     node_name, sensor_type)
                 logging.error("IpmiModule getNodeInfo - %s" % str(e))
                 code = "failed"
-        # print result_list
-        # result = {"code": code, "info": result_list, "message": message}
         result = Response(code=code,
                           message=message,
                           data={"info": result_list})
@@ -271,24 +259,6 @@ class IPMIManager(object):
         except Exception as e:
             logging.error("IPMIModule-- getSensorStatusByConfig fail : %s" % str(e))
 
-    def resetWatchDog(self, node_name):
-        status = True
-        base = self._baseCMDGenerate(node_name)
-        if base is None:
-            # result = {"code": 1}
-            result = Response(code="failed")
-            return result
-        try:
-            command = base + IPMIConf.RESET_WATCHDOG
-            response = subprocess.check_output(command, shell=True)
-            if IPMIConf.WATCHDOG_RESET_SUCEESS_MSG in response:
-                logging.info(
-                    "IpmiModule resetWatchDog - The Computing Node %s's watchdog timer has been reset." % node_name)
-        except Exception as e:
-            logging.error("IpmiModule resetWatchDog - %s" % e)
-            status = False
-        return status
-
     def getPowerStatus(self, node_name):
         status = "OK"
         try:
@@ -324,20 +294,39 @@ class IPMIManager(object):
 if __name__ == "__main__":
     i = IPMIManager()
     # print i.getOSStatus_new("compute2")
+    '''
+    def getOSStatus(self, node_name):
+        status = "OK"
+        time.sleep(float(IPMIConf.WATCHDOG_THRESHOLD)) # wait watchdog countdown
+        try:
+            initial = self._getOSValue(node_name, IPMIConf.OS_TYPE_INITIAL)
+            present = self._getOSValue(node_name, IPMIConf.OS_TYPE_PRESENT)
+        except Exception as e:
+            logging.error("IpmiModule detectOSstatus - %s" % e)
+            status = "IPMI_disable"
+            return status
+        if (initial - present) > IPMIConf.WATCHDOG_THRESHOLD:
+            #print initial - present
+            status = "Error"
+            return status
+        else:
+            return status
 
-    # def getOSStatus(self, node_name):
-    #     status = "OK"
-    #     time.sleep(float(IPMIConf.WATCHDOG_THRESHOLD)) # wait watchdog countdown
-    #     try:
-    #         initial = self._getOSValue(node_name, IPMIConf.OS_TYPE_INITIAL)
-    #         present = self._getOSValue(node_name, IPMIConf.OS_TYPE_PRESENT)
-    #     except Exception as e:
-    #         logging.error("IpmiModule detectOSstatus - %s" % e)
-    #         status = "IPMI_disable"
-    #         return status
-    #     if (initial - present) > IPMIConf.WATCHDOG_THRESHOLD:
-    #         #print initial - present
-    #         status = "Error"
-    #         return status
-    #     else:
-    #         return status
+    def resetWatchDog(self, node_name):
+        status = True
+        base = self._baseCMDGenerate(node_name)
+        if base is None:
+            # result = {"code": 1}
+            result = Response(code="failed")
+            return result
+        try:
+            command = base + IPMIConf.RESET_WATCHDOG
+            response = subprocess.check_output(command, shell=True)
+            if IPMIConf.WATCHDOG_RESET_SUCEESS_MSG in response:
+                logging.info(
+                    "IpmiModule resetWatchDog - The Computing Node %s's watchdog timer has been reset." % node_name)
+        except Exception as e:
+            logging.error("IpmiModule resetWatchDog - %s" % e)
+            status = False
+        return status
+    '''

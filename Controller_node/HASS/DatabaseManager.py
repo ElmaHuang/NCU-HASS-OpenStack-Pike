@@ -43,7 +43,7 @@ class DatabaseManager(object):
         try:
             self.db_conn.ping()
         except Exception as e:
-            logging.info("MYSQL CONNECTION REESTABLISHED!")
+            logging.info("MYSQL CONNECTION REESTABLISHED!" + str(e))
             self.connect()
 
     def createTable(self):
@@ -108,7 +108,6 @@ class DatabaseManager(object):
                 cmd = self._selectCMD("ha_instance", "below_cluster", cluster_id)
                 self.db.execute(cmd)
                 ha_instance_date = self.db.fetchall()
-
                 for node in ha_node_date:
                     node_list.append(node["node_name"])
                 for instance in ha_instance_date:
@@ -120,7 +119,6 @@ class DatabaseManager(object):
                 # cluster_manager.addNode(cluster_id, node_list)
             logging.info("Hass AccessDB - Read data success")
             return exist_cluster
-
         except MySQLdb.Error, e:
             self.closeDB()
             logging.error("Hass AccessDB - Read data failed (MySQL Error: %s)", str(e))
@@ -137,8 +135,8 @@ class DatabaseManager(object):
                 data = {"cluster_uuid": cluster_id, "cluster_name": cluster.name}
                 self.writeDB("ha_cluster", data)
                 # sync node
-                node_list = cluster.getNodeList()
-                for node in node_list:
+                # node_list = cluster.getNodeList()
+                for node in cluster.node_list:
                     data = {"node_name": node.name, "below_cluster": node.cluster_id}
                     self.writeDB("ha_node", data)
                 # sync instance

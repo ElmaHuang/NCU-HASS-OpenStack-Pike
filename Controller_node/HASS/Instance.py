@@ -11,14 +11,6 @@ class Instance(object):
         self.ext_net = self.getExternalNetwork(self.network)
         self.status = status
 
-    # self.sendIP()
-
-    def isPowerOn(self):
-        return self.nova_client.isInstancePowerOn(self.id)
-
-    def hasVolume(self):
-        return self.nova_client.isInstanceGetVolume(self.id)
-
     def updateInfo(self):
         self.status = self.nova_client.getInstanceState(self.id)
         self.host = self.nova_client.getInstanceHost(self.id)
@@ -55,4 +47,10 @@ class Instance(object):
         so.send()
         # print ip
         so.close()
+    
+    def isPowerOn(self):
+        return self.nova_client.isInstancePowerOn(self.id)
+
+    def hasVolume(self):
+        return self.nova_client.isInstanceGetVolume(self.id)
     '''

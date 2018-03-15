@@ -37,9 +37,6 @@ class ClusterManager():
             message = "ClusterManager - cluster name overlapping"
             data = {"cluster_id": cluster_id}
             result = ClusterManager.failResult(message, data)
-            # result = Response(code="failed",
-            #                   message=message,
-            #                   data={"cluster_id": cluster_id})
         else:
             logging.info("ClusterManager - cluster name is not overlapping")
             result = ClusterManager._addToClusterList(cluster_name, cluster_id)
@@ -57,9 +54,6 @@ class ClusterManager():
             if not cluster:
                 message = "The cluster is not found. (cluster_id = %s)" % cluster_id
                 result = ClusterManager.failResult(message, data)
-                # result = Response(code="failed",
-                #                   message=message,
-                #                   data={"cluster_id": cluster_id})
             else:
                 cluster.deleteAllNode()
                 # check delete all nodes of cluster
@@ -69,25 +63,16 @@ class ClusterManager():
                     message = "Delete all nodes of cluster fail"
                     logging.error(message)
                     result = ClusterManager.failResult(message, data)
-                    # result = Response(code="failed",
-                    #                   message=message,
-                    #                   data={"clusterId": cluster_id})
                 if result is None:
                     message = "Delete cluster success. The cluster is deleted. (cluster_id = %s)" % cluster_id
                     result = ClusterManager.successResult(message, data)
                     logging.info(message)
-                    # result = Response(code="succeed",
-                    #                   message=message,
-                    #                   data={"cluster_id": cluster_id})
                 if result.code == "succeed" and write_DB:
                     ClusterManager.syncToDatabase()
         except Exception as e:
             message += "ClusterManager--deleteCluster fail" + str(e)
             result = ClusterManager.failResult(message, data)
             logging.error(message)
-            # result = Response(code="failed",
-            #                   message=message,
-            #                   data={"cluster_id": cluster_id})
         finally:
             return result
 
@@ -126,9 +111,6 @@ class ClusterManager():
                 if not cluster:
                     message += "ClusterManager--Add the node to cluster failed. The cluster is not found. (cluster_id = %s)" % cluster_id
                     result = ClusterManager.failResult(message, data)
-                    # result = Response(code="failed",
-                    #                   message=message,
-                    #                   data={"cluster_id": cluster_id})
                 else:
                     result = cluster.addNode(tmp_list)
                     logging.info(
@@ -139,9 +121,6 @@ class ClusterManager():
             message += "add node fail. node not found. (node_name = %s).%s" % (tmp_list, str(e))
             result = ClusterManager.failResult(message, data)
             logging.error(message)
-            # result = Response(code="failed",
-            #                   message=message,
-            #                   data={"cluster_id": cluster_id})
         finally:
             return result
 
@@ -155,9 +134,6 @@ class ClusterManager():
                 message = "delete the node failed. The cluster is not found. (cluster_id = %s)" % cluster_id
                 result = ClusterManager.failResult(message, data)
                 logging.error(message)
-                # result = Response(code="failed",
-                #               message=message,
-                #               data={"cluster_id": cluster_id})
             else:
                 result = cluster.deleteNode(node_name)
                 if result.code == "succeed" and write_DB:
@@ -168,9 +144,6 @@ class ClusterManager():
             message = "delete node fail. node not found. (node_name = %s).%s" % (node_name, str(e))
             result = ClusterManager.failResult(message, data)
             logging.error(message)
-            # result = Response(code="failed",
-            #                   message=message,
-            #                   data={"cluster_id": cluster_id})
         finally:
             return result
 
@@ -189,17 +162,11 @@ class ClusterManager():
                 data = {"cluster_id": cluster_id, "node_list": node_list}
                 result = ClusterManager.successResult(message, data)
                 logging.info(message)
-            # result = Response(code="succeed",
-            #                   message=message,
-            #                   data={"cluster_id": cluster_id, "node_list": node_list})
         except Exception as e:
             message = "ClusterManager--listNode-- get all node info fail. " + str(e)
             data = {"cluster_id": cluster_id}
             result = ClusterManager.failResult(message, data)
             logging.error(message)
-            # result = Response(code="failed",
-            #                   message=message,
-            #                   data={"cluster_id": cluster_id})
         finally:
             return result
 
@@ -212,10 +179,6 @@ class ClusterManager():
             if not cluster:
                 message = "ClusterManager--Add the instance to cluster failed. The cluster is not found. (cluster_id = %s)" % cluster_id
                 result = ClusterManager.failResult(message, data)
-                # result = Response(code="failed",
-                #                   message=message,
-                #                   data={"cluster_id": cluster_id})
-                # return result
             else:
                 if not ClusterManager._checkInstanceNOTOverlappingForAllCluster(instance_id):
                     message = "instance already being protected "
@@ -233,9 +196,6 @@ class ClusterManager():
                 instance_id, cluster_id, str(e))
             result = ClusterManager.failResult(message, data)
             logging.error(message)
-            # result = Response(code="failed",
-            #                   message=message,
-            #                   data={"cluster_id": cluster_id})
         finally:
             return result
 
@@ -248,9 +208,6 @@ class ClusterManager():
             if not cluster:
                 message = "delete the instance to cluster failed. The cluster is not found. (cluster_id = %s)" % cluster_id
                 result = ClusterManager.failResult(message, data)
-                # result = Response(code="failed",
-                #                   message=message,
-                #                   data={"cluster_id": cluster_id, "instance_id": instance_id})
             else:
                 result = cluster.deleteInstance(instance_id, send_flag)
                 if result.code == "succeed" and write_DB:
@@ -261,9 +218,6 @@ class ClusterManager():
                 instance_id, str(e))
             result = ClusterManager.failResult(message, data)
             logging.error(message)
-            # result = Response(code="failed",
-            #                   message=message,
-            #                   data={"cluster_id": cluster_id, "instance_id": instance_id})
         finally:
             return result
 
@@ -283,25 +237,19 @@ class ClusterManager():
                 #     for instance in illegal_instance:
                 #         ClusterManager.deleteInstance(cluster_id, instance[0], send_flag=False)
                 # if user live migration vm by openstack
-                if send_flag:
-                    for instance in instance_list[:]:
-                        cluster.sendUpdateInstance(instance[2])  # info[2]
-                    # for instance in illegal_instance[:]:
-                    #     cluster.sendUpdateInstance(instance[1])  # prev_host
+                # if send_flag:
+                #     for instance in instance_list[:]:
+                #          cluster.sendUpdateInstance(instance[2])  # info[2]
+                #     for instance in illegal_instance[:]:
+                #         cluster.sendUpdateInstance(instance[1])  # prev_host
                 message = "ClusterManager--listInstance,getInstanceList success,instanceList is %s" % instance_list
                 data["instance_list"] = instance_list
                 result = ClusterManager.successResult(message, data)
                 logging.info(message)
-                # result = Response(code="succeed",
-                #                   message=message,
-                #                   data={"instance_list": instance_list})
         except Exception as e:
             message = "ClusterManager--listInstance,getInstanceList fail" + str(e)
             result = ClusterManager.failResult(message, data)
             logging.error(message)
-            # result = Response(code="failed",
-            #                   message=message,
-            #                   data={"instance_list": []})
         finally:
             return result
 
@@ -316,9 +264,6 @@ class ClusterManager():
                 data = {"cluster_id": cluster_id}
                 result = ClusterManager.successResult(message, data)
                 logging.info(message)
-                # result = Response(code="succeed",
-                #                   message=message,
-                #                   data={"cluster_id": cluster_id})
             else:
                 # create a new cluster
                 cluster_id = str(uuid.uuid4())
@@ -328,16 +273,10 @@ class ClusterManager():
                 message = "ClusterManager - createCluster._addToClusterList success,cluster id = %s" % cluster_id
                 result = ClusterManager.successResult(message, data)
                 logging.info(message)
-                # result = Response(code="succeed",
-                #                   message=message,
-                #                   data={"cluster_id": cluster_id})
         except Exception as e:
             message = "ClusterManager - createCluster._addToCluster fail,cluster id = %s.%s" % (cluster_id, str(e))
             result = ClusterManager.failResult(message, data)
             logging.error(message)
-            # result = Response(code="failed",
-            #                   message=message,
-            #                   data={"cluster_id": cluster_id})
         finally:
             return result
 
