@@ -199,7 +199,7 @@ class RecoveryManager(object):
             print "start modify iii database"
             for instance in protected_instance_list:
                 try:
-                    self.iii_database.updateInstance(instance.id, target_host.name)
+                    self.iii_database.updateInstance(instance.id, target_host.name, fail_node.name)
                 except Exception as e:
                     print str(e)
                     logging.error("%s" % str(e))

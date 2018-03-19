@@ -214,8 +214,9 @@ class IIIDatabaseManager(object):
                                        )
         self.db = self.db_conn.cursor(cursorclass=MySQLdb.cursors.DictCursor)
 
-    def updateInstance(self, instance_id, node):
+    def updateInstance(self, instance_id, node, prev_node):
         self.checkDB()
+        prev_compute_num = self._getComputeNum(prev_node)
         compute_num = self._getComputeNum(node)
         instance_resource_id = self.getInstanceResourceID(instance_id)
 
@@ -228,9 +229,8 @@ class IIIDatabaseManager(object):
             UPDATE `Resource_Relationship`
             SET `parent` =%s
             WHERE `child`=%s
-            AND parent=13
-            OR parent=14
-            """, (compute_num, instance_resource_id))
+            AND `parent`= %s
+            """, (compute_num, instance_resource_id, prev_compute_num))
         self.db_conn.commit()
 
     def getInstanceResourceID(self, instance_id):
@@ -241,10 +241,9 @@ class IIIDatabaseManager(object):
         return str(data[0]["id"])
 
     def _getComputeNum(self, node):
-        if node == "compute1":
-            return 13
-        elif node == "compute2":
-            return 14
+        self.db.execute("SELECT * FROM `Resource` WHERE `name`= '%s'" % node)
+        data = self.db.fetchall()
+        return str(data[0]["id"])
 
     def checkDB(self):
         try:
@@ -256,4 +255,4 @@ class IIIDatabaseManager(object):
 
 if __name__ == "__main__":
     a = IIIDatabaseManager()
-    a.getInstanceResourceID("123")
+    print a.getInstanceResourceID("806df263-a6e6-4e44-a8b6-79c5548ce33c")
