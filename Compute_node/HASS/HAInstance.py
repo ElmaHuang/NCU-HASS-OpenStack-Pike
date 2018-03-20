@@ -1,3 +1,4 @@
+import logging
 import subprocess
 
 from Instance import Instance
@@ -30,7 +31,9 @@ class HAInstance():
                     HAInstance.addInstance(cluster_id, instance)
             # return host_instance
         except Exception as e:
-            print "HAInstance getInstanceFromController Except:", str(e)
+            message = "HAInstance getInstanceFromController Except:" + str(e)
+            logging.error(message)
+            print message
 
     @staticmethod
     def _getHAInstance(clusterId):
@@ -38,8 +41,9 @@ class HAInstance():
         try:
             instance_list = HAInstance.server.listInstance(clusterId, False)["data"]["instance_list"]
         except Exception as e:
-            print "get ha instance fail" + str(e)
+            message = "_getHAInstance--get instance list from controller(rpc server) fail" + str(e)
             # instance_list = []
+            logging.error(message)
         finally:
             return instance_list
 
@@ -72,4 +76,4 @@ class HAInstance():
     def updateHAInstance():
         HAInstance.init()
         HAInstance.getInstanceFromController()
-        print "update HA Instance"
+        print "update HA Instance finish"

@@ -248,7 +248,7 @@ class Cluster(ClusterInterface):
             pre_host = instance.host
             instance.updateInfo()
             self.sendUpdateInstance(pre_host)
-            # instance is already in cluster
+            # instance is still in cluster
             if instance.host != pre_host and self.isInstanceHostInCluster(instance):
                 self.sendUpdateInstance(instance.host)
             # if instance not in cluster, delete the instance

@@ -234,8 +234,8 @@ class RecoveryManager(object):
     def recoverNodeByReboot(self, fail_node):
         print "start recover node by reboot"
         result = fail_node.reboot()
+        message = "RecoveryManager recover node by reboot finish"
         print "boot node result : %s" % result.message
-        message = "RecoveryManager recover network isolation"
         if result.code == "succeed":
             logging.info(message + result.message)
             boot_up = self.checkNodeBootSuccess(fail_node)
@@ -277,23 +277,19 @@ class RecoveryManager(object):
             return False
 
     def restartDetectionService(self, fail_node, version):
-        # kill crash thread
-
-        # start
-        print "Start service failure recovery by starting Detection Agent"
         agent_path = self.config.get("path", "agent_path")
-        cmd = "cd /home/%s/%s/ ; python DetectionAgent.py" % (fail_node.name, agent_path)  # not daemon
-        print cmd
-        # if version = 16:
-        # 	cmd = "systemctl restart DetectionAgent.py" # 16 daemon
-        # elif version = 14:
-        # 	cmd = "service DetectionAgent.py restart" # 14 daemon
+        find_detection_cmd = "ps aux | grep '[D]etectionAgent.py'"
+        start_detection_cmd = "cd /home/%s/%s/ ; python DetectionAgent.py" % (fail_node.name, agent_path)  # not daemon
         try:
-            fail_node.remote_exec(cmd)  # restart DetectionAgent service
+            # kill crash detection agent
+            agent_pid = find_detection_cmd.split()[1]
+            kill_detection_cmd = "kill -9 %s" % agent_pid
+            fail_node.remote_exec(kill_detection_cmd)
+            # start detection agent
+            print "Start service failure recovery by starting Detection Agent"
+            fail_node.remote_exec(start_detection_cmd)  # restart DetectionAgent service
             time.sleep(5)
-
-            cmd = "ps aux | grep '[D]etectionAgent.py'"
-            stdin, stdout, stderr = fail_node.remote_exec(cmd)
+            stdin, stdout, stderr = fail_node.remote_exec(find_detection_cmd)
             service = stdout.read()
             print service
             if "python DetectionAgent.py" in service:  # check DetectionAgent

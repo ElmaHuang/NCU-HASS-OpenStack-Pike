@@ -7,7 +7,7 @@ Event_string = (
     ("Paused", "Migrated_when_pause", "IOError", "Watchdog", "Restored", "Snapshot"),
     ("Unpaused", "Migrated_when_unpause", "Snapshot"),
     ("Shutdown", "Destroyed", "Crashed", "Migrated_when_shutoff", "Saved", "Failed", "Snapshot"),
-    ("Finished")
+    ("Finished","Prepare-ShutOff")
 )
 
 Event_failed = (Event_string[5][2], Event_string[5][5])

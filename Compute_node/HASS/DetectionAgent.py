@@ -1,22 +1,22 @@
 import ConfigParser
 import asyncore
 import logging
+import os
 import sys
 
 from HostFailures import HostFailures
 from InstanceFailures import InstanceFailure
 from ReceiveInfoFromController import ReceiveInfoFromController
 
-
-class DetectionAgent():
-    def __init__(self):
-        config = ConfigParser.RawConfigParser()
-        config.read('hass_node.conf')
-
-        log_level = logging.getLevelName(config.get("log", "level"))
-        log_file_name = config.get("log", "location")
-        FORMAT = "%(asctime)s [%(levelname)s] : %(message)s"
-        logging.basicConfig(filename=log_file_name, level=log_level, format=FORMAT)
+config = ConfigParser.RawConfigParser()
+config.read('hass_node.conf')
+log_level = logging.getLevelName(config.get("log", "level"))
+log_file_name = config.get("log", "location")
+dir = os.path.dirname(log_file_name)
+if not os.path.exists(dir):
+    os.makedirs(dir)
+FORMAT = "%(asctime)s [%(levelname)s] : %(message)s"
+logging.basicConfig(filename=log_file_name, level=log_level, format=FORMAT)
 
 
 def main():

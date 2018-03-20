@@ -20,19 +20,25 @@ node = Node(HOST, CLUSTER_ID)
 
 
 def run():
+    # shutoff node
     client = _create_ssh_client(HOST)
-    _remote_exec(client, "sudo systemctl stop networking.service")
-    result = detection_network_fail(20)
-    if result:
-        print "detect network isolation successfully"
-        result = recover.recoverNodeByReboot(node)
+    _remote_exec(client, "sudo poweroff -f")
+    time.sleep(30)
+    # result = ipmi_manager.shutOffNode(HOST)
+    # if result.code == "succeed":
+    # print "shutoff node successfully"
+    # start node
+    try:
+        result = recover.recoverNodeByStart(node)
         if result:
             return True
         else:
             return False
-    else:
-        print "detect network isolation fail"
+    except Exception as e:
+        print "UT_Recover_Node_By_Start Except:" + str(e)
         return False
+    # else:
+    # return False
 
 
 def recover_network_fail(detect_time=5):

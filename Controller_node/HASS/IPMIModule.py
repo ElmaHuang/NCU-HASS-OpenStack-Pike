@@ -213,58 +213,70 @@ class IPMIManager(object):
         return "Error"
 
     def _getOSValue(self, node_name, value_type):
-        base = self._baseCMDGenerate(node_name)
-        if base is None:
-            raise Exception("ipmi node not found , node_name : %s" % node_name)
-        command = base + IPMIConf.GET_OS_STATUS
-        p = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-        response = p.wait()
-        if response != 0:
-            raise Exception("Error! The subprocess's command is invalid.")
-        while True:
-            info = p.stdout.readline()
-            if "Stopped" in info:
-                return False
-            if not info:
-                break
-            if value_type in info:
-                return int(re.findall("[0-9]+", info)[0])  # find value
+        try:
+            base = self._baseCMDGenerate(node_name)
+            if base is None:
+                raise Exception("ipmi node not found , node_name : %s" % node_name)
+            command = base + IPMIConf.GET_OS_STATUS
+            p = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+            response = p.wait()
+            if response != 0:
+                raise Exception("Error! The subprocess's command is invalid.")
+            while True:
+                info = p.stdout.readline()
+                if "Stopped" in info:
+                    return False
+                if not info:
+                    break
+                if value_type in info:
+                    return int(re.findall("[0-9]+", info)[0])  # find value
+        except Exception as e:
+            logging.error("IPMIModule _getOSValue--" + str(e))
+            return False
 
     def getSensorStatus(self, node_name):
         ipmi_watched_sensor_list = json.loads(self.config.get("ipmi_sensor", "ipmi_watched_sensors"))
         try:
+            if self.getPowerStatus(node_name) != "OK":
+                return "OK"
             for sensor in ipmi_watched_sensor_list:
                 value = self.getRecoverInfoByNode(node_name, sensor)
-                if value == "Error" and self.getPowerStatus(node_name) != "OK":
-                    return "OK"
+                if value == "Error":  # node is power off
+                    logging.error("get %s sensor value fail" % sensor)
+                    # return "Error"
                 if value[0] > value[2] or value[0] < value[1]:
                     # (value,lower,upper)
                     return "Error"
             return "OK"
         except Exception as e:
             logging.error("IPMIModule-- getSensorStatus fail : %s" % str(e))
+            return "Error"
 
     def getSensorStatusByConfig(self, node_name):
         ipmi_watched_sensor_list = json.loads(self.config.get("ipmi_sensor", "ipmi_watched_sensors"))
         upper_critical = int(self.config.get("ipmi_sensor", "upper_critical"))
         lower_critical = int(self.config.get("ipmi_sensor", "lower_critical"))
         try:
+            if self.getPowerStatus(node_name) != "OK":
+                return "OK"
             for sensor in ipmi_watched_sensor_list:
                 value = self.getRecoverInfoByNode(node_name, sensor)
-                if value == "Error" and self.getPowerStatus(node_name) != "OK":
-                    return "OK"
+                if value == "Error":
+                    logging.error("get %s sensor value fail" % sensor)
+                    # return "Error"
                 if value[0] > upper_critical or value[0] < lower_critical:
                     return "Error"
             return "OK"
         except Exception as e:
             logging.error("IPMIModule-- getSensorStatusByConfig fail : %s" % str(e))
+            return "Error"
 
     def getPowerStatus(self, node_name):
         status = "OK"
+        base = self._baseCMDGenerate(node_name)
+        if base is None:
+            raise Exception("node not found , node_name : %s" % node_name)
         try:
-            base = self._baseCMDGenerate(node_name)
-            if base is None:
-                raise Exception("node not found , node_name : %s" % node_name)
             command = base + IPMIConf.POWER_STATUS
             response = subprocess.check_output(command, shell=True)
             if IPMIConf.POWER_STATUS_SUCCESS_MSG not in response:

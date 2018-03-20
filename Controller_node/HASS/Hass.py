@@ -398,8 +398,7 @@ class Hass(object):
                     False -> fail.
                 """
         try:
-            result = ClusterManager.syncToDatabase()
-            return result
+            ClusterManager.syncToDatabase()
         except Exception as e:
             logging.error("HASS--update database fail : %s" % str(e))
 

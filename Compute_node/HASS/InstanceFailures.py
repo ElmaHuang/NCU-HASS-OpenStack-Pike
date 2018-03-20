@@ -2,18 +2,21 @@ import logging
 import subprocess
 import sys
 import threading
+import time
 
 import libvirt
 
 # import ConfigParse
 import InstanceEvent
 from HAInstance import HAInstance
+from NovaClient import NovaClient
 from RecoveryInstance import RecoveryInstance
 
 
 class InstanceFailure(threading.Thread):
     def __init__(self):
         threading.Thread.__init__(self)
+        self.nova_client = NovaClient.getInstance()
         self.recovery_vm = RecoveryInstance()
         self.libvirt_uri = "qemu:///system"
         # self.failed_instances = []
@@ -27,13 +30,14 @@ class InstanceFailure(threading.Thread):
             try:
                 self.createLibvirtDetectionThread()
                 libvirt_connection = self.getLibvirtConnection()
-                #time.sleep(5)
+                # time.sleep(5)
                 libvirt_connection.domainEventRegister(self._checkVMState, None)  # event handler(callback,self)
                 libvirt_connection.domainEventRegisterAny(None, libvirt.VIR_DOMAIN_EVENT_ID_WATCHDOG,
                                                           self._checkVMWatchdog, None)
                 # Adds a callback to receive notifications of arbitrary domain events occurring on a domain.
                 while True:
-                    #self._checkNetwork()
+                    self._checkNetwork()
+                    time.sleep(5)
                     if not self.checkLibvrtConnect(libvirt_connection):
                         # 1 if alive, 0 if dead, -1 on error
                         break
@@ -42,30 +46,6 @@ class InstanceFailure(threading.Thread):
                 message = "failed to run detection method , please check libvirt is alive.exception :" + str(e)
                 logging.error(message)
                 sys.exit(1)
-            # finally:
-            #     while True:
-            #         if not self.checkLibvrtConnect(libvirt_connection):
-            #             # 1 if alive, 0 if dead, -1 on error
-            #             break
-            #         time.sleep(5)
-            #         if self.failed_instances != []:
-            #             # libvirt_connect.close()
-            #             try:
-            #                 result = self.recoverFailedInstance(fail_instance=)
-            #                 if not result:
-            #                     print "recovery " + str(
-            #                         self.failed_instances) + "fail or the instance is not HA instance."
-            #                 else:
-            #                     print "recovery " + str(self.failed_instances) + " success"
-            #             except Exception as e:
-            #                 print str(e)
-            #             finally:
-            #                 self.failed_instances = []
-            #         elif not libvirt_connection.isAlive() == 1:
-            #             libvirt_connection.close()
-            #             # 1 if alive, 0 if dead, -1 on error
-            #             break
-            #             # time.sleep(5)
 
     def createLibvirtDetectionThread(self):
         try:
@@ -108,18 +88,18 @@ class InstanceFailure(threading.Thread):
         print "domain name :", domain.name(), " domain id :", domain.ID(), "event:", event, "detail:", detail
         event_string = self.transformDetailToString(event, detail)
         print "state event string :", event_string
-        recovery_type = self._findfailure(event_string)
+        recovery_type = self._findfailure(event_string, domain)
         if recovery_type != "":
             fail_instance = [domain.name(), event_string, recovery_type]
             logging.info(str(fail_instance))
             result = self.recoverFailedInstance(fail_instance=fail_instance)
             print self.showResult(result)
 
-    def _findfailure(self, event_string):
+    def _findfailure(self, event_string, domain):
         recovery_type = ""
         if self._check_vm_crash(event_string):
             recovery_type = "Crash"
-        elif self._check_vm_destroyed(event_string):
+        elif self._check_vm_destroyed(event_string, domain.name()):
             recovery_type = "Delete"
         elif self._check_vm_migrated(event_string):
             recovery_type = "Migration"
@@ -132,14 +112,15 @@ class InstanceFailure(threading.Thread):
             return True
         return False
 
-    def _check_vm_destroyed(self, event_string):
+    def _check_vm_destroyed(self, event_string, instance_name):
         destroyed_string = InstanceEvent.Event_destroyed
-        print destroyed_string
+        # print destroyed_string
         if event_string in destroyed_string:
             print "vm be shut off"
             print "destroy--state event string :", event_string
-            return True
-        return False
+            return self.checkDestroyState(instance_name)
+        #     return True
+        # return False
 
     def _check_vm_migrated(self, event_string):
         migrated_string = InstanceEvent.Event_migrated
@@ -149,23 +130,21 @@ class InstanceFailure(threading.Thread):
         return False
 
     def _checkNetwork(self):
-        print "check net"
         recovery_type = "Network"
         ha_instance_list = HAInstance.getInstanceList()
         if not ha_instance_list:
             return
         for ha_instance in ha_instance_list:
+            print "check net"
+            if not ha_instance.network_provider:
+                return
             ip = ha_instance.network_provider[0]
-            try:
-                response = subprocess.check_output(['timeout', '2', 'ping', '-c', '1', ip], stderr=subprocess.STDOUT,
-                                                   universal_newlines=True)
-            except Exception as e:
-                print str(e)
-                fail_instance = [ha_instance.name, None, recovery_type]
-                print fail_instance
-                # result = self.recoverFailedInstance(fail_instance=fail_instance)
-                # print self.showResult(result)
-                # self.failed_instances.append([instance.name, ip, recovery_type])
+            if not self.pingInstance(ip):
+                if self.checkNetworkDown(ip):
+                    fail_instance = [ha_instance.name, ip, recovery_type]
+                    # print fail_instance
+                    result = self.recoverFailedInstance(fail_instance=fail_instance)
+                    print self.showResult(result)
 
     def _checkVMWatchdog(self, connect, domain, action, opaque):
         print "domain name:", domain.name(), " domain id:", domain.ID(), "action:", action
@@ -176,7 +155,6 @@ class InstanceFailure(threading.Thread):
             fail_instance = [domain.name(), action, recovery_type]
             result = self.recoverFailedInstance(fail_instance=fail_instance)
             print self.showResult(result)
-            # self.failed_instances.append([domain.name(), action, recovery_type])
 
     def transformDetailToString(self, event, detail):
         stateString = InstanceEvent.Event_string
@@ -185,10 +163,11 @@ class InstanceFailure(threading.Thread):
     def recoverFailedInstance(self, fail_instance):
         # print "get ha vm"
         result = False
-        HAInstance.updateHAInstance()
+        print "start recover fail instance"
+        HAInstance.updateHAInstance()  # for live migration host info
         ha_instance_list = HAInstance.getInstanceList()
         # check instance is protected
-        check = self.checkRecoveryVM(fail_instance, ha_instance_list)
+        check = self.checkRecoveryVM(fail_instance, ha_instance_list)  # True/None
         if check:
             try:
                 result = self.recovery_vm.recoverInstance(fail_instance)
@@ -196,14 +175,13 @@ class InstanceFailure(threading.Thread):
                 logging.error("InstanceFailures recoverFailedInstance Except:" + str(e))
                 print str(e)
             finally:
-                return result
+                return result  # True/False
         elif not check:
-            # not ha vm
-            return check
+            return check  # None
 
     def checkRecoveryVM(self, failed_instance, ha_instance_list):
         # find all fail_vm in self.failed_instances is ha vm or not
-        #print ha_instance_list
+        # print ha_instance_list
         result = None
         if not ha_instance_list:
             return result
@@ -212,13 +190,59 @@ class InstanceFailure(threading.Thread):
                 result = True
         return result
 
+    def checkDestroyState(self, instance_name, check_timeout=10):
+        instance = HAInstance.getInstance(instance_name)
+        print "start check %s is destroyed or shutoff" % instance_name
+        time.sleep(5)
+        result = True
+        while check_timeout > 0:
+            # print "check"
+            # print check_timeout
+            try:
+                state = self.nova_client.getInstanceState(instance.id)
+                if "ACTIVE" not in state:
+                    result = True
+                else:
+                    result = False
+                check_timeout -= 1
+            except Exception as e:
+                print str(e)
+                return True
+        # print "check just reboot (False)", result
+        return result
+
+    def checkNetworkDown(self, ip, time_out=5):
+        # check network state is down
+        time.sleep(5)
+        print "start to check network state second time"
+        time.sleep(5)  # maybe vm just be reboot
+        while time_out > 0:
+            state = self.pingInstance(ip)
+            if state:
+                # network state is not down
+                return False
+            # network state is temporary down
+            time_out -= 1
+        return True
+
+    def pingInstance(self, ip):
+        try:
+            response = subprocess.check_output(['timeout', '2', 'ping', '-c', '1', ip], stderr=subprocess.STDOUT,
+                                               universal_newlines=True)
+            return True
+        except Exception as e:
+            print str(e)
+            return False
+
     def showResult(self, result):
         if result is None:
             return '\033[92m' + "[it is not HA instance] " + '\033[0m'
         elif result:
             return '\033[92m' + "[recover instance success] " + '\033[0m'
-        else:
+        elif not result:
             return '\033[91m' + "[recover instance fail] " + '\033[0m'
+        else:
+            return result
 
 
 if __name__ == '__main__':

@@ -58,20 +58,28 @@ class NovaClient(object):
         instance = self.getVM(id)
         NovaClient._helper.servers.reboot(instance, reboot_type='SOFT')
 
-    def getAllInstanceList(self):
-        return NovaClient._helper.servers.list(search_opts={'all_tenants': 1})
+    def getInstanceExternalNetwork(self, ip):
+        ext_ip = self.config.get("openstack", "openstack_external_network_gateway_ip").split(".")
+        ext_ip = ext_ip[0:-1]
+        check_ip = ip.split(".")
+        if all(x in check_ip for x in ext_ip):
+            return ip
+        return None
 
-    def getInstanceNetwork(self, instance_id):
-        instance = self.getVM(instance_id)
-        network = getattr(instance, "networks")
-        return network
-
-    def isInstancePowerOn(self, id):
-        vm = self.getVM(id)
-        power_state = getattr(vm, "OS-EXT-STS:power_state")
-        if power_state != 1:
-            return False
-        return True
+    # def getAllInstanceList(self):
+    #     return NovaClient._helper.servers.list(search_opts={'all_tenants': 1})
+    #
+    # def getInstanceNetwork(self, instance_id):
+    #     instance = self.getVM(instance_id)
+    #     network = getattr(instance, "networks")
+    #     return network
+    #
+    # def isInstancePowerOn(self, id):
+    #     vm = self.getVM(id)
+    #     power_state = getattr(vm, "OS-EXT-STS:power_state")
+    #     if power_state != 1:
+    #         return False
+    #     return True
 
 
 if __name__ == "__main__":

@@ -50,7 +50,7 @@ class DetectionThread(threading.Thread):
                     if recover_success:  # recover success
                         print "recover success"
                         self.detector.connect()
-                    else:  # recover fail
+                    else:  # recover fail(False) or get cluster fail(none)
                         print "recover fail delete node %s from the cluster" % self.node.name
                         self.server.deleteNode(self.cluster_id, self.node.name)
                         self.stop()
@@ -71,9 +71,7 @@ class DetectionThread(threading.Thread):
             return State.SENSOR_FAIL
         if highest_level_check() != State.HEALTH:
             state = self.verify(highest_level_check)
-            if state == State.HEALTH:
-                return State.HEALTH
-            else:
+            if state != State.HEALTH:
                 return state
         return State.HEALTH
 

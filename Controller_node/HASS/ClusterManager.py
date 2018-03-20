@@ -95,7 +95,7 @@ class ClusterManager():
         try:
             # delete illegal node
             tmp_list = node_name_list[:]
-            for node_name in tmp_list:
+            for node_name in tmp_list[:]:
                 if not ClusterManager._checkNodeOverlappingForAllCluster(node_name):
                     print "%s is already in a HA cluster. " % node_name
                     message += "%s is overlapping node" % node_name

@@ -20,19 +20,23 @@ node = Node(HOST, CLUSTER_ID)
 
 
 def run():
-    client = _create_ssh_client(HOST)
-    _remote_exec(client, "sudo systemctl stop networking.service")
-    result = detection_network_fail(20)
-    if result:
-        print "detect network isolation successfully"
+    # client = _create_ssh_client(HOST)
+    # _remote_exec(client, "sudo systemctl stop networking.service")
+    # result = detection_network_fail(20)
+    # if result:
+    # print "detect network isolation successfully"
+    try:
         result = recover.recoverNodeByReboot(node)
         if result:
             return True
         else:
             return False
-    else:
-        print "detect network isolation fail"
+    except Exception as e:
+        print "UT_Recover_Node_By_Reboot Except:" + str(e)
         return False
+    # else:
+    # print "detect network isolation fail"
+    # return False
 
 
 def recover_network_fail(detect_time=5):

@@ -27,11 +27,8 @@ class ReceiveInfoFromController(threading.Thread):
             data = cs.recv(1024)
             print data
             if "update instance" in data:
-                self.updateHAInstance()
-
-    def updateHAInstance(self):
-        HAInstance.init()
-        HAInstance.getInstanceFromController()
+                print "get update mesg from controller"
+                HAInstance.updateHAInstance()
         # for instance in instance_list[:]:
         #     # [self.id, self.name, self.host, self.status, self.network]
         #     vm = Instance(ha_instance=instance)
