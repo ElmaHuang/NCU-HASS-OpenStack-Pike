@@ -180,7 +180,7 @@ class Cluster(ClusterInterface):
                 prev_host = instance.host
                 check_instance_result = self._checkInstance(instance)
                 if check_instance_result == False:
-                    illegal_instance.append((instance.id, prev_host))
+                    illegal_instance.append({'id':instance.id, 'prev_host':prev_host})
                 else:
                     info = instance.getInfo()
                     legal_instance.append(info)
@@ -192,7 +192,7 @@ class Cluster(ClusterInterface):
     def _checkInstance(self, instance):
     	try:
             instance_info = instance.getInfo()
-            host = instance_info[2]
+            host = instance_info["host"]
             if "SHUTOFF" in instance_info:
                 return False
             elif host not in self.getAllNodeStr():
@@ -250,7 +250,7 @@ class Cluster(ClusterInterface):
             # print "node list:",self.node_list
 
     def getInfo(self):
-        return [self.id, self.name]
+        return {"cluster_id": self.id, "cluster_name": self.name}
 
     def checkInstanceGetVolume(self, instance_id):
         if not self.nova_client.isInstanceGetVolume(instance_id):

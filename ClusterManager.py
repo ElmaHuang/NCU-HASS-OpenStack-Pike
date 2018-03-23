@@ -173,13 +173,18 @@ class ClusterManager():
 
     @staticmethod
     def listNode(cluster_id):
-        # nodelist=[]
         try:
             cluster = ClusterManager.getCluster(cluster_id)
+            if not cluster:
+                message = "list the node failed. The cluster is not found. (cluster_id = %s)" % cluster_id
+                # result = {"code": "1", "clusterId":cluster_id, "message":message}
+                result = Response(code="failed",
+                                  message=message,
+                                  data={"clusterId": cluster_id})
+                return result
             nodelist = cluster.getAllNodeInfo()
             message = "ClusterManager-listNode--get all node info finish"
             logging.info(message)
-            # result = {"code":"0","nodeList":nodelist}
             result = Response(code="succeed",
                               message=message,
                               data={"clusterId": cluster_id, "nodeList": nodelist})
@@ -266,12 +271,12 @@ class ClusterManager():
         try:
             instance_list, illegal_instance = cluster.getAllInstanceInfo()
             if illegal_instance != []:
-            	ClusterManager.deleteInstance(cluster_id, instance[0], False)
+            	ClusterManager.deleteInstance(cluster_id, instance["id"], False)
             if send_flag == True:
             	for instance in instance_list[:]:
-                    cluster.sendUpdateInstance(instance[2])  # info[2]
+                    cluster.sendUpdateInstance(instance["host"])  # info[2]
                 for instance in illegal_instance[:]:
-                    cluster.sendUpdateInstance(instance[1])  # prev_host
+                    cluster.sendUpdateInstance(instance["prev_host"])  # prev_host
             logging.info("ClusterManager--listInstance,getInstanceList success,instanceList is %s" % instance_list)
             result = Response(code="succeed",
                               message=None,

@@ -10,20 +10,20 @@ class Instance(object):
         self.main()
 
     def main(self):
-        self.id = self.ha_instance[0]
-        self.name = self.ha_instance[1]
-        self.host = self.ha_instance[2]
-        self.status = self.ha_instance[3]
+        self.id = self.ha_instance["id"]
+        self.name = self.ha_instance["name"]
+        self.host = self.ha_instance["host"]
+        self.status = self.ha_instance["status"]
         self.update_network()
         print "id:", self.id, " name:", self.name, " host:", self.host, " status:", self.status, " network_s:", self.network_self, "p:", self.network_provider
 
     def update_network(self):
         # {'selfservice':", "['192.168.1.8',", "'192.168.0.212']}
-        network = self.ha_instance[4]
+        network = self.ha_instance["network"]
         if "selfservice" in network:
             self.network_self = network["selfservice"]
         if "provider" in network:
-            self.network_provider = self.ha_instance[4]["provider"]
+            self.network_provider = self.ha_instance["network"]["provider"]
             # self.network
 
 

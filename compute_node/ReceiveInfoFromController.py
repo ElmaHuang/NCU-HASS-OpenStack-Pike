@@ -36,7 +36,7 @@ class ReceiveInfoFromController(threading.Thread):
         host_instance = []
         cluster_list = self.server.listCluster()
         for cluster in cluster_list:
-            clusterId = cluster[0]
+            clusterId = cluster["cluster_id"]
             instance_list = self._getHAInstance(clusterId)
             print "HA instacne list:", instance_list
             host_instance = self._getInstanceByNode(instance_list)
@@ -54,7 +54,7 @@ class ReceiveInfoFromController(threading.Thread):
     def _getInstanceByNode(self, instance_list):
         host_instance = []
         for instance in instance_list:
-            if self.host in instance[2]:
+            if self.host in instance["host"]:
                 host_instance.append(instance)
         return host_instance
 

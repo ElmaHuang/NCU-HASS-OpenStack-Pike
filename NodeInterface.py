@@ -71,7 +71,11 @@ class NodeInterface(object):
         self.detection_thread.stop()
 
     def getInfo(self):
-        return [self.name, self.cluster_id, self.ipmi_status]
+        return {
+            "node_name":self.name, 
+            "below_cluster_id": self.cluster_id,
+            "ipmi_enable" : self.ipmi_status
+        }
 
     def sendUpdateInstance(self):
         so = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

@@ -79,8 +79,8 @@ class IndexView(tables.DataTableView):
 	clusters = server.listCluster()
         instances = []
 	for cluster in clusters:
-	    uuid = cluster[0]
-	    name = cluster[1]
+	    uuid = cluster["cluster_id"]
+	    name = cluster["cluster_name"]
 	    _cluster_instances = server.listInstance(uuid, False)
 	    _cluster_instances = Response(code=_cluster_instances["code"], message=_cluster_instances["message"], data=_cluster_instances["data"])
 	    result = _cluster_instances.code
@@ -89,7 +89,7 @@ class IndexView(tables.DataTableView):
 		if cluster_instances != "":
 		    #cluster_instances = cluster_instances.split(",")
 		    for _instance in cluster_instances:
-			instance_id = _instance[0]
+			instance_id = _instance["id"]
 			try:
 			    instance = api.nova.server_get(self.request, instance_id)
 			    instance.cluster_name = name
@@ -176,7 +176,7 @@ class IndexView(tables.DataTableView):
 		node_list = cluster_node.data.get("nodeList")
 		cluster_nodes = []
 		for node in node_list:
-			cluster_nodes.append(node[0])
+			cluster_nodes.append(node["node_name"])
 	        if len(cluster_nodes) == 1:
 		    inst.protection = "Incomplete Protected"
 	        else:

@@ -55,7 +55,7 @@ class AddForm(forms.SelfHandlingForm):
 
 	clusters = server.listCluster()
 	for cluster in clusters:
-	    cluster_choices.append((cluster[0],cluster[1]))
+	    cluster_choices.append((cluster["cluster_id"],cluster["cluster_name"]))
         self.fields['cluster_id'].choices = cluster_choices
 
 
@@ -150,8 +150,8 @@ class UpdateForm(forms.SelfHandlingForm):
         clusters = server.listCluster()
 	cluster_uuid = ""
 	for cluster in clusters:
-	    uuid = cluster[0]
-	    name = cluster[1]
+	    uuid = cluster["cluster_id"]
+	    name = cluster["cluster_name"]
 	    _ha_instances = server.listInstance(uuid)
             _ha_instances = Response(code=_ha_instances["code"], message=_ha_instances["message"], data=_ha_instances["data"])
 	    #result,ha_instances = _ha_instances.split(";")
@@ -160,7 +160,7 @@ class UpdateForm(forms.SelfHandlingForm):
 	    ha_instances = []
 	    if result == 'succeed':
 		for _instance in ha_instance:
-			ha_instances.append(_instance[0])
+			ha_instances.append(_instance["id"])
 		#ha_instances = ha_instances.split(",")
 		for _inst_id in ha_instances:
 		    if instance_id in _inst_id:

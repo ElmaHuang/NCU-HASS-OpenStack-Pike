@@ -73,8 +73,8 @@ class IndexView(tables.DataTableView):
 	for cluster in result:
 	    node_info = []
 	    instance_info = []
-	    uuid = cluster[0]
-	    name = cluster[1]
+	    uuid = cluster["cluster_id"]
+	    name = cluster["cluster_name"]
 	    node_number = 0
 	    instance_number = 0
 	    node_info = server.listNode(uuid)
@@ -104,7 +104,7 @@ class DetailView(tables.DataTableView):
 	    if result != "":
 		instance_id = 0 
 		for node in result:#node = [compute name,cluster id , ipmi state]
-	    	    name  = node[0]  # split computing nodes
+	    	    name  = node["node_name"]  # split computing nodes
 		    #node_anme_list.append(name)
 	    	    #instance_id = 0
 		    #for name in result:
@@ -127,7 +127,7 @@ class DetailView(tables.DataTableView):
 	if result == 'succeed' and instance_list != "":
 	    #instances = instance_list.split(",")
 	    for instance in instance_list:
-	         if node_name == instance[2]:
+	         if node_name == instance["host"]:
 		    instance_number = instance_number + 1 
 	return instance_number
 

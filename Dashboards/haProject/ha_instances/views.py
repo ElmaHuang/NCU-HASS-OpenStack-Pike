@@ -77,8 +77,8 @@ class IndexView(tables.DataTableView):
         instances = []
         ha_instances = []
 	for cluster in clusters:
-	    uuid = cluster[0]
-	    name = cluster[1]
+	    uuid = cluster["cluster_id"]
+	    name = cluster["cluster_name"]
             _cluster_instances = server.listInstance(uuid)
             _cluster_instances = Response(code=_cluster_instances["code"], message=_cluster_instances["message"], data=_cluster_instances["data"])
             #result,cluster_instances = _cluster_instances.split(";")
@@ -89,7 +89,7 @@ class IndexView(tables.DataTableView):
 		    for _instance in cluster_instances:
                     #cluster_instances = cluster_instances.split(",")
                     #for _instance_id in cluster_instances:
-                        instance_id = _instance[0]
+                        instance_id = _instance["id"]
                         try:
                             instance = api.nova.server_get(self.request, instance_id)
                             instance.cluster_name = name

@@ -423,9 +423,9 @@ def main():
     HASS = Hass()
     server.register_instance(HASS, allow_dotted_names=True)
 
-    # a = HASS_RESTful.RESTfulThread(HASS)
-    # a.daemon = True
-    # a.start()
+    rest_thread = HASS_RESTful.RESTfulThread(HASS)
+    rest_thread.daemon = True
+    rest_thread.start()
 
     print "HASS Server ready"
     try:
