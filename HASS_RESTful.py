@@ -95,6 +95,7 @@ class RESTfulThread(threading.Thread):
       token = request.headers["X-Auth-Token"]
       if not authenticator.success(token):
         abort(401)
+      print "RESTful request in."
       return f(*args, **kwargs)
     return decorated
 
@@ -128,10 +129,9 @@ class RESTfulThread(threading.Thread):
   @app.route("/HASS/api/cluster", methods=['DELETE'])
   @requires_auth
   def delete_cluster():
-    if not request.json or \
-       "cluster_id" not in request.json:
-        abort(400)
-    cluster_id = request.json["cluster_id"]
+    if not request.args.get("cluster_id"):
+      abort(400)
+    cluster_id = request.args.get("cluster_id")
     res = HASS.deleteCluster(cluster_id)
     return _convert_res_to_JSON(res)
 
@@ -142,7 +142,7 @@ class RESTfulThread(threading.Thread):
     if res != None:
       res = Response(code="succeed",
                      message="get cluster list success",
-                    data=res)
+                     data=res)
       return _convert_res_to_JSON(res)
     else:
       res = Response(code="failed",
@@ -165,12 +165,11 @@ class RESTfulThread(threading.Thread):
   @app.route("/HASS/api/node", methods=['DELETE'])
   @requires_auth
   def delete_node():
-    if not request.json or \
-      "cluster_id" not in request.json or \
-      "node_name" not in request.json:
-        abort(400)
-    cluster_id = request.json["cluster_id"]
-    node_name = request.json["node_name"]
+    if not request.args.get("cluster_id") or \
+       not request.args.get("node_name"):
+       abort(400)
+    cluster_id = request.args.get("cluster_id")
+    node_name = request.args.get("node_name")
     res = HASS.deleteNode(cluster_id, node_name)
     return _convert_res_to_JSON(res)
 
@@ -195,12 +194,11 @@ class RESTfulThread(threading.Thread):
   @app.route("/HASS/api/instance", methods=['DELETE'])
   @requires_auth
   def delete_instance():
-    if not request.json or \
-      "cluster_id" not in request.json or \
-      "instance_id" not in request.json:
-        abort(400)
-    cluster_id = request.json["cluster_id"]
-    instance_id = request.json["instance_id"]
+    if not request.args.get("cluster_id") or \
+       not request.args.get("instance_id"):
+       abort(400)
+    cluster_id = request.args.get("cluster_id")
+    instance_id = request.args.get("instance_id")
     res = HASS.deleteInstance(cluster_id, instance_id)
     return _convert_res_to_JSON(res)
 
