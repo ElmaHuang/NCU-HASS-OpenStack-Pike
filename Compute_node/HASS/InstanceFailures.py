@@ -19,6 +19,7 @@ class InstanceFailure(threading.Thread):
         self.nova_client = NovaClient.getInstance()
         self.recovery_vm = RecoveryInstance()
         self.libvirt_uri = "qemu:///system"
+        HAInstance.init()
         # self.failed_instances = []
 
     def __virEventLoopNativeRun(self):
@@ -135,12 +136,12 @@ class InstanceFailure(threading.Thread):
         if not ha_instance_list:
             return
         for ha_instance in ha_instance_list:
-            print "check net"
             if not ha_instance.network_provider:
                 return
             ip = ha_instance.network_provider[0]
+            print "check net %s" % ip
             if not self.pingInstance(ip):
-                if self.checkNetworkDown(ip):
+                if self.checkNetworkDown(ha_instance):
                     fail_instance = [ha_instance.name, ip, recovery_type]
                     # print fail_instance
                     result = self.recoverFailedInstance(fail_instance=fail_instance)
@@ -193,36 +194,41 @@ class InstanceFailure(threading.Thread):
     def checkDestroyState(self, instance_name, check_timeout=10):
         instance = HAInstance.getInstance(instance_name)
         print "start check %s is destroyed or shutoff" % instance_name
-        time.sleep(5)
-        result = True
+        # result = True
         while check_timeout > 0:
-            # print "check"
-            # print check_timeout
-            try:
-                state = self.nova_client.getInstanceState(instance.id)
-                if "ACTIVE" not in state:
-                    result = True
+            time.sleep(5)
+            state = self.getInstanceState(instance.id)
+            if "ACTIVE" not in state:
+                if state is None:
+                    # Deleted
+                    # result = True
+                    check_timeout -= 1
                 else:
-                    result = False
-                check_timeout -= 1
-            except Exception as e:
-                print str(e)
-                return True
-        # print "check just reboot (False)", result
-        return result
-
-    def checkNetworkDown(self, ip, time_out=5):
-        # check network state is down
-        time.sleep(5)
-        print "start to check network state second time"
-        time.sleep(5)  # maybe vm just be reboot
-        while time_out > 0:
-            state = self.pingInstance(ip)
-            if state:
-                # network state is not down
+                    # ShutOff
+                    return False
+            else:
+                # Reboot
                 return False
-            # network state is temporary down
-            time_out -= 1
+            # print "check just reboot (False)", result
+        return True
+
+    def checkNetworkDown(self, instance, time_out=5):
+        # check network state is down
+        print "start to check network state second time"
+        while time_out > 0:
+            time.sleep(5)
+            state = self.getInstanceState(instance.id)
+            # maybe vm just be reboot
+            if "ACTIVE" in state:
+                network_state = self.pingInstance(instance.ip)
+                if network_state:
+                    # network state is not down
+                    return False
+                    # network state is temporary down
+                time_out -= 1
+            else:
+                # vm is deleted or shutoff
+                return False
         return True
 
     def pingInstance(self, ip):
@@ -231,8 +237,16 @@ class InstanceFailure(threading.Thread):
                                                universal_newlines=True)
             return True
         except Exception as e:
-            print str(e)
+            print "pingInstance--Exception:", str(e)
             return False
+
+    def getInstanceState(self, instance_id):
+        try:
+            state = self.nova_client.getInstanceState(instance_id)
+            return state
+        except Exception as e:
+            print "getInstanceState--Exception:", str(e)
+            return None
 
     def showResult(self, result):
         if result is None:

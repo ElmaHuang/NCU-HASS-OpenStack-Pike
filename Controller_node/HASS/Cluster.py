@@ -260,7 +260,7 @@ class Cluster(ClusterInterface):
         host_name = self.nova_client.getInstanceHost(instance_id)
         host = self.getNodeByName(host_name)
         target_host = self.findTargetHost(host)
-        print "start live migrate vm from ", host.name, "to ", target_host.name
+        print "start live migrate vm from ", host_name, "to ", target_host.name
         final_host = self.nova_client.liveMigrateVM(instance_id, target_host.name)
         return final_host
 

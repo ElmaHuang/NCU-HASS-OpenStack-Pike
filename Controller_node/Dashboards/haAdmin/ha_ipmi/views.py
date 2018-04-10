@@ -59,7 +59,7 @@ class IndexView(tables.DataTableView):
             hypervisors.sort(key=utils.natural_sort('hypervisor_hostname'))
         except Exception:
             exceptions.handle(self.request, _(
-                'Unable to retrieve hypervisor Controller_node/Dashboards/haAdmin/ha_ipmi/views.py:61information.'))
+                'Unable to retrieve hypervisor information.'))
         return hypervisors
 
 
