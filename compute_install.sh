@@ -89,6 +89,8 @@ install_compute_service() {
     DIR=/home/localadmin/HASS/
     cp -r $DIR/compute_node /home/localadmin/.
     cp $DIR/example/Detectionagentd.service /etc/systemd/system/.
+    systemctl daemon-reload
+    systemctl enable Detectionagentd.service >> $LOG_FILE
     service Detectionagentd start >> $LOG_FILE
     service Detectionagentd status >> $LOG_FILE
 }

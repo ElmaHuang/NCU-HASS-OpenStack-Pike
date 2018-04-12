@@ -22,6 +22,8 @@ install_script_start() {
 upstart_setting() {
     UPSTART_CONF_FILE=/mnt/drbd/HASS/example/HASSd.service
     cp $UPSTART_CONF_FILE /etc/systemd/system/.
+    systemctl daemon-reload
+    systemctl enable HASSd.service >> $LOG_FILE
     ipmitool_install
 }
 
