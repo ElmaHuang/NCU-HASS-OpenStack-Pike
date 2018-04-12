@@ -20,8 +20,8 @@ install_script_start() {
 }
 
 upstart_setting() {
-    UPSTART_CONF_FILE=/mnt/drbd/HASS/example/HASSd.conf
-    cp $UPSTART_CONF_FILE /etc/init/.
+    UPSTART_CONF_FILE=/mnt/drbd/HASS/example/HASSd.service
+    cp $UPSTART_CONF_FILE /etc/systemd/system/.
     ipmitool_install
 }
 
