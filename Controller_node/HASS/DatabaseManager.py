@@ -10,6 +10,7 @@
 #   This is a class which maintains database for both hass/iii.
 ##########################################################
 
+
 import ConfigParser
 import logging
 import sys

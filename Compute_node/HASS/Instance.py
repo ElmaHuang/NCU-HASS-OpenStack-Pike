@@ -1,4 +1,18 @@
+#########################################################
+#:Date: 2018/2/13
+#:Version: 1
+#:Authors:
+#    - Elma Huang <huanghuei0206@gmail.com>
+#    - LSC <sclee@g.ncu.edu.tw>
+#:Python_Version: 2.7
+#:Platform: Unix
+#:Description:
+#   This is a class maintains ha instance data structure.
+##########################################################
+
+
 from NovaClient import NovaClient
+
 
 class Instance(object):
     def __init__(self, cluster_id, ha_instance):
@@ -30,9 +44,9 @@ class Instance(object):
         #         self.network_provider = self.network["selfservice"][0]
         # if "provider" in self.network:
         #     self.network_provider = self.network["provider"]
-            # self.network
+        # self.network
 
-    def _checkExternalNetwork(self,ip):
+    def _checkExternalNetwork(self, ip):
         ext_ip = self.nova_client.getInstanceExternalNetwork(ip)
         if not ext_ip:
             return False

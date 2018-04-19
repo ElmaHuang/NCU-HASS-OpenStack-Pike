@@ -1,10 +1,8 @@
-import sys
-
-sys.path.insert(0, '..')
 import ConfigParser
 import xmlrpclib
 
-import Postprocess, Preprocess
+import Postprocess
+import Preprocess
 
 config = ConfigParser.RawConfigParser()
 config.read('hass.conf')

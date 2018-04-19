@@ -1,3 +1,16 @@
+##########################################################
+#:Date: 2018/2/12
+#:Version: 1
+#:Authors:
+#    - Elma Huang <huanghuei0206@gmail.com>
+#    - LSC <sclee@g.ncu.edu.tw>
+#:Python_Version: 2.7
+#:Platform: Unix
+#:Description:
+#   This is a class which detects whether virtual machine happens error or not.
+###########################################################
+
+
 import logging
 import subprocess
 import sys
@@ -117,7 +130,7 @@ class InstanceFailure(threading.Thread):
         destroyed_string = InstanceEvent.Event_destroyed
         # print destroyed_string
         if event_string in destroyed_string:
-            print "vm be shut off"
+            #print "vm be shut off"
             print "destroy--state event string :", event_string
             return self.checkDestroyState(instance_name)
         #     return True
@@ -235,8 +248,10 @@ class InstanceFailure(threading.Thread):
         try:
             response = subprocess.check_output(['timeout', '2', 'ping', '-c', '1', ip], stderr=subprocess.STDOUT,
                                                universal_newlines=True)
+            print "ping %s success" % ip
             return True
         except Exception as e:
+            print "ping %s fail" % ip
             print "pingInstance--Exception:", str(e)
             return False
 
@@ -262,4 +277,3 @@ class InstanceFailure(threading.Thread):
 if __name__ == '__main__':
     a = InstanceFailure()
     a.start()
-    # a._splitString("[['id:8f3340f3-0c48-4333-98e3-96f62df41f21', 'name:instance-00000346', 'host:compute3', 'status:ACTIVE', \"network:{'selfservice':\", \"['192.168.1.8',\", \"'192.168.0.212']}")

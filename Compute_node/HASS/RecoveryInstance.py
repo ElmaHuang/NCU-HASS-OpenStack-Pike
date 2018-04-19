@@ -1,3 +1,16 @@
+#########################################################
+#:Date: 2018/2/12
+#:Version: 1
+#:Authors:
+#    - Elma Huang <huanghuei0206@gmail.com>
+#    - LSC <sclee@g.ncu.edu.tw>
+#:Python_Version: 2.7
+#:Platform: Unix
+#:Description:
+#   This is a class maintains recovery methods.
+##########################################################
+
+
 import logging
 import subprocess
 
@@ -52,7 +65,7 @@ class RecoveryInstance(object):
                     print message
                     logging.error(message)
         print "recover %s finish" % self.recovery_type
-        #print result
+        # print result
         HAInstance.updateHAInstance()
         return result
 

@@ -1,4 +1,5 @@
 import ConfigParser
+import logging
 import xmlrpclib
 
 from django.utils.translation import ugettext_lazy as _
@@ -8,8 +9,11 @@ from horizon.utils import functions as utils
 from openstack_dashboard.api import nova
 from openstack_dashboard.dashboards.haAdmin.ha_ipmi import tables as project_tables
 
+LOG = logging.getLogger(__name__)
+
+conf_path = "/home/controller/Desktop/HASS/Controller_node/HASS/hass.conf"
 config = ConfigParser.RawConfigParser()
-config.read('/home/controller/Desktop/HASS/Controller_node/HASS/hass.conf')
+config.read(conf_path)
 
 
 # user = config.get("rpc", "rpc_username")
@@ -53,15 +57,22 @@ class IndexView(tables.DataTableView):
     page_title = _("HA_IPMI_Node")
 
     def get_data(self):
-        hypervisors = []
+        ipmi_hypervisors = []
         try:
             hypervisors = nova.hypervisor_list(self.request)
-            hypervisors.sort(key=utils.natural_sort('hypervisor_hostname'))
+            for hypervisor in hypervisors:
+                if self.ipmi_state(hypervisor.hypervisor_hostname):
+                    ipmi_hypervisors.append(hypervisor)
+            ipmi_hypervisors.sort(key=utils.natural_sort('hypervisor_hostname'))
         except Exception:
             exceptions.handle(self.request, _(
                 'Unable to retrieve hypervisor information.'))
-        return hypervisors
+        return ipmi_hypervisors
 
+    def ipmi_state(self, host_name):
+        c = ConfigParser.RawConfigParser()
+        c.read(conf_path)
+        return c.has_option('ipmi', host_name)
 
 class DetailView(tables.MultiTableView):
     table_classes = (project_tables.IPMINodeTemperatureTable, project_tables.IPMINodeFanTable)

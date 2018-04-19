@@ -96,8 +96,10 @@ class IndexView(tables.DataTableView):
                             instance.cluster_id = uuid
                             ha_instances.append(instance)
                         except Exception:
+                            #the ha instance is admin project instance
                             msg = _('Unable to retrieve instance list.')
-                            exceptions.handle(self.request, msg)
+                            #exceptions.handle(self.request, msg)
+                            LOG.info(msg)
 
         marker = self.request.GET.get(
             project_tables.InstancesTable._meta.pagination_param, None)

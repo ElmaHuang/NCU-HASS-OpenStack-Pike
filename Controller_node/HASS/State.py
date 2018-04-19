@@ -9,6 +9,8 @@
 #:Description:
 #   Data storage file for computing nodes state.
 ##########################################################
+
+
 HEALTH = "health"
 NETWORK_FAIL = "network"
 SERVICE_FAIL = "service"

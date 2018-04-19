@@ -2,6 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="dbfb63cd-65e2-44a5-b436-409b2486cd17" name="Default" comment="set detectionagent daemon service">
+      <change beforePath="" afterPath="$PROJECT_DIR$/Compute_node/UnitTest/Config.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/Compute_node/UnitTest/hass_node.conf" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/Compute_node/UnitTest/tests/UT_Recive_Info_from_controller.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/Compute_node/UnitTest/tests/__init__.py" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/Controller_node/Dashboards/openstack/_live_migrate.html" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/Controller_node/Dashboards/openstack/tables.py" />
       <change beforePath="$PROJECT_DIR$/../HASS-Newton-106/.idea/Hass-Newton.iml" afterPath="$PROJECT_DIR$/../HASS-Newton-106/.idea/Hass-Newton.iml" />
       <change beforePath="$PROJECT_DIR$/../HASS-Newton-106/.idea/modules.xml" afterPath="$PROJECT_DIR$/../HASS-Newton-106/.idea/modules.xml" />
       <change beforePath="$PROJECT_DIR$/../HASS-Newton-106/.idea/vcs.xml" afterPath="$PROJECT_DIR$/../HASS-Newton-106/.idea/vcs.xml" />
@@ -12,9 +18,41 @@
       <change beforePath="$PROJECT_DIR$/.idea/modules.xml" afterPath="$PROJECT_DIR$/.idea/modules.xml" />
       <change beforePath="$PROJECT_DIR$/.idea/refactor-HASS.iml" afterPath="$PROJECT_DIR$/.idea/refactor-HASS.iml" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change beforePath="$PROJECT_DIR$/Compute_node/HASS/DetectionAgent.py" afterPath="$PROJECT_DIR$/Compute_node/HASS/DetectionAgent.py" />
+      <change beforePath="$PROJECT_DIR$/Compute_node/HASS/HAInstance.py" afterPath="$PROJECT_DIR$/Compute_node/HASS/HAInstance.py" />
+      <change beforePath="$PROJECT_DIR$/Compute_node/HASS/HostFailures.py" afterPath="$PROJECT_DIR$/Compute_node/HASS/HostFailures.py" />
+      <change beforePath="$PROJECT_DIR$/Compute_node/HASS/Instance.py" afterPath="$PROJECT_DIR$/Compute_node/HASS/Instance.py" />
       <change beforePath="$PROJECT_DIR$/Compute_node/HASS/InstanceFailures.py" afterPath="$PROJECT_DIR$/Compute_node/HASS/InstanceFailures.py" />
+      <change beforePath="$PROJECT_DIR$/Compute_node/HASS/NovaClient.py" afterPath="$PROJECT_DIR$/Compute_node/HASS/NovaClient.py" />
+      <change beforePath="$PROJECT_DIR$/Compute_node/HASS/RPCServer.py" afterPath="$PROJECT_DIR$/Compute_node/HASS/RPCServer.py" />
+      <change beforePath="$PROJECT_DIR$/Compute_node/HASS/ReceiveInfoFromController.py" afterPath="$PROJECT_DIR$/Compute_node/HASS/ReceiveInfoFromController.py" />
+      <change beforePath="$PROJECT_DIR$/Compute_node/HASS/RecoveryInstance.py" afterPath="$PROJECT_DIR$/Compute_node/HASS/RecoveryInstance.py" />
+      <change beforePath="$PROJECT_DIR$/Compute_node/UnitTest/UT_Detect_VM_Crash.py" afterPath="$PROJECT_DIR$/Compute_node/UnitTest/tests/UT_Detect_VM_Crash.py" />
+      <change beforePath="$PROJECT_DIR$/Compute_node/UnitTest/UT_Detect_VM_OS_Hang.py" afterPath="$PROJECT_DIR$/Compute_node/UnitTest/tests/UT_Detect_VM_OS_Hang.py" />
+      <change beforePath="$PROJECT_DIR$/Compute_node/UnitTest/UT_Get_Info_form_HA_Instance.py" afterPath="$PROJECT_DIR$/Compute_node/UnitTest/UnitTestInstance.py" />
+      <change beforePath="$PROJECT_DIR$/Compute_node/UnitTest/UT_Hard_Reboot.py" afterPath="$PROJECT_DIR$/Compute_node/UnitTest/tests/UT_Get_Info_form_HA_Instance.py" />
+      <change beforePath="$PROJECT_DIR$/Compute_node/UnitTest/UT_Recive_Info_from_controller.py" afterPath="$PROJECT_DIR$/Compute_node/UnitTest/tests/UT_Hard_Reboot.py" />
       <change beforePath="$PROJECT_DIR$/Controller_node/Dashboards/haAdmin/ha_ipmi/views.py" afterPath="$PROJECT_DIR$/Controller_node/Dashboards/haAdmin/ha_ipmi/views.py" />
+      <change beforePath="$PROJECT_DIR$/Controller_node/Dashboards/haProject/ha_instances/tables.py" afterPath="$PROJECT_DIR$/Controller_node/Dashboards/haProject/ha_instances/tables.py" />
+      <change beforePath="$PROJECT_DIR$/Controller_node/Dashboards/haProject/ha_instances/views.py" afterPath="$PROJECT_DIR$/Controller_node/Dashboards/haProject/ha_instances/views.py" />
       <change beforePath="$PROJECT_DIR$/Controller_node/HASS/Cluster.py" afterPath="$PROJECT_DIR$/Controller_node/HASS/Cluster.py" />
+      <change beforePath="$PROJECT_DIR$/Controller_node/HASS/ClusterInterface.py" afterPath="$PROJECT_DIR$/Controller_node/HASS/ClusterInterface.py" />
+      <change beforePath="$PROJECT_DIR$/Controller_node/HASS/ClusterManager.py" afterPath="$PROJECT_DIR$/Controller_node/HASS/ClusterManager.py" />
+      <change beforePath="$PROJECT_DIR$/Controller_node/HASS/DatabaseManager.py" afterPath="$PROJECT_DIR$/Controller_node/HASS/DatabaseManager.py" />
+      <change beforePath="$PROJECT_DIR$/Controller_node/HASS/DetectionThread.py" afterPath="$PROJECT_DIR$/Controller_node/HASS/DetectionThread.py" />
+      <change beforePath="$PROJECT_DIR$/Controller_node/HASS/Hass.py" afterPath="$PROJECT_DIR$/Controller_node/HASS/Hass.py" />
+      <change beforePath="$PROJECT_DIR$/Controller_node/HASS/HassAPI.py" afterPath="$PROJECT_DIR$/Controller_node/HASS/HassAPI.py" />
+      <change beforePath="$PROJECT_DIR$/Controller_node/HASS/IPMIConf.py" afterPath="$PROJECT_DIR$/Controller_node/HASS/IPMIConf.py" />
+      <change beforePath="$PROJECT_DIR$/Controller_node/HASS/IPMIModule.py" afterPath="$PROJECT_DIR$/Controller_node/HASS/IPMIModule.py" />
+      <change beforePath="$PROJECT_DIR$/Controller_node/HASS/IPMINodeOperator.py" afterPath="$PROJECT_DIR$/Controller_node/HASS/IPMINodeOperator.py" />
+      <change beforePath="$PROJECT_DIR$/Controller_node/HASS/Instance.py" afterPath="$PROJECT_DIR$/Controller_node/HASS/Instance.py" />
+      <change beforePath="$PROJECT_DIR$/Controller_node/HASS/Node.py" afterPath="$PROJECT_DIR$/Controller_node/HASS/Node.py" />
+      <change beforePath="$PROJECT_DIR$/Controller_node/HASS/NodeInterface.py" afterPath="$PROJECT_DIR$/Controller_node/HASS/NodeInterface.py" />
+      <change beforePath="$PROJECT_DIR$/Controller_node/HASS/NovaClient.py" afterPath="$PROJECT_DIR$/Controller_node/HASS/NovaClient.py" />
+      <change beforePath="$PROJECT_DIR$/Controller_node/HASS/Response.py" afterPath="$PROJECT_DIR$/Controller_node/HASS/Response.py" />
+      <change beforePath="$PROJECT_DIR$/Controller_node/HASS/State.py" afterPath="$PROJECT_DIR$/Controller_node/HASS/State.py" />
+      <change beforePath="$PROJECT_DIR$/Controller_node/UnitTest/testcase.co" afterPath="$PROJECT_DIR$/Controller_node/UnitTest/testcase.co" />
+      <change beforePath="$PROJECT_DIR$/Controller_node/UnitTest/tests/UT_Correct_Auth.py" afterPath="$PROJECT_DIR$/Controller_node/UnitTest/tests/UT_Correct_Auth.py" />
       <change beforePath="$PROJECT_DIR$/../Hass-kilo/.idea/HASS-Project-master.iml" afterPath="$PROJECT_DIR$/../Hass-kilo/.idea/HASS-Project-master.iml" />
       <change beforePath="$PROJECT_DIR$/../Hass-kilo/.idea/modules.xml" afterPath="$PROJECT_DIR$/../Hass-kilo/.idea/modules.xml" />
       <change beforePath="$PROJECT_DIR$/../Hass-kilo/.idea/vcs.xml" afterPath="$PROJECT_DIR$/../Hass-kilo/.idea/vcs.xml" />
@@ -54,46 +92,26 @@
     <favorites_list name="HASS" />
   </component>
   <component name="FileEditorManager">
-    <splitter split-orientation="horizontal" split-proportion="0.5">
+    <splitter split-orientation="horizontal" split-proportion="0.62526655">
       <split-first>
         <leaf>
-          <file leaf-file-name="Cluster.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/Controller_node/HASS/Cluster.py">
+          <file leaf-file-name="UT_Without_Auth.py" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/Controller_node/UnitTest/tests/UT_Without_Auth.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="5645">
-                  <caret line="262" column="50" lean-forward="false" selection-start-line="262" selection-start-column="50" selection-end-line="262" selection-end-column="50" />
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="Instance.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/Controller_node/HASS/Instance.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="100">
-                  <caret line="4" column="8" lean-forward="false" selection-start-line="4" selection-start-column="8" selection-end-line="4" selection-end-column="8" />
+                <state relative-caret-position="200">
+                  <caret line="8" column="10" lean-forward="true" selection-start-line="8" selection-start-column="10" selection-end-line="8" selection-end-column="10" />
                   <folding>
-                    <element signature="e#1126#1755#1" expanded="false" />
+                    <element signature="e#0#16#0" expanded="true" />
                   </folding>
                 </state>
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="NovaClient.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/Controller_node/HASS/NovaClient.py">
+          <file leaf-file-name="UT_Create_Cluster.py" pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/Controller_node/UnitTest/tests/UT_Create_Cluster.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="295">
-                  <caret line="114" column="8" lean-forward="false" selection-start-line="114" selection-start-column="8" selection-end-line="114" selection-end-column="8" />
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="forms.py" pinned="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/Controller_node/Dashboards/haAdmin/ha_instances/forms.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="-1500">
-                  <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+                <state relative-caret-position="150">
+                  <caret line="6" column="0" lean-forward="false" selection-start-line="6" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
                   <folding />
                 </state>
               </provider>
@@ -103,23 +121,21 @@
       </split-first>
       <split-second>
         <leaf>
-          <file leaf-file-name="InstanceFailures.py" pinned="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/Compute_node/HASS/InstanceFailures.py">
+          <file leaf-file-name="hass_node.conf" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/Compute_node/HASS/hass_node.conf">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="250">
-                  <caret line="40" column="33" lean-forward="true" selection-start-line="40" selection-start-column="33" selection-end-line="40" selection-end-column="33" />
-                  <folding>
-                    <element signature="e#0#14#0" expanded="true" />
-                  </folding>
+                <state relative-caret-position="0">
+                  <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+                  <folding />
                 </state>
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="forms.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/Controller_node/Dashboards/haProject/ha_instances/forms.py">
+          <file leaf-file-name="testcase.co" pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/Controller_node/UnitTest/testcase.co">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="-1229">
-                  <caret line="89" column="24" lean-forward="true" selection-start-line="89" selection-start-column="24" selection-end-line="89" selection-end-column="24" />
+                <state relative-caret-position="409">
+                  <caret line="37" column="33" lean-forward="true" selection-start-line="37" selection-start-column="33" selection-end-line="37" selection-end-column="33" />
                   <folding />
                 </state>
               </provider>
@@ -132,18 +148,13 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
+        <option value="HTML File" />
         <option value="Python Script" />
       </list>
     </option>
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>cluster.</find>
-      <find>alread</find>
-      <find>server.upda</find>
-      <find>E:</find>
-      <find>recover</find>
-      <find>sensor</find>
       <find>raise</find>
       <find>getPower</find>
       <find>getRecover</find>
@@ -168,6 +179,12 @@
       <find>getInstanceS</find>
       <find>server</find>
       <find>updat</find>
+      <find>random</find>
+      <find>LOG</find>
+      <find>tables.</find>
+      <find>config</find>
+      <find>hypervisor_hostname</find>
+      <find>StartNodeAction</find>
     </findStrings>
     <replaceStrings>
       <replace>cluster_id</replace>
@@ -204,7 +221,6 @@
       <dir>C:\Users\Elma\Documents\GitHub\HASS\Controller_node\UnitTest\tests</dir>
       <dir>C:\Users\Elma\Documents\GitHub\HASS\Compute_node</dir>
       <dir>C:\Users\Elma\Documents\GitHub\HASS</dir>
-      <dir>C:\Users\Elma\Documents\GitHub\HASS\Controller_node\HASS</dir>
       <dir>C:\Users\Elma\Documents\GitHub\HASS\Compute_node\HASS</dir>
       <dir>C:\Users\Elma\Documents\GitHub\HASS\Controller_node\Dashboards</dir>
       <dir>C:\Users\Elma\Documents\GitHub\MOST\HASS\Dashboards</dir>
@@ -212,6 +228,7 @@
       <dir>C:\Users\Elma\Documents\GitHub\MOST\HASS\Dashboards\haAdmin\ha_ipmi\templates\ha_ipmi</dir>
       <dir>C:\Users\Elma\Documents\GitHub\MOST\HASS\Dashboards\haAdmin\ha_ipmi</dir>
       <dir>C:\Users\Elma\Documents\GitHub\HASS\Controller_node\Dashboards\haProject\ha_instances</dir>
+      <dir>C:\Users\Elma\Documents\GitHub\HASS\Controller_node\HASS</dir>
     </dirStrings>
   </component>
   <component name="Git.Settings">
@@ -226,44 +243,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/Controller_node/nosetest/testcase.co" />
-        <option value="$PROJECT_DIR$/Controller_node/nosetest/__init__.py" />
-        <option value="$PROJECT_DIR$/Controller_node/nosetest/cover/__init__.py" />
-        <option value="$PROJECT_DIR$/Controller_node/nosetest/cover/UT_Correct_Auth.py" />
-        <option value="$PROJECT_DIR$/Controller_node/nosetest/UT_Correct_Auth.py" />
-        <option value="$PROJECT_DIR$/Controller_node/nosetest/Oracle.py" />
-        <option value="$PROJECT_DIR$/Controller_node/nosetest/cover/TestFoo.py" />
-        <option value="$PROJECT_DIR$/Controller_node/HASS/hass.conf" />
-        <option value="$PROJECT_DIR$/Compute_node/HASS/hass_node.conf" />
-        <option value="$PROJECT_DIR$/Controller_node/UnitTest/tests/UT_Recover_Service_by_Evacuate.py" />
-        <option value="$PROJECT_DIR$/Controller_node/UnitTest/tests/UT_Recover_Network_Isolation.py" />
-        <option value="$PROJECT_DIR$/Controller_node/UnitTest/tests/UT_Recover_Node_By_Reboot.py" />
-        <option value="$PROJECT_DIR$/Controller_node/UnitTest/tests/UT_Recover_Node_By_Start.py" />
-        <option value="$PROJECT_DIR$/Controller_node/UnitTest/tests/UT_Evacuate.py" />
-        <option value="$PROJECT_DIR$/Controller_node/UnitTest/tests/UT_Live_Migration.py" />
-        <option value="$PROJECT_DIR$/Controller_node/UnitTest/testcase.co" />
-        <option value="$PROJECT_DIR$/Controller_node/UnitTest/tests/UT_Recover_Node_By_Shutoff.py" />
-        <option value="$PROJECT_DIR$/Controller_node/HASS/caculate.py" />
-        <option value="$PROJECT_DIR$/Compute_node/HASS/NovaClient.py" />
-        <option value="$PROJECT_DIR$/Compute_node/HASS/DetectionAgent.py" />
-        <option value="$PROJECT_DIR$/Compute_node/HASS/Instance.py" />
-        <option value="$PROJECT_DIR$/Compute_node/HASS/detectionagent.service" />
-        <option value="$PROJECT_DIR$/Controller_node/HASS/IPMINodeOperator.py" />
-        <option value="$PROJECT_DIR$/Controller_node/HASS/DatabaseManager.py" />
-        <option value="$PROJECT_DIR$/Controller_node/HASS/Instance.py" />
-        <option value="$PROJECT_DIR$/Controller_node/HASS/Node.py" />
-        <option value="$PROJECT_DIR$/Controller_node/HASS/NodeInterface.py" />
-        <option value="$PROJECT_DIR$/Controller_node/HASS/NovaClient.py" />
-        <option value="$PROJECT_DIR$/Controller_node/HASS/Hass.py" />
-        <option value="$PROJECT_DIR$/Controller_node/HASS/IPMIModule.py" />
-        <option value="$PROJECT_DIR$/Controller_node/HASS/DetectionThread.py" />
-        <option value="$PROJECT_DIR$/Controller_node/HASS/ClusterManager.py" />
-        <option value="$PROJECT_DIR$/Compute_node/HASS/InstanceEvent.py" />
-        <option value="$PROJECT_DIR$/Controller_node/HASS/RecoveryManager.py" />
-        <option value="$PROJECT_DIR$/Compute_node/HASS/ReceiveInfoFromController.py" />
-        <option value="$PROJECT_DIR$/Compute_node/HASS/HAInstance.py" />
-        <option value="$PROJECT_DIR$/Compute_node/HASS/RecoveryInstance.py" />
-        <option value="$PROJECT_DIR$/../MOST/HASS/Dashboards/haAdmin/ha_clusters/views.py" />
         <option value="$PROJECT_DIR$/../MOST/HASS/Dashboards/haAdmin/ha_clusters/tables.py" />
         <option value="$PROJECT_DIR$/../MOST/HASS/Dashboards/haAdmin/ha_clusters/workflows.py" />
         <option value="$PROJECT_DIR$/../MOST/HASS/Dashboards/haAdmin/ha_instances/forms.py" />
@@ -273,10 +252,48 @@
         <option value="$PROJECT_DIR$/../MOST/HASS/Dashboards/haAdmin/ha_ipmi/templates/ha_ipmi/detail.html" />
         <option value="$PROJECT_DIR$/../MOST/HASS/Dashboards/haAdmin/ha_ipmi/tables.py" />
         <option value="$PROJECT_DIR$/../MOST/HASS/Dashboards/haAdmin/ha_ipmi/views.py" />
-        <option value="$PROJECT_DIR$/Controller_node/Dashboards/haAdmin/ha_ipmi/views.py" />
         <option value="$PROJECT_DIR$/../MOST/HASS/compute_node/DetectionAgent.py" />
-        <option value="$PROJECT_DIR$/Controller_node/HASS/Cluster.py" />
+        <option value="$PROJECT_DIR$/Controller_node/Dashboards/haProject/ha_instances/tables.py" />
+        <option value="$PROJECT_DIR$/Controller_node/Dashboards/haProject/ha_instances/views.py" />
+        <option value="$PROJECT_DIR$/Controller_node/Dashboards/_live_migrate.html" />
+        <option value="$PROJECT_DIR$/Controller_node/Dashboards/openstack/tables.py" />
+        <option value="$PROJECT_DIR$/Controller_node/Dashboards/haAdmin/ha_ipmi/tables.py" />
+        <option value="$PROJECT_DIR$/Controller_node/Dashboards/haAdmin/ha_ipmi/views.py" />
+        <option value="$PROJECT_DIR$/Controller_node/HASS/hass.conf" />
+        <option value="$PROJECT_DIR$/Controller_node/Dashboards/openstack/_live_migrate.html" />
+        <option value="$PROJECT_DIR$/Controller_node/HASS/Hass.py" />
+        <option value="$PROJECT_DIR$/Compute_node/HASS/HostFailures.py" />
+        <option value="$PROJECT_DIR$/Compute_node/HASS/HAInstance.py" />
+        <option value="$PROJECT_DIR$/Controller_node/HASS/DetectionThread.py" />
+        <option value="$PROJECT_DIR$/Compute_node/HASS/DetectionAgent.py" />
+        <option value="$PROJECT_DIR$/Controller_node/HASS/Instance.py" />
+        <option value="$PROJECT_DIR$/Controller_node/HASS/NovaClient.py" />
+        <option value="$PROJECT_DIR$/Controller_node/HASS/Node.py" />
+        <option value="$PROJECT_DIR$/Controller_node/HASS/IPMIModule.py" />
+        <option value="$PROJECT_DIR$/Controller_node/HASS/IPMINodeOperator.py" />
+        <option value="$PROJECT_DIR$/Controller_node/HASS/NodeInterface.py" />
+        <option value="$PROJECT_DIR$/Controller_node/HASS/Response.py" />
+        <option value="$PROJECT_DIR$/Controller_node/HASS/State.py" />
+        <option value="$PROJECT_DIR$/Controller_node/HASS/ClusterInterface.py" />
+        <option value="$PROJECT_DIR$/Controller_node/HASS/ClusterManager.py" />
+        <option value="$PROJECT_DIR$/Controller_node/HASS/DatabaseManager.py" />
+        <option value="$PROJECT_DIR$/Controller_node/HASS/Detector.py" />
+        <option value="$PROJECT_DIR$/Controller_node/HASS/HassAPI.py" />
+        <option value="$PROJECT_DIR$/Controller_node/HASS/IPMIConf.py" />
+        <option value="$PROJECT_DIR$/Controller_node/HASS/RecoveryManager.py" />
+        <option value="$PROJECT_DIR$/Compute_node/HASS/NovaClient.py" />
+        <option value="$PROJECT_DIR$/Compute_node/HASS/RecoveryInstance.py" />
+        <option value="$PROJECT_DIR$/Compute_node/HASS/Instance.py" />
+        <option value="$PROJECT_DIR$/Compute_node/HASS/RPCServer.py" />
+        <option value="$PROJECT_DIR$/Compute_node/HASS/ReceiveInfoFromController.py" />
         <option value="$PROJECT_DIR$/Compute_node/HASS/InstanceFailures.py" />
+        <option value="$PROJECT_DIR$/Controller_node/UnitTest/UnitTestInstance.py" />
+        <option value="$PROJECT_DIR$/Compute_node/UnitTest/UnitTestInstance.py" />
+        <option value="$PROJECT_DIR$/Controller_node/UnitTest/tests/UT_Correct_Auth.py" />
+        <option value="$PROJECT_DIR$/Controller_node/UnitTest/testcase.co" />
+        <option value="$PROJECT_DIR$/Controller_node/HASS/Cluster.py" />
+        <option value="$PROJECT_DIR$/Controller_node/UnitTest/tests/UT_Wrong_Auth.py" />
+        <option value="$PROJECT_DIR$/Controller_node/UnitTest/tests/UT_Without_Auth.py" />
       </list>
     </option>
   </component>
@@ -443,51 +460,13 @@
               <item name="HASS" type="b2602c69:ProjectViewProjectNode" />
               <item name="HASS" type="462c0819:PsiDirectoryNode" />
               <item name="Controller_node" type="462c0819:PsiDirectoryNode" />
-              <item name="Dashboards" type="462c0819:PsiDirectoryNode" />
+              <item name="HASS" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="HASS" type="b2602c69:ProjectViewProjectNode" />
               <item name="HASS" type="462c0819:PsiDirectoryNode" />
               <item name="Controller_node" type="462c0819:PsiDirectoryNode" />
-              <item name="Dashboards" type="462c0819:PsiDirectoryNode" />
-              <item name="haAdmin" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="HASS" type="b2602c69:ProjectViewProjectNode" />
-              <item name="HASS" type="462c0819:PsiDirectoryNode" />
-              <item name="Controller_node" type="462c0819:PsiDirectoryNode" />
-              <item name="Dashboards" type="462c0819:PsiDirectoryNode" />
-              <item name="haAdmin" type="462c0819:PsiDirectoryNode" />
-              <item name="ha_clusters" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="HASS" type="b2602c69:ProjectViewProjectNode" />
-              <item name="HASS" type="462c0819:PsiDirectoryNode" />
-              <item name="Controller_node" type="462c0819:PsiDirectoryNode" />
-              <item name="Dashboards" type="462c0819:PsiDirectoryNode" />
-              <item name="haAdmin" type="462c0819:PsiDirectoryNode" />
-              <item name="ha_instances" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="HASS" type="b2602c69:ProjectViewProjectNode" />
-              <item name="HASS" type="462c0819:PsiDirectoryNode" />
-              <item name="Controller_node" type="462c0819:PsiDirectoryNode" />
-              <item name="Dashboards" type="462c0819:PsiDirectoryNode" />
-              <item name="haProject" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="HASS" type="b2602c69:ProjectViewProjectNode" />
-              <item name="HASS" type="462c0819:PsiDirectoryNode" />
-              <item name="Controller_node" type="462c0819:PsiDirectoryNode" />
-              <item name="Dashboards" type="462c0819:PsiDirectoryNode" />
-              <item name="haProject" type="462c0819:PsiDirectoryNode" />
-              <item name="ha_instances" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="HASS" type="b2602c69:ProjectViewProjectNode" />
-              <item name="HASS" type="462c0819:PsiDirectoryNode" />
-              <item name="Controller_node" type="462c0819:PsiDirectoryNode" />
-              <item name="HASS" type="462c0819:PsiDirectoryNode" />
+              <item name="UnitTest" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="HASS" type="b2602c69:ProjectViewProjectNode" />
@@ -511,21 +490,22 @@
     <property name="WebServerToolWindowPanel.toolwindow.highlight.mappings" value="true" />
     <property name="com.intellij.database.dataSource.DataSourceTemplate" value="MySQL" />
     <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
+    <property name="DefaultHtmlFileTemplate" value="HTML File" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Elma\Documents\GitHub\HASS\Compute_node\UnitTest\tests" />
+      <recent name="C:\Users\Elma\Documents\GitHub\HASS\Controller_node\Dashboards\openstack" />
       <recent name="C:\Users\Elma\Documents\GitHub\HASS\Controller_node\nosetest" />
       <recent name="C:\Users\Elma\Documents\GitHub\HASS\Compute_node\HASS" />
       <recent name="C:\Users\Elma\Documents\GitHub\HASS\Compute_node\UnitTest" />
-      <recent name="C:\Users\Elma\Documents\GitHub\HASS" />
-      <recent name="C:\Users\Elma\Documents\GitHub\HASS\Controller" />
     </key>
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Elma\Documents\GitHub\HASS\Compute_node\UnitTest" />
       <recent name="C:\Users\Elma\Documents\GitHub\MOST\HASS\compute_node" />
       <recent name="C:\Users\Elma\Documents\GitHub\HASS\Controller_node\UnitTest" />
       <recent name="C:\Users\Elma\Documents\GitHub\HASS\Controller_node\UnitTest\tests" />
       <recent name="C:\Users\Elma\Documents\GitHub\HASS\Controller_node\nosetest\cover" />
-      <recent name="C:\Users\Elma\Documents\GitHub\HASS\Controller_node\nosetest" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -876,7 +856,7 @@
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.59144384" sideWeight="0.4968017" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3295099" sideWeight="0.4978678" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Remote Host" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.27771854" sideWeight="0.4909091" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.14765458" sideWeight="0.49455675" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.14765458" sideWeight="0.49455675" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Docker" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32995737" sideWeight="0.49469495" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32941177" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -894,6 +874,33 @@
       <window_info id="Coverage" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.27771854" sideWeight="0.5090909" order="0" side_tool="true" content_ui="tabs" />
       <window_info id="Concurrent Activities Diagram" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3295099" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
     </layout>
+    <layout-to-restore>
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39937434" sideWeight="0.5063966" order="8" side_tool="true" content_ui="tabs" />
+      <window_info id="Remote Host" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.27771854" sideWeight="0.4909091" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="6" side_tool="false" content_ui="combo" />
+      <window_info id="Docker" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32995737" sideWeight="0.49469495" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39937434" sideWeight="0.4936034" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Data View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3295099" sideWeight="0.49626866" order="12" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="File Transfer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.13048129" sideWeight="0.49573562" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3272727" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3295099" sideWeight="0.4936034" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.59144384" sideWeight="0.4968017" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Coverage" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.27771854" sideWeight="0.5090909" order="0" side_tool="true" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3295099" sideWeight="0.4978678" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.14765458" sideWeight="0.49455675" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32941177" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="SciView" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32995737" sideWeight="0.49469495" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Concurrent Activities Diagram" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3295099" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.13113007" sideWeight="0.5054432" order="2" side_tool="true" content_ui="tabs" />
+    </layout-to-restore>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
@@ -956,74 +963,7 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/Compute_node/HASS/Instance.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="260">
-          <caret line="14" column="190" lean-forward="true" selection-start-line="14" selection-start-column="190" selection-end-line="14" selection-end-column="190" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Compute_node/HASS/RecoveryInstance.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1175">
-          <caret line="54" column="9" lean-forward="false" selection-start-line="54" selection-start-column="9" selection-end-line="54" selection-end-column="9" />
-          <folding>
-            <element signature="e#0#14#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Compute_node/HASS/NovaClient.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="503">
-          <caret line="48" column="20" lean-forward="false" selection-start-line="48" selection-start-column="20" selection-end-line="48" selection-end-column="20" />
-          <folding>
-            <element signature="e#2418#2449#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Controller_node/HASS/hass.conf">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="400">
-          <caret line="16" column="19" lean-forward="true" selection-start-line="16" selection-start-column="19" selection-end-line="16" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Compute_node/HASS/InstanceEvent.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="375">
-          <caret line="15" column="0" lean-forward="false" selection-start-line="15" selection-start-column="0" selection-end-line="15" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/.PyCharm2017.3/system/remote_sources/349975800/-125940560/MySQLdb/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-600">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Controller_node/HASS/DatabaseManager.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="400">
-          <caret line="16" column="10" lean-forward="false" selection-start-line="16" selection-start-column="10" selection-end-line="16" selection-end-column="10" />
-          <folding>
-            <marker date="1521104125568" expanded="true" signature="1732:1986" ph="CREATE TABLE... IF" />
-            <marker date="1521104125568" expanded="true" signature="2081:2493" ph="CREATE TABLE... IF" />
-            <marker date="1521104125568" expanded="true" signature="2588:3165" ph="CREATE TABLE... IF" />
-            <marker date="1521104125568" expanded="true" signature="3525:3549" ph="SELECT * FRO... ha_cluster" />
-            <marker date="1521104125568" expanded="true" signature="9055:9083" ph="DELETE FROM missing_value" />
-            <marker date="1521104125568" expanded="true" signature="10649:10788" ph="UPDATE `Resource_Relationship`... " />
-            <marker date="1521104125568" expanded="true" signature="10972:11027" ph="SELECT * FRO... Resource" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../MOST/HASS/compute_node/detectionagent.service">
+    <entry file="file://$PROJECT_DIR$/Controller_node/Dashboards/haAdmin/ha_ipmi/templates/ha_ipmi/index.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
@@ -1033,385 +973,465 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Controller_node/Dashboards/haProject/ha_instances/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="475">
-          <caret line="17" column="19" lean-forward="false" selection-start-line="17" selection-start-column="19" selection-end-line="17" selection-end-column="19" />
-          <folding>
-            <element signature="e#0#19#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../MOST/HASS/Dashboards/haAdmin/ha_clusters/tables.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#19#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../MOST/HASS/Dashboards/haAdmin/ha_clusters/workflows.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="200">
-          <caret line="9" column="76" lean-forward="false" selection-start-line="9" selection-start-column="76" selection-end-line="9" selection-end-column="76" />
-          <folding>
-            <element signature="e#573#592#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../MOST/HASS/Dashboards/haAdmin/ha_instances/forms.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="375">
-          <caret line="35" column="59" lean-forward="false" selection-start-line="35" selection-start-column="59" selection-end-line="35" selection-end-column="59" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../MOST/HASS/Dashboards/haProject/ha_instances/forms.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="425">
-          <caret line="36" column="59" lean-forward="false" selection-start-line="36" selection-start-column="59" selection-end-line="36" selection-end-column="59" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../MOST/HASS/Dashboards/haProject/ha_instances/views.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="169">
-          <caret line="23" column="38" lean-forward="true" selection-start-line="23" selection-start-column="38" selection-end-line="23" selection-end-column="38" />
-          <folding>
-            <element signature="e#0#14#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Controller_node/Dashboards/haProject/ha_instances/tables.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#27#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../MOST/HASS/Dashboards/haAdmin/dashboard.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="125">
-          <caret line="5" column="24" lean-forward="true" selection-start-line="5" selection-start-column="24" selection-end-line="5" selection-end-column="24" />
-          <folding>
-            <element signature="e#0#14#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../MOST/HASS/Dashboards/haAdmin/ha_ipmi/templates/ha_ipmi/_update.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../MOST/HASS/Dashboards/haAdmin/ha_ipmi/templates/ha_ipmi/_detail_overview.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1275">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../MOST/HASS/Dashboards/haAdmin/ha_ipmi/templates/ha_ipmi/_create.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../MOST/HASS/Dashboards/haAdmin/ha_ipmi/templates/ha_ipmi/index.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Controller_node/Dashboards/haAdmin/dashboard.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#14#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Controller_node/HASS/IPMINodeOperator.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="147">
-          <caret line="133" column="8" lean-forward="false" selection-start-line="133" selection-start-column="8" selection-end-line="133" selection-end-column="8" />
+        <state relative-caret-position="-600">
+          <caret line="0" column="19" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Controller_node/Dashboards/haAdmin/ha_ipmi/tables.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="200">
-          <caret line="164" column="22" lean-forward="false" selection-start-line="164" selection-start-column="22" selection-end-line="164" selection-end-column="22" />
-          <folding>
-            <element signature="e#0#19#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Controller_node/Dashboards/haAdmin/ha_ipmi/templates/ha_ipmi/detail.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../MOST/HASS/Dashboards/haAdmin/ha_ipmi/templates/ha_ipmi/detail.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="100">
-          <caret line="4" column="16" lean-forward="true" selection-start-line="4" selection-start-column="16" selection-end-line="4" selection-end-column="16" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../MOST/HASS/Dashboards/haAdmin/ha_ipmi/urls.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-283">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#37#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../MOST/HASS/Dashboards/haAdmin/ha_ipmi/panel.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="200">
-          <caret line="8" column="50" lean-forward="true" selection-start-line="8" selection-start-column="50" selection-end-line="8" selection-end-column="50" />
-          <folding>
-            <element signature="e#0#14#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Controller_node/HASS/Hass.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="291">
-          <caret line="290" column="45" lean-forward="false" selection-start-line="290" selection-start-column="45" selection-end-line="290" selection-end-column="45" />
-          <folding>
-            <element signature="e#834#906#0" expanded="false" />
-            <element signature="e#3456#3485#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../MOST/HASS/Dashboards/haAdmin/ha_ipmi/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../MOST/HASS/Dashboards/haAdmin/ha_ipmi/templates/ha_ipmi/update.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../MOST/HASS/Dashboards/enabled/_2600_haAdmin.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../MOST/HASS/Dashboards/haAdmin/ha_ipmi/tables.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4600">
-          <caret line="181" column="15" lean-forward="false" selection-start-line="181" selection-start-column="15" selection-end-line="181" selection-end-column="15" />
-          <folding>
-            <element signature="e#0#19#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../MOST/HASS/Dashboards/haAdmin/ha_clusters/views.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2283">
-          <caret line="7" column="0" lean-forward="false" selection-start-line="7" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../MOST/HASS/Dashboards/haAdmin/ha_instances/views.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-3983">
-          <caret line="14" column="59" lean-forward="false" selection-start-line="14" selection-start-column="59" selection-end-line="14" selection-end-column="59" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../MOST/HASS/Dashboards/haAdmin/ha_ipmi/views.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-383">
-          <caret line="46" column="51" lean-forward="false" selection-start-line="46" selection-start-column="51" selection-end-line="46" selection-end-column="51" />
-          <folding>
-            <element signature="e#0#19#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Compute_node/HASS/start_agent.sh">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="50">
-          <caret line="2" column="24" lean-forward="false" selection-start-line="2" selection-start-column="24" selection-end-line="2" selection-end-column="24" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Compute_node/HASS/detectionagent.service">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="250">
-          <caret line="10" column="32" lean-forward="true" selection-start-line="10" selection-start-column="32" selection-end-line="10" selection-end-column="32" />
+        <state relative-caret-position="500">
+          <caret line="138" column="37" lean-forward="true" selection-start-line="138" selection-start-column="37" selection-end-line="138" selection-end-column="37" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Controller_node/Dashboards/haAdmin/ha_ipmi/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="276">
-          <caret line="61" column="62" lean-forward="false" selection-start-line="61" selection-start-column="62" selection-end-line="61" selection-end-column="62" />
-          <folding>
-            <element signature="e#1117#1616#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../MOST/HASS/Hass.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="209">
-          <caret line="235" column="89" lean-forward="true" selection-start-line="235" selection-start-column="89" selection-end-line="235" selection-end-column="89" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../MOST/HASS/IPMINodeOperator.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-5">
-          <caret line="120" column="46" lean-forward="false" selection-start-line="120" selection-start-column="46" selection-end-line="120" selection-end-column="46" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../MOST/HASS/IPMIModule.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-180">
-          <caret line="181" column="8" lean-forward="false" selection-start-line="181" selection-start-column="8" selection-end-line="181" selection-end-column="8" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../MOST/HASS/hass.conf">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="25">
-          <caret line="5" column="30" lean-forward="false" selection-start-line="5" selection-start-column="30" selection-end-line="5" selection-end-column="30" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Compute_node/HASS/DetectionAgent.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="260">
-          <caret line="23" column="25" lean-forward="true" selection-start-line="23" selection-start-column="25" selection-end-line="23" selection-end-column="25" />
+        <state relative-caret-position="150">
+          <caret line="73" column="25" lean-forward="false" selection-start-line="73" selection-start-column="25" selection-end-line="73" selection-end-column="25" />
           <folding>
             <element signature="e#0#19#0" expanded="false" />
+            <element signature="e#3385#3388#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../MOST/HASS/compute_node/DetectionAgent.py">
+    <entry file="file://$PROJECT_DIR$/Controller_node/Dashboards/openstack/_live_migrate.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="443">
-          <caret line="151" column="38" lean-forward="true" selection-start-line="151" selection-start-column="38" selection-end-line="151" selection-end-column="38" />
+        <state relative-caret-position="500">
+          <caret line="18" column="48" lean-forward="false" selection-start-line="18" selection-start-column="48" selection-end-line="18" selection-end-column="48" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Controller_node/HASS/hass.conf">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="175">
+          <caret line="10" column="24" lean-forward="true" selection-start-line="10" selection-start-column="24" selection-end-line="10" selection-end-column="24" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Compute_node/HASS/InstanceEvent.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Compute_node/HASS/HostFailures.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="325">
+          <caret line="13" column="0" lean-forward="false" selection-start-line="13" selection-start-column="0" selection-end-line="13" selection-end-column="0" />
           <folding>
-            <element signature="e#0#13#0" expanded="false" />
-            <element signature="e#547#4885#1" expanded="false" />
+            <element signature="e#372#391#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Controller_node/HASS/Hass.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="425">
+          <caret line="17" column="0" lean-forward="false" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
+          <folding>
+            <element signature="e#431#450#0" expanded="false" />
+            <element signature="e#835#907#0" expanded="false" />
+            <element signature="e#3457#3486#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Compute_node/HASS/HAInstance.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="325">
+          <caret line="13" column="0" lean-forward="false" selection-start-line="13" selection-start-column="0" selection-end-line="13" selection-end-column="0" />
+          <folding>
+            <element signature="e#375#389#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Controller_node/HASS/DetectionThread.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="325">
+          <caret line="13" column="0" lean-forward="false" selection-start-line="13" selection-start-column="0" selection-end-line="13" selection-end-column="0" />
+          <folding>
+            <element signature="e#372#391#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Controller_node/HASS/Instance.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="100">
-          <caret line="4" column="8" lean-forward="false" selection-start-line="4" selection-start-column="8" selection-end-line="4" selection-end-column="8" />
+        <state relative-caret-position="325">
+          <caret line="13" column="0" lean-forward="false" selection-start-line="13" selection-start-column="0" selection-end-line="13" selection-end-column="0" />
           <folding>
-            <element signature="e#1126#1755#1" expanded="false" />
+            <element signature="e#1473#2102#1" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Controller_node/HASS/NovaClient.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="295">
-          <caret line="114" column="8" lean-forward="false" selection-start-line="114" selection-start-column="8" selection-end-line="114" selection-end-column="8" />
+        <state relative-caret-position="400">
+          <caret line="16" column="0" lean-forward="false" selection-start-line="16" selection-start-column="0" selection-end-line="16" selection-end-column="0" />
+          <folding>
+            <element signature="e#454#473#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Controller_node/HASS/Node.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="325">
+          <caret line="13" column="0" lean-forward="false" selection-start-line="13" selection-start-column="0" selection-end-line="13" selection-end-column="0" />
+          <folding>
+            <element signature="e#343#357#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Compute_node/HASS/DetectionAgent.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="325">
+          <caret line="13" column="0" lean-forward="false" selection-start-line="13" selection-start-column="0" selection-end-line="13" selection-end-column="0" />
+          <folding>
+            <element signature="e#372#391#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Controller_node/HASS/IPMIModule.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="375">
+          <caret line="15" column="0" lean-forward="false" selection-start-line="15" selection-start-column="0" selection-end-line="15" selection-end-column="0" />
+          <folding>
+            <element signature="e#385#404#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Controller_node/HASS/IPMINodeOperator.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="375">
+          <caret line="15" column="0" lean-forward="false" selection-start-line="15" selection-start-column="0" selection-end-line="15" selection-end-column="0" />
+          <folding>
+            <element signature="e#388#407#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Controller_node/HASS/NodeInterface.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="325">
+          <caret line="13" column="0" lean-forward="false" selection-start-line="13" selection-start-column="0" selection-end-line="13" selection-end-column="0" />
+          <folding>
+            <element signature="e#340#359#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Controller_node/HASS/Response.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="325">
+          <caret line="13" column="0" lean-forward="false" selection-start-line="13" selection-start-column="0" selection-end-line="13" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Controller_node/HASS/State.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="325">
+          <caret line="13" column="0" lean-forward="false" selection-start-line="13" selection-start-column="0" selection-end-line="13" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Controller_node/HASS/ClusterInterface.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="325">
+          <caret line="13" column="0" lean-forward="false" selection-start-line="13" selection-start-column="0" selection-end-line="13" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Controller_node/HASS/ClusterManager.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="325">
+          <caret line="13" column="0" lean-forward="false" selection-start-line="13" selection-start-column="0" selection-end-line="13" selection-end-column="0" />
+          <folding>
+            <element signature="e#357#371#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Controller_node/HASS/DatabaseManager.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="325">
+          <caret line="13" column="0" lean-forward="false" selection-start-line="13" selection-start-column="0" selection-end-line="13" selection-end-column="0" />
+          <folding>
+            <element signature="e#356#375#0" expanded="false" />
+            <marker date="1523869405509" expanded="true" signature="1733:1987" ph="CREATE TABLE... IF" />
+            <marker date="1523869405509" expanded="true" signature="2082:2494" ph="CREATE TABLE... IF" />
+            <marker date="1523869405509" expanded="true" signature="2589:3166" ph="CREATE TABLE... IF" />
+            <marker date="1523869405509" expanded="true" signature="3526:3550" ph="SELECT * FRO... ha_cluster" />
+            <marker date="1523869405509" expanded="true" signature="9056:9084" ph="DELETE FROM missing_value" />
+            <marker date="1523869405509" expanded="true" signature="10650:10789" ph="UPDATE `Resource_Relationship`... " />
+            <marker date="1523869405509" expanded="true" signature="10973:11028" ph="SELECT * FRO... Resource" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Controller_node/HASS/Detector.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="325">
+          <caret line="13" column="0" lean-forward="false" selection-start-line="13" selection-start-column="0" selection-end-line="13" selection-end-column="0" />
+          <folding>
+            <element signature="e#343#362#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Controller_node/HASS/HassAPI.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="325">
+          <caret line="13" column="0" lean-forward="false" selection-start-line="13" selection-start-column="0" selection-end-line="13" selection-end-column="0" />
+          <folding>
+            <element signature="e#330#349#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Controller_node/HASS/IPMIConf.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="375">
+          <caret line="15" column="0" lean-forward="false" selection-start-line="15" selection-start-column="0" selection-end-line="15" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Controller_node/HASS/RecoveryManager.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="325">
+          <caret line="13" column="0" lean-forward="false" selection-start-line="13" selection-start-column="0" selection-end-line="13" selection-end-column="0" />
+          <folding>
+            <element signature="e#340#359#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Compute_node/HASS/NovaClient.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="325">
+          <caret line="13" column="62" lean-forward="true" selection-start-line="13" selection-start-column="62" selection-end-line="13" selection-end-column="62" />
+          <folding>
+            <element signature="e#427#446#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Compute_node/HASS/Instance.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="275">
+          <caret line="11" column="0" lean-forward="true" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Compute_node/HASS/RPCServer.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="325">
+          <caret line="13" column="0" lean-forward="false" selection-start-line="13" selection-start-column="0" selection-end-line="13" selection-end-column="0" />
+          <folding>
+            <element signature="e#321#340#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Compute_node/HASS/ReceiveInfoFromController.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="325">
+          <caret line="13" column="0" lean-forward="false" selection-start-line="13" selection-start-column="0" selection-end-line="13" selection-end-column="0" />
+          <folding>
+            <element signature="e#349#362#0" expanded="true" />
+            <element signature="e#664#1232#1" expanded="false" />
+            <element signature="e#1552#1587#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Compute_node/HASS/InstanceFailures.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="520">
+          <caret line="166" column="55" lean-forward="true" selection-start-line="166" selection-start-column="55" selection-end-line="166" selection-end-column="55" />
+          <folding>
+            <element signature="e#373#387#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Compute_node/HASS/RecoveryInstance.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="520">
+          <caret line="104" column="8" lean-forward="false" selection-start-line="104" selection-start-column="8" selection-end-line="104" selection-end-column="8" />
+          <folding>
+            <element signature="e#339#353#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Controller_node/UnitTest/tests/UT_List_Instance_Wrong_Cluster_ID.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="225">
+          <caret line="9" column="0" lean-forward="true" selection-start-line="9" selection-start-column="0" selection-end-line="9" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Controller_node/UnitTest/tests/UT_Delete_Instance.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="125">
+          <caret line="5" column="24" lean-forward="true" selection-start-line="5" selection-start-column="24" selection-end-line="5" selection-end-column="24" />
+          <folding>
+            <element signature="e#0#10#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Controller_node/UnitTest/hass.conf">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Controller_node/UnitTest/tests/UT_Add_Instance.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Controller_node/UnitTest/Config.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="325">
+          <caret line="13" column="0" lean-forward="true" selection-start-line="13" selection-start-column="0" selection-end-line="13" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Compute_node/UnitTest/hass_node.conf">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Controller_node/UnitTest/UnitTestInstance.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="175">
+          <caret line="7" column="29" lean-forward="true" selection-start-line="7" selection-start-column="29" selection-end-line="7" selection-end-column="29" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Compute_node/HASS/hass_node.conf">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Compute_node/UnitTest/Config.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Controller_node/UnitTest/Preprocess.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-175">
+          <caret line="21" column="9" lean-forward="true" selection-start-line="21" selection-start-column="9" selection-end-line="21" selection-end-column="9" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Compute_node/UnitTest/UnitTestInstance.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="100">
+          <caret line="4" column="8" lean-forward="true" selection-start-line="4" selection-start-column="8" selection-end-line="4" selection-end-column="8" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Controller_node/UnitTest/testcase.co">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="409">
+          <caret line="37" column="33" lean-forward="true" selection-start-line="37" selection-start-column="33" selection-end-line="37" selection-end-column="33" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Controller_node/UnitTest/tests/UT_Correct_Auth.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="50">
+          <caret line="2" column="0" lean-forward="true" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Controller_node/HASS/Cluster.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="5645">
-          <caret line="262" column="50" lean-forward="false" selection-start-line="262" selection-start-column="50" selection-end-line="262" selection-end-column="50" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Compute_node/HASS/HAInstance.py">
-      <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="300">
-          <caret line="12" column="0" lean-forward="true" selection-start-line="12" selection-start-column="0" selection-end-line="12" selection-end-column="0" />
+          <caret line="12" column="0" lean-forward="false" selection-start-line="12" selection-start-column="0" selection-end-line="12" selection-end-column="0" />
           <folding>
-            <element signature="e#0#14#0" expanded="true" />
+            <element signature="e#358#372#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Controller_node/Dashboards/haAdmin/ha_instances/forms.py">
+    <entry file="file://$PROJECT_DIR$/Controller_node/UnitTest/tests/UT_Wrong_Auth.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1500">
+        <state relative-caret-position="375">
+          <caret line="15" column="50" lean-forward="true" selection-start-line="15" selection-start-column="50" selection-end-line="15" selection-end-column="50" />
+          <folding>
+            <element signature="e#0#19#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Controller_node/UnitTest/tests/UT_Delete_Instance_Wrong_ID.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Controller_node/Dashboards/haProject/ha_instances/forms.py">
+    <entry file="file://$PROJECT_DIR$/Controller_node/UnitTest/tests/UT_Without_Auth.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1229">
-          <caret line="89" column="24" lean-forward="true" selection-start-line="89" selection-start-column="24" selection-end-line="89" selection-end-column="24" />
-          <folding />
+        <state relative-caret-position="200">
+          <caret line="8" column="10" lean-forward="true" selection-start-line="8" selection-start-column="10" selection-end-line="8" selection-end-column="10" />
+          <folding>
+            <element signature="e#0#16#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Compute_node/HASS/InstanceFailures.py">
+    <entry file="file://$PROJECT_DIR$/Controller_node/UnitTest/tests/UT_Create_Cluster.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="250">
-          <caret line="40" column="33" lean-forward="true" selection-start-line="40" selection-start-column="33" selection-end-line="40" selection-end-column="33" />
-          <folding>
-            <element signature="e#0#14#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="150">
+          <caret line="6" column="0" lean-forward="false" selection-start-line="6" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>

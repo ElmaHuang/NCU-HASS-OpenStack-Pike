@@ -14,6 +14,7 @@
 #   Client can use function in Hass class directly
 ##########################################################
 
+
 import ConfigParser
 import logging
 import os

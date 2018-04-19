@@ -13,6 +13,7 @@
 #   This is a class maintains Openstack-Nova command operation
 ##############################################################
 
+
 # from ClusterManager import ClusterManager
 import ConfigParser
 import logging

@@ -12,6 +12,7 @@
 #   This is a class maintains IPMI command operation.
 ##########################################################
 
+
 import ConfigParser
 import logging
 import socket

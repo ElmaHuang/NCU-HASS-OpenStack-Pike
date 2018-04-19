@@ -1,3 +1,16 @@
+#########################################################
+#:Date: 2018/2/13
+#:Version: 1
+#:Authors:
+#    - Elma Huang <huanghuei0206@gmail.com>
+#    - LSC <sclee@g.ncu.edu.tw>
+#:Python_Version: 2.7
+#:Platform: Unix
+#:Description:
+#   Using SimpleXMLRPC client
+##########################################################
+
+
 import ConfigParser
 import xmlrpclib
 

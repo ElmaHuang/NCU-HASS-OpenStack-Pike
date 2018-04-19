@@ -1,3 +1,16 @@
+#########################################################
+#:Date: 2018/2/13
+#:Version: 1
+#:Authors:
+#    - Elma Huang <huanghuei0206@gmail.com>
+#    - LSC <sclee@g.ncu.edu.tw>
+#:Python_Version: 2.7
+#:Platform: Unix
+#:Description:
+#   Receive update message from controller node by socket
+##########################################################
+
+
 import socket
 import threading
 

@@ -1,5 +1,5 @@
 from django import template
-from django.template.defaultfilters import title  # noqa
+from django.template.defaultfilters import title  # nova
 from django.utils.translation import pgettext_lazy
 from django.utils.translation import ugettext_lazy as _
 from horizon import tables
