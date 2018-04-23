@@ -128,11 +128,16 @@ class NovaClient(object):
     def getVolumes(self, id):
         return NovaClient._helper.volumes.get_server_volumes(id)
 
-    def isInstanceGetVolume(self, id):
+    def isInstanceBootFromVolume(self, id):
         volume = self.getVolumes(id)
-        if volume == []:
+        image = self.getImage(id)
+        if volume == [] or image != '':
             return False
         return True
+
+    def getImage(self, id):
+        vm = self.getVM(id)
+        return getattr(vm, "image")
 
     def novaServiceUp(self, node):
         return NovaClient._helper.services.force_down(node.name, "nova-compute", False)

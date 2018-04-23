@@ -87,39 +87,6 @@ class ClusterTest(unittest.TestCase):
         self.assertEqual(response["code"], MESSAGE_FAIL)
         self.assertEqual(len(server.listCluster()), 0)
 
-    def test_add_instance_overlapping_different_cluster(self):
-        res = server.createCluster(self.cluster_name)
-        cluster_id = res["data"]["clusterId"]
-        server.addNode(cluster_id,["compute1"])
-        res2 = server.createCluster("test2")
-        cluster_id2 = res2["data"]["clusterId"]
-        server.addNode(cluster_id2,["compute2"])
-        instance_id = "24d18aab-3406-4601-afe7-807235ec7c99"
-        server.addInstance(cluster_id,instance_id)
-
-        # perform http request
-        data = {"cluster_id": cluster_id2, "instance_id": instance_id}
-        data = json.dumps(data)
-        self.conn.request("POST", "/HASS/api/instance", body=data, headers=headers)
-        response = json.loads(self.conn.getresponse().read())
-	print response	
-
-        listinstance = server.listInstance(cluster_id)
-	print listinstance
-        for instance in listinstance["data"]["instanceList"]:
-       		i = instance["name"].split()
-
-        listinstance2 = server.listInstance(cluster_id2)
-        print listinstance2
-	for instance in listinstance2["data"]["instanceList"]:
-        	j = instance["name"].split()
-
-        # assert equal
-        self.assertEqual(response["code"], MESSAGE_FAIL)
-        self.assertEqual(len(i), 1)
-        self.assertEqual(len(j), 0)
-
-
     def tearDown(self):
         self.conn.close()
         HASS_reset()

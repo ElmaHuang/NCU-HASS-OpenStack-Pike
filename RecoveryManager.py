@@ -254,7 +254,7 @@ class RecoveryManager(object):
         print "Start service failure recovery by starting Detection Agent"
         agent_path = self.config.get("path", "agent_path")
         #cmd = "cd %s ; python DetectionAgent.py" % (agent_path)  # not daemon
-        cmd = "service Detectionagentd restart"
+        cmd = "service detectionagentd restart"
         print cmd
         # if version = 16:
         # 	cmd = "systemctl restart DetectionAgent.py" # 16 daemon

@@ -4,6 +4,8 @@ import urllib
 import xmlrpclib
 import ConfigParser
 import json
+import HASS_RESTful
+from Hass import Hass
 
 config = ConfigParser.RawConfigParser()
 config.read('hass.conf')
@@ -42,11 +44,15 @@ headers = {'Content-Type' : 'application/json',
 MESSAGE_OK = 'succeed'
 MESSAGE_FAIL = 'failed'
 
+app = HASS_RESTful.app.test_client()
+HASS = Hass()
+HASS_RESTful.RESTfulThread(HASS)
+
 # global function for reset HASS
 def HASS_reset():
-	cluster_list = server.listCluster()
+	cluster_list = HASS.listCluster()
 	for cluster in cluster_list:
-		server.deleteCluster(cluster["cluster_id"])
+		HASS.deleteCluster(cluster["cluster_id"])
 
 class ClusterTest(unittest.TestCase):
 	# set up before every test case runinng.
@@ -54,12 +60,19 @@ class ClusterTest(unittest.TestCase):
 		self.conn = httplib.HTTPConnection(REST_host, REST_port, timeout=30)
 		self.cluster_name = 'test'
 
+	def test_xxx(self):
+		data = {"cluster_name": self.cluster_name}
+		data = json.dumps(data)
+		res = app.post("/HASS/api/cluster", data =data, headers=headers)
+		#res = app.get("/HASS/api/clusters", headers=headers, follow_redirects=True)
+
 	def test_create_cluster(self):
-		# perform http requeset
+		# perform http request
 		data = {"cluster_name": self.cluster_name}
 		data = json.dumps(data)
 		self.conn.request("POST", "/HASS/api/cluster", body=data, headers=headers)
 		response = json.loads(self.conn.getresponse().read())
+
 		# assert equal
 		self.assertEqual(response["code"], MESSAGE_OK)
 		self.assertEqual(len(server.listCluster()), 1)
@@ -68,7 +81,7 @@ class ClusterTest(unittest.TestCase):
 		# create cluster first
 		server.createCluster(self.cluster_name) 
 
-		# perform http requeset
+		# perform http request
 		data = {"cluster_name": self.cluster_name}
 		data = json.dumps(data)
 		self.conn.request("POST", "/HASS/api/cluster", body=data, headers=headers)
@@ -79,7 +92,7 @@ class ClusterTest(unittest.TestCase):
 		self.assertEqual(len(server.listCluster()), 1)
 
 	def test_create_cluster_lack_post_arguments(self):
-		# perform http requeset
+		# perform http request
 		data = None
 		self.conn.request("POST", "/HASS/api/cluster", body=data, headers=headers)
 		response = json.loads(self.conn.getresponse().read())
@@ -196,9 +209,13 @@ class NodeTest(unittest.TestCase):
         	data = json.dumps(data)
         	self.conn.request("POST", "/HASS/api/node", body=data, headers=headers)
         	response = json.loads(self.conn.getresponse().read())        	
+		
+		node_list = server.listNode(cluster_id)
+                count_node_list = node_list["data"]["nodeList"]
 
         	# assert equal
         	self.assertEqual(response["code"], MESSAGE_FAIL)
+		self.assertEqual(len(count_node_list),0)
 	
 	def test_add_node_lack_post_arguments(self):
         	# perform http request
@@ -249,18 +266,23 @@ class NodeTest(unittest.TestCase):
 
 	def test_delete_node_not_exist_cluster_id(self):
         	res = server.createCluster(self.cluster_name)
-        	cluster_id = "123456"
+        	cluster_id = res["data"]["clusterId"]
+		newClusterID = "12345"
         	node_name = "compute1"
 
         	# perform http request
-        	data = {"cluster_id": cluster_id,"node_name": node_name}
+        	data = {"cluster_id": newClusterID,"node_name": node_name}
         	data = json.dumps(data)
-        	endpoint = "/HASS/api/node?cluster_id=%s&&node_name=%s" % (cluster_id, node_name)
+        	endpoint = "/HASS/api/node?cluster_id=%s&&node_name=%s" % (newClusterID, node_name)
         	self.conn.request("DELETE", endpoint, body=data, headers=headers)
         	response = json.loads(self.conn.getresponse().read())
 
+		node_list = server.listNode(cluster_id)
+                count_node_list = node_list["data"]["nodeList"]
+
         	# assert equal
         	self.assertEqual(response["code"], MESSAGE_FAIL)
+		self.assertEqual(len(count_node_list), 0)
     
 	def test_delete_node_lack_post_arguments(self):
         	# perform http request
@@ -269,10 +291,10 @@ class NodeTest(unittest.TestCase):
         	endpoint = "/HASS/api/node"
         	self.conn.request("DELETE", endpoint, body=data, headers=headers)
         	response = json.loads(self.conn.getresponse().read())
-
+		
         	# assert equal
         	self.assertEqual(response["code"], MESSAGE_FAIL)
-
+		
 	def test_list_node(self):
 		node_list = ["compute1"]
         	res = server.createCluster(self.cluster_name)
@@ -294,18 +316,22 @@ class NodeTest(unittest.TestCase):
 
 	def test_list_node_not_exist_cluster_id(self):
         	res = server.createCluster(self.cluster_name)
-        	cluster_id = "123456"
+		cluster_id = res["data"]["clusterId"]
+        	newClusterID = "12345"
 
         	# perform http request
         	data = {"cluster_id": cluster_id}
         	data = json.dumps(data)
-        	endpoint = "/HASS/api/nodes/%s" % cluster_id
+        	endpoint = "/HASS/api/nodes/%s" % newClusterID
         	self.conn.request("GET", endpoint, body=data, headers=headers)
         	response = json.loads(self.conn.getresponse().read())
 
+		node_list = server.listNode(res["data"]["clusterId"])
+                count_node_list = node_list["data"]["nodeList"]
+
         	# assert equal
         	self.assertEqual(response["code"], MESSAGE_FAIL)
-        	
+        	self.assertEqual(len(count_node_list), 0)
 
 	# clean the data after test case end.
         def tearDown(self):
@@ -323,7 +349,7 @@ class InstanceTest(unittest.TestCase):
         	res = server.createCluster(self.cluster_name)
         	cluster_id = res["data"]["clusterId"]
 		server.addNode(cluster_id,["compute1"])
-        	instance_id = "24d18aab-3406-4601-afe7-807235ec7c99"
+        	instance_id = "b6e95aa3-79f0-4edd-9a63-deb4d884b191"
 
         	# perform http request
         	data = {"cluster_id": cluster_id, "instance_id": instance_id}
@@ -343,7 +369,7 @@ class InstanceTest(unittest.TestCase):
         	res = server.createCluster(self.cluster_name)
         	cluster_id = res["data"]["clusterId"]
 		server.addNode(cluster_id,["compute1"])
-        	instance_id = "24d18aab-3406-4601-afe7-807235ec7c99"
+        	instance_id = "b6e95aa3-79f0-4edd-9a63-deb4d884b191"
         	server.addInstance(cluster_id,instance_id)
 
         	# perform http request
@@ -367,7 +393,7 @@ class InstanceTest(unittest.TestCase):
         	res2 = server.createCluster("test2")
         	cluster_id2 = res2["data"]["clusterId"]
 		server.addNode(cluster_id2,["compute2"])
-        	instance_id = "24d18aab-3406-4601-afe7-807235ec7c99"
+        	instance_id = "b6e95aa3-79f0-4edd-9a63-deb4d884b191"
         	server.addInstance(cluster_id,instance_id)
 
         	# perform http request
@@ -399,7 +425,7 @@ class InstanceTest(unittest.TestCase):
         	res = server.createCluster(self.cluster_name)
         	cluster_id = res["data"]["clusterId"]
 		server.addNode(cluster_id,["compute1"])
-		instance_id = "24d18aab-3406-4601-afe7-807235ec7c99"
+		instance_id = "b6e95aa3-79f0-4edd-9a63-deb4d884b191"
 
         	# perform http request
         	data = {"cluster_id": "123456", "instance_id": instance_id}
@@ -407,9 +433,17 @@ class InstanceTest(unittest.TestCase):
         	self.conn.request("POST", "/HASS/api/instance", body=data, headers=headers)
         	response = json.loads(self.conn.getresponse().read())
 
+		listinstance = server.listInstance(cluster_id)
+		if len(listinstance["data"]["instanceList"]) > 0:
+                        for instance in listinstance["data"]["instanceList"]:
+                                i = instance["name"].split()
+                else:
+                        i = []
+
         	# assert equal
         	self.assertEqual(response["code"], MESSAGE_FAIL)
-	
+		self.assertEqual(len(i), 0)
+
 	def test_add_instance_not_exist_instance_id(self):
 		res = server.createCluster(self.cluster_name)
                 cluster_id = res["data"]["clusterId"]
@@ -421,9 +455,17 @@ class InstanceTest(unittest.TestCase):
                 data = json.dumps(data)
                 self.conn.request("POST", "/HASS/api/instance", body=data, headers=headers)
                 response = json.loads(self.conn.getresponse().read())
+		
+		listinstance = server.listInstance(cluster_id)
+                if len(listinstance["data"]["instanceList"]) > 0:
+                        for instance in listinstance["data"]["instanceList"]:
+                                i = instance["name"].split()
+                else:
+                        i = []
 
                 # assert equal
                 self.assertEqual(response["code"], MESSAGE_FAIL)
+		self.assertEqual(len(i), 0)
 
 	def test_add_instance_poweroff(self):
 		res = server.createCluster(self.cluster_name)
@@ -437,8 +479,16 @@ class InstanceTest(unittest.TestCase):
                 self.conn.request("POST", "/HASS/api/instance", body=data, headers=headers)
                 response = json.loads(self.conn.getresponse().read())
 
+		listinstance = server.listInstance(cluster_id)
+                if len(listinstance["data"]["instanceList"]) > 0:
+                        for instance in listinstance["data"]["instanceList"]:
+                                i = instance["name"].split()
+                else:
+                        i = []
+
                 # assert equal
                 self.assertEqual(response["code"], MESSAGE_FAIL)
+		self.assertEqual(len(i),0)
 
 	def test_add_instance_not_have_volume(self):
         	res = server.createCluster(self.cluster_name)
@@ -452,8 +502,16 @@ class InstanceTest(unittest.TestCase):
                 self.conn.request("POST", "/HASS/api/instance", body=data, headers=headers)
                 response = json.loads(self.conn.getresponse().read())
 
+		listinstance = server.listInstance(cluster_id)
+                if len(listinstance["data"]["instanceList"]) > 0:
+                        for instance in listinstance["data"]["instanceList"]:
+                                i = instance["name"].split()
+                else:
+                        i = []
+
                 # assert equal
                 self.assertEqual(response["code"], MESSAGE_FAIL)
+		self.assertEqual(len(i),0)
 
 	def test_add_instance_lack_post_arguments(self):
 		# perform http request
@@ -464,12 +522,12 @@ class InstanceTest(unittest.TestCase):
 
                 # assert equal
                 self.assertEqual(response["code"], MESSAGE_FAIL)	
-	
+
 	def test_list_instance(self):
                 res = server.createCluster(self.cluster_name)
                 cluster_id = res["data"]["clusterId"]
                 addnode = server.addNode(cluster_id,["compute1"])
-        	instance_id = "24d18aab-3406-4601-afe7-807235ec7c99"
+        	instance_id = "b6e95aa3-79f0-4edd-9a63-deb4d884b191"
                 server.addInstance(cluster_id,instance_id)
 
         	# perform http request
@@ -490,7 +548,7 @@ class InstanceTest(unittest.TestCase):
         	res = server.createCluster(self.cluster_name)
         	cluster_id = res["data"]["clusterId"]
 		server.addNode(cluster_id,["compute1"])
-        	instance_id = "24d18aab-3406-4601-afe7-807235ec7c99"
+        	instance_id = "b6e95aa3-79f0-4edd-9a63-deb4d884b191"
 		server.addInstance(cluster_id,instance_id)
 
         	# perform http request
@@ -513,20 +571,28 @@ class InstanceTest(unittest.TestCase):
    	
 	def test_delete_instance_non_exist_cluster_id(self):
         	res = server.createCluster(self.cluster_name)
-        	cluster_id = "123"
+        	cluster_id = res["data"]["clusterId"]
+		newClusterID = "12345"
 		server.addNode(cluster_id,["compute1"])
-        	instance_id = "24d18aab-3406-4601-afe7-807235ec7c99"
+        	instance_id = "b6e95aa3-79f0-4edd-9a63-deb4d884b191"
 
         	# perform http request
-        	data = {"cluster_id": cluster_id, "instance_id": instance_id}
+        	data = {"cluster_id": newClusterID, "instance_id": instance_id}
         	data = json.dumps(data)
-        	endpoint = "/HASS/api/instance?cluster_id=%s&&instance_id=%s" % (cluster_id, instance_id)
+        	endpoint = "/HASS/api/instance?cluster_id=%s&&instance_id=%s" % (newClusterID, instance_id)
         	self.conn.request("DELETE", endpoint, body=data, headers=headers)
         	response = json.loads(self.conn.getresponse().read())
+		
+		listinstance = server.listInstance(cluster_id)
+                if len(listinstance["data"]["instanceList"]) > 0:
+                        for instance in listinstance["data"]["instanceList"]:
+                                i = instance["name"].split()
+                else:
+                        i = []
 
         	# assert equal
         	self.assertEqual(response["code"], MESSAGE_FAIL)
-        	
+		self.assertEqual(len(i),0)        	
 	
 	def test_delete_instance_non_protected_instance_id(self):
         	res = server.createCluster(self.cluster_name)

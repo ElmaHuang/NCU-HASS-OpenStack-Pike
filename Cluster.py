@@ -23,6 +23,8 @@ import ConfigParser
 class Cluster(ClusterInterface):
     def __init__(self, id, name):
         super(Cluster, self).__init__(id, name)
+        self.config = ConfigParser.RawConfigParser()
+        self.config.read('hass.conf')
 
     def addNode(self, node_name_list):
         # create node list
@@ -105,9 +107,9 @@ class Cluster(ClusterInterface):
             return Response(code="failed",
                             message="instance %s doesn't exist" % instance_id,
                             data=None)
-        elif not self.checkInstanceGetVolume(instance_id):
+        elif not self.checkInstanceBootFromVolume(instance_id):
             return Response(code="failed",
-                            message="instance %s doesn't have volume attached" % instance_id,
+                            message="instance %s doesn't booted from volume" % instance_id,
                             data=None)
         elif not self.checkInstancePowerOn(instance_id):
             return Response(code="failed",
@@ -252,9 +254,12 @@ class Cluster(ClusterInterface):
     def getInfo(self):
         return {"cluster_id": self.id, "cluster_name": self.name}
 
-    def checkInstanceGetVolume(self, instance_id):
-        if not self.nova_client.isInstanceGetVolume(instance_id):
-            message = "this instance not having volume! Instance id is %s " % instance_id
+    def checkInstanceBootFromVolume(self, instance_id):
+        # if specify shared_storage to be true, enable file level HA and volume level HA
+        if self.config.getboolean("default", "shared_storage") == True:
+            return True
+        if not self.nova_client.isInstanceBootFromVolume(instance_id):
+            message = "this instance doesn't boot from volume! Instance id is %s " % instance_id
             logging.error(message)
             return False
         return True
