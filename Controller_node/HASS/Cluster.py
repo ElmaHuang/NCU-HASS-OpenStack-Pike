@@ -232,8 +232,10 @@ class Cluster(ClusterInterface):
 
     def isInstanceHostInCluster(self, instance):
         node_list = self.getAllNodeStr()
+        print "isInstanceHostCluster--node_list:", node_list
         print "isInstance in cluster --host:", instance.host
         if instance.host in node_list:
+            print instance.host, " in cluster"
             return True
         return False
 
@@ -248,14 +250,17 @@ class Cluster(ClusterInterface):
         for instance in self.instance_list:
             pre_host = instance.host
             instance.updateInfo()
-            self.sendUpdateInstance(pre_host)
-            # instance is still in cluster
-            if instance.host != pre_host and self.isInstanceHostInCluster(instance):
-                self.sendUpdateInstance(instance.host)
-            # if instance not in cluster, delete the instance
-            if not self.isInstanceHostInCluster(instance):
-                self.deleteInstance(instance.id, send_flag=False)
-            print "instance %s update host to %s" % (instance.name, instance.host)
+            print "pre_host:", pre_host, " host: ", instance.host
+            if instance.host != pre_host:
+                print "instance %s update host to %s" % (instance.name, instance.host)
+                self.sendUpdateInstance(pre_host)
+                # instance is still in cluster
+                if self.isInstanceHostInCluster(instance):
+                    print "send to ", instance.host
+                    self.sendUpdateInstance(instance.host)
+                else:
+                    # if instance not in cluster, delete the instance
+                    self.deleteInstance(instance.id, send_flag=False)
 
     def liveMigrateInstance(self, instance_id):
         host_name = self.nova_client.getInstanceHost(instance_id)
