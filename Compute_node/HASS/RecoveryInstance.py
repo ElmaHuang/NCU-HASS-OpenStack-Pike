@@ -38,7 +38,6 @@ class RecoveryInstance(object):
         self.recovery_type = ""
 
     def recoverInstance(self, fail_vm):
-
         # fail_vm = ['instance-00000344', 'Failed',State]
         self.vm_name = fail_vm[0]
         self.failed_info = fail_vm[1]

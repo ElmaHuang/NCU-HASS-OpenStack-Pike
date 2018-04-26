@@ -32,8 +32,7 @@ class InstanceFailure(threading.Thread):
         self.nova_client = NovaClient.getInstance()
         self.recovery_vm = RecoveryInstance()
         self.libvirt_uri = "qemu:///system"
-        HAInstance.init()
-        # self.failed_instances = []
+        HAInstance.updateHAInstance()
 
     def __virEventLoopNativeRun(self):
         while True:
@@ -50,7 +49,7 @@ class InstanceFailure(threading.Thread):
                                                           self._checkVMWatchdog, None)
                 # Adds a callback to receive notifications of arbitrary domain events occurring on a domain.
                 while True:
-                    self._checkNetwork()
+                    #self._checkNetwork()
                     time.sleep(5)
                     if not self.checkLibvrtConnect(libvirt_connection):
                         # 1 if alive, 0 if dead, -1 on error
@@ -103,6 +102,7 @@ class InstanceFailure(threading.Thread):
         event_string = self.transformDetailToString(event, detail)
         print "state event string :", event_string
         recovery_type = self._findfailure(event_string, domain)
+        print "recover:", recovery_type
         if recovery_type != "":
             fail_instance = [domain.name(), event_string, recovery_type]
             logging.info(str(fail_instance))
@@ -117,6 +117,7 @@ class InstanceFailure(threading.Thread):
             recovery_type = "Delete"
         elif self._check_vm_migrated(event_string):
             recovery_type = "Migration"
+            #time.sleep(5)
         return recovery_type
 
     def _check_vm_crash(self, event_string):
@@ -130,16 +131,15 @@ class InstanceFailure(threading.Thread):
         destroyed_string = InstanceEvent.Event_destroyed
         # print destroyed_string
         if event_string in destroyed_string:
-            #print "vm be shut off"
+            # print "vm be shut off"
             print "destroy--state event string :", event_string
             return self.checkDestroyState(instance_name)
-        #     return True
-        # return False
 
     def _check_vm_migrated(self, event_string):
         migrated_string = InstanceEvent.Event_migrated
         if "Migrated" in event_string and event_string in migrated_string:
             print "migrate--state event string :", event_string
+            time.sleep(5)
             return True
         return False
 
@@ -178,6 +178,7 @@ class InstanceFailure(threading.Thread):
         # print "get ha vm"
         result = False
         print "start recover fail instance"
+        print "update HA Instance"
         HAInstance.updateHAInstance()  # for live migration host info
         ha_instance_list = HAInstance.getInstanceList()
         # check instance is protected
@@ -214,7 +215,6 @@ class InstanceFailure(threading.Thread):
             if "ACTIVE" not in state:
                 if state is None:
                     # Deleted
-                    # result = True
                     check_timeout -= 1
                 else:
                     # ShutOff
@@ -222,7 +222,6 @@ class InstanceFailure(threading.Thread):
             else:
                 # Reboot
                 return False
-            # print "check just reboot (False)", result
         return True
 
     def checkNetworkDown(self, instance, time_out=5):

@@ -37,7 +37,6 @@ class HAInstance():
             for cluster in cluster_list:
                 cluster_uuid = cluster[0]
                 HAInstance.ha_instance_list[cluster_uuid] = HAInstance._getHAInstance(cluster_uuid)
-                # for clusteruuid,ha_instance_list in ha_instance_list.iter:, width=1)
             host_instance = HAInstance._getInstanceByNode(HAInstance.ha_instance_list)
             for cluster_id, instance_list in host_instance.iteritems():
                 for instance in instance_list:
@@ -65,7 +64,7 @@ class HAInstance():
         for id, instance_list in instance_lists.iteritems():
             for instance in instance_list[:]:
                 if HAInstance.host not in instance[2]:
-                    print instance[2]
+                    # print instance[2]
                     instance_list.remove(instance)
         return instance_lists
 
