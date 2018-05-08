@@ -12,7 +12,6 @@
 
 
 import ConfigParser
-import asyncore
 import logging
 import os
 import sys
@@ -36,13 +35,15 @@ def main():
     # agent = DetectionAgent()
     # agent.startListen()
     host_detection = HostFailures()
+    host_detection.daemon = True
+    host_detection.start()
     recv = ReceiveInfoFromController()
     recv.daemon = True
     recv.start()
     instance_detection = InstanceFailure()
     instance_detection.daemon = True
     instance_detection.start()
-    asyncore.loop()
+    # asyncore.loop()
     try:
         while True:
             pass

@@ -12,28 +12,44 @@
 
 
 import ConfigParser
-import asyncore
 import logging
 import socket
 import subprocess
+import threading
 
 import libvirt
 
 
-class HostFailures(asyncore.dispatcher):
+class HostFailures(threading.Thread):
     def __init__(self):
-        asyncore.dispatcher.__init__(self)
+        # asyncore.dispatcher.__init__(self)
+        threading.Thread.__init__(self)
         config = ConfigParser.RawConfigParser()
         config.read('hass_node.conf')
         self.host = None
         self.port = int(config.get("polling", "listen_port"))
         self.version = int(config.get("version", "version"))
-        self.create_socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.set_reuse_addr()
-        self.bind(('', self.port))
+        self.s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.s.bind(('', self.port))
+        # self.create_socket(socket.AF_INET, socket.SOCK_DGRAM)
+        # self.set_reuse_addr()
+        # self.bind(('', self.port))
         self.libvirt_uri = "qemu:///system"
         print "host failure port:", self.port
 
+    def run(self):
+        while True:
+            data, addr = self.s.recvfrom(1024)
+            print data
+            if "polling request" in data:
+                check_result = self.check_services()
+                if check_result == "":
+                    self.s.sendto("OK", addr)
+                else:
+                    check_result = "error:" + check_result
+                    self.s.sendto(check_result, addr)
+
+    '''
     def handle_read(self):
         data, addr = self.recvfrom(2048)
         # print 'request from: ', addr
@@ -45,6 +61,7 @@ class HostFailures(asyncore.dispatcher):
             else:
                 check_result = "error:" + check_result
                 self.sendto(check_result, addr)
+    '''
 
     def check_services(self):
         message = ""

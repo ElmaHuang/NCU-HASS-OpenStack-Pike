@@ -102,7 +102,6 @@ class InstanceFailure(threading.Thread):
         event_string = self.transformDetailToString(event, detail)
         print "state event string :", event_string
         recovery_type = self._findfailure(event_string, domain)
-        print "recover:", recovery_type
         if recovery_type != "":
             fail_instance = [domain.name(), event_string, recovery_type]
             logging.info(str(fail_instance))
@@ -113,8 +112,10 @@ class InstanceFailure(threading.Thread):
         recovery_type = ""
         if self._check_vm_crash(event_string):
             recovery_type = "Crash"
+            return recovery_type
         elif self._check_vm_destroyed(event_string, domain.name()):
             recovery_type = "Delete"
+            return recovery_type
         elif self._check_vm_migrated(event_string):
             recovery_type = "Migration"
             #time.sleep(5)
@@ -122,16 +123,14 @@ class InstanceFailure(threading.Thread):
 
     def _check_vm_crash(self, event_string):
         failed_string = InstanceEvent.Event_failed
-        if event_string == failed_string:
+        if event_string in failed_string:
             print "crash--state event string :", event_string
             return True
         return False
 
     def _check_vm_destroyed(self, event_string, instance_name):
         destroyed_string = InstanceEvent.Event_destroyed
-        # print destroyed_string
         if event_string in destroyed_string:
-            # print "vm be shut off"
             print "destroy--state event string :", event_string
             return self.checkDestroyState(instance_name)
 
@@ -164,7 +163,6 @@ class InstanceFailure(threading.Thread):
         print "domain name:", domain.name(), " domain id:", domain.ID(), "action:", action
         recovery_type = "Watchdog"
         watchdog_string = InstanceEvent.Event_watchdog_action
-        # print "watchdog event string:",watchdogString
         if action in watchdog_string:
             fail_instance = [domain.name(), action, recovery_type]
             result = self.recoverFailedInstance(fail_instance=fail_instance)
