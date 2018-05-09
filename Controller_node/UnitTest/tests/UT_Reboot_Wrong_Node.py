@@ -3,7 +3,7 @@ import sys
 sys.path.insert(0, '..')
 from HASS.IPMINodeOperator import Operator
 
-HOST = "compute1"
+HOST = "compute3"
 
 
 def run():

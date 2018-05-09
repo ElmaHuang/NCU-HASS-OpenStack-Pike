@@ -15,6 +15,7 @@
 
 
 import ConfigParser
+import logging
 
 from keystoneauth1 import session
 from keystoneauth1.identity import v3
@@ -59,17 +60,28 @@ class NovaClient(object):
     def getVM(self, id):
         return NovaClient._helper.servers.get(id)
 
+    def getAllInstanceList(self):
+        return NovaClient._helper.servers.list(search_opts={'all_tenants': 1})
+
     def getInstanceState(self, instance_id):
         instance = self.getVM(instance_id)
         return getattr(instance, "status")
 
     def hardReboot(self, id):
-        instance = self.getVM(id)
-        NovaClient._helper.servers.reboot(instance, reboot_type='HARD')
+        try:
+            instance = self.getVM(id)
+            NovaClient._helper.servers.reboot(instance, reboot_type='HARD')
+            logging.info("hard reboot success--vm id = %s" % id)
+        except Exception as e:
+            logging.error(str(e))
 
     def softReboot(self, id):
-        instance = self.getVM(id)
-        NovaClient._helper.servers.reboot(instance, reboot_type='SOFT')
+        try:
+            instance = self.getVM(id)
+            NovaClient._helper.servers.reboot(instance, reboot_type='SOFT')
+            logging.info("soft reboot success--vm id = %s" % id)
+        except Exception as e:
+            logging.error(str(e))
 
     def getInstanceExternalNetwork(self, ip):
         ext_ip = self.config.get("openstack", "openstack_external_network_gateway_ip").split(".")
@@ -96,5 +108,6 @@ class NovaClient(object):
 
 
 if __name__ == "__main__":
-    a = NovaClient.getInstance()
-    a.hardReboot("219046ce-1c1e-4a73-ac53-4cacafd08e79")
+    pass
+    # a = NovaClient.getInstance()
+    # a.hardReboot("21ffc94c-343e-4813-96b6-5d7d593a6449")

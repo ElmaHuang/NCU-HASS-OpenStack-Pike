@@ -11,11 +11,11 @@ def run():
     try:
         novaClient = NovaClient.getInstance()
         instance_id = Preprocess.create_instance()
-        novaClient.hardReboot(instance_id)
+        novaClient.softReboot(instance_id)
         time.sleep(10)
         return True
     except Exception as e:
-        print "UT_Hard_Reboot Except:" + str(e)
+        print "UT_Soft_Reboot Except:" + str(e)
         return False
     finally:
         # time.sleep(10)

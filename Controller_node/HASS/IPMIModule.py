@@ -186,10 +186,15 @@ class IPMIManager(object):
         ipmi_node_sensors_list = json.loads(self.config.get("ipmi_sensor", "ipmi_node_sensors"))
         try:
             result = self.getNodeInfoByType(node_name, ipmi_node_sensors_list)
-            logging.info("IPMIModule--getAllInfoMoudle finish %s" % result.message)
-            return result
+            logging.info("IPMIModule--getAllInfoByNode finish %s" % result.message)
         except Exception as e:
-            logging.error("IPMIModule--getAllInfoNode fail" + str(e))
+            message = "IPMIModule--getAllInfoNode fail " + str(e)
+            logging.error(message)
+            result = Response(code="failed",
+                              message=message,
+                              data={"info": []})
+        finally:
+            return result
 
     def getOSStatus(self, node_name):
         interval = (IPMIConf.WATCHDOG_THRESHOLD / 2)
@@ -244,7 +249,7 @@ class IPMIManager(object):
                 value = self.getRecoverInfoByNode(node_name, sensor)
                 if value == "Error":  # node is power off
                     logging.error("get %s sensor value fail" % sensor)
-                    # return "Error"
+                    return "Error"
                 if value[0] > value[2] or value[0] < value[1]:
                     # (value,lower,upper)
                     return "Error"
@@ -264,7 +269,7 @@ class IPMIManager(object):
                 value = self.getRecoverInfoByNode(node_name, sensor)
                 if value == "Error":
                     logging.error("get %s sensor value fail" % sensor)
-                    # return "Error"
+                    return "Error"
                 if value[0] > upper_critical or value[0] < lower_critical:
                     return "Error"
             return "OK"
@@ -306,7 +311,7 @@ class IPMIManager(object):
 
 if __name__ == "__main__":
     i = IPMIManager()
-    # print i.getOSStatus_new("compute2")
+    i.getNodeInfoByType("compute2",["Inlet Temp"])
     '''
     def getOSStatus(self, node_name):
         status = "OK"

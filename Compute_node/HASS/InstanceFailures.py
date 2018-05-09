@@ -49,7 +49,7 @@ class InstanceFailure(threading.Thread):
                                                           self._checkVMWatchdog, None)
                 # Adds a callback to receive notifications of arbitrary domain events occurring on a domain.
                 while True:
-                    #self._checkNetwork()
+                    # self._checkNetwork()
                     time.sleep(5)
                     if not self.checkLibvrtConnect(libvirt_connection):
                         # 1 if alive, 0 if dead, -1 on error
@@ -101,24 +101,24 @@ class InstanceFailure(threading.Thread):
         print "domain name :", domain.name(), " domain id :", domain.ID(), "event:", event, "detail:", detail
         event_string = self.transformDetailToString(event, detail)
         print "state event string :", event_string
-        recovery_type = self._findfailure(event_string, domain)
+        recovery_type = self._findfailure(event_string, domain.name())
         if recovery_type != "":
             fail_instance = [domain.name(), event_string, recovery_type]
             logging.info(str(fail_instance))
             result = self.recoverFailedInstance(fail_instance=fail_instance)
             print self.showResult(result)
 
-    def _findfailure(self, event_string, domain):
+    def _findfailure(self, event_string, domain_name):
         recovery_type = ""
         if self._check_vm_crash(event_string):
             recovery_type = "Crash"
             return recovery_type
-        elif self._check_vm_destroyed(event_string, domain.name()):
-            recovery_type = "Delete"
-            return recovery_type
         elif self._check_vm_migrated(event_string):
             recovery_type = "Migration"
-            #time.sleep(5)
+            return recovery_type
+        elif self._check_vm_destroyed(event_string, domain_name):
+            recovery_type = "Delete"
+            # time.sleep(5)
         return recovery_type
 
     def _check_vm_crash(self, event_string):
@@ -203,24 +203,11 @@ class InstanceFailure(threading.Thread):
                 result = True
         return result
 
-    def checkDestroyState(self, instance_name, check_timeout=10):
-        instance = HAInstance.getInstance(instance_name)
+    def checkDestroyState(self, instance_name):
+        # instance = HAInstance.getInstance(instance_name)# not ha instance
         print "start check %s is destroyed or shutoff" % instance_name
-        # result = True
-        while check_timeout > 0:
-            time.sleep(5)
-            state = self.getInstanceState(instance.id)
-            if "ACTIVE" not in state:
-                if state is None:
-                    # Deleted
-                    check_timeout -= 1
-                else:
-                    # ShutOff
-                    return False
-            else:
-                # Reboot
-                return False
-        return True
+        time.sleep(5)
+        return not self._instanceIsExist(instance_name)
 
     def checkNetworkDown(self, instance, time_out=5):
         # check network state is down
@@ -259,6 +246,13 @@ class InstanceFailure(threading.Thread):
         except Exception as e:
             print "getInstanceState--Exception:", str(e)
             return None
+
+    def _instanceIsExist(self, instance_name):
+        all_instance = self.nova_client.getAllInstanceList()
+        for instance in all_instance:
+            if instance.name == instance_name:
+                return True
+        return False
 
     def showResult(self, result):
         if result is None:

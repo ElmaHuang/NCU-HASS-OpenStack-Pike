@@ -98,8 +98,8 @@ class RecoveryInstance(object):
                 return True
             return False
         except Exception as e:
-            print str(e)
             logging.error("RecoveryInstance deleteInstance--except:" + str(e))
+            return False
 
     def chekNetworkState(self, ip, time_out=60):
         # check network state is up
@@ -131,4 +131,3 @@ if __name__ == '__main__':
     a = RecoveryInstance()
     # a.softRebootInstance("instance-000000cc")
     # a.nova_client.softReboot("ef554e3d-72a2-46fb-91e1-274f6de85f23")
-    print a.pingInstance("192.168.0.232")

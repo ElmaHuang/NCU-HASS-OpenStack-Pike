@@ -1,33 +1,33 @@
 # test case sample:
 # test_case_name	description
 #==================Detect====================
-UT_Detect_Network    HAIPMI-TC-20
-UT_Detect_OS    HAIPMI-TC-20
-UT_Detect_Power    HAIPMI-TC-20
-UT_Detect_Service    HAIPMI-TC-20
-UT_Get_OS_Status    HAIPMI-TC-15
-UT_Get_Power_Status    HAIPMI-TC-16
-UT_Get_Sensor_Status    HAIPMI-TC-17
+UT_Detect_Network    HAIPMI-TC-28
+UT_Detect_OS    HAIPMI-TC-29
+UT_Detect_Power    HAIPMI-TC-30
+UT_Detect_Service    HAIPMI-TC-31
+UT_Get_OS_Status    HAIPMI-TC-32
+UT_Get_Power_Status    HAIPMI-TC-33
+UT_Get_Sensor_Status    HAIPMI-TC-34
 #==================Recover===================
-UT_Evacuate    description:
-UT_Recover_Node_By_Reboot    HAIPMI-TC-24
-UT_Recover_Node_By_Start    HAIPMI-TC-27
-UT_Recover_Node_By_Shutoff    HAIPMI-TC-26
-UT_Live_Migration    description:
+UT_Evacuate    HAIPMI-TC-38
+UT_Recover_Node_By_Reboot    HAIPMI-TC-35
+UT_Recover_Node_By_Start    HAIPMI-TC-36
+UT_Recover_Node_By_Shutoff    HAIPMI-TC-37
+UT_Live_Migration    HAIPMI-TC-39
 #==================Operator===================
-UT_ShutOff_Node    HAIPMI-TC-13
-UT_Start_Node    HAIPMI-TC-14
-UT_Reboot_Node    HAIPMI-TC-12
-UT_Reboot_Wrong_Node    HAIPMI-TC-12
-UT_Reboot_Node_In_Cluster    HAIPMI-TC-12
-UT_ShutOff_Wrong_Node    HAIPMI-TC-13
-UT_ShutOff_Node_In_Cluster    HAIPMI-TC-13
-UT_Start_Wrong_Node    HAIPMI-TC-14
-UT_Get_Sensor_Value_By_Type    HAIPMI-TC-18
-UT_Get_Sensor_Value_Wrong_Type    HAIPMI-TC-18
-UT_Get_Sensor_Value_Wrong_Node    HAIPMI-TC-18
-UT_Get_All_Sensor_Value    HAIPMI-TC-19
-UT_Get_All_Sensor_Value_Wrong_Node    HAIPMI-TC-19
+UT_ShutOff_Node    HAIPMI-TC-40
+UT_Start_Node    HAIPMI-TC-41
+UT_Reboot_Node    HAIPMI-TC-42
+UT_Reboot_Wrong_Node    HAIPMI-TC-43
+UT_Reboot_Node_In_Cluster    HAIPMI-TC-44
+UT_ShutOff_Wrong_Node    HAIPMI-TC-45
+UT_ShutOff_Node_In_Cluster    HAIPMI-TC-46
+UT_Start_Wrong_Node    HAIPMI-TC-47
+UT_Get_Sensor_Value_By_Type    HAIPMI-TC-48
+UT_Get_Sensor_Value_Wrong_Type    HAIPMI-TC-49
+UT_Get_Sensor_Value_Wrong_Node    HAIPMI-TC-50
+UT_Get_All_Sensor_Value    HAIPMI-TC-51
+UT_Get_All_Sensor_Value_Wrong_Node    HAIPMI-TC-52
 #===============Auth===================
 UT_Correct_Auth    HAIPMI-TC-01
 UT_Wrong_Auth    HAIPMI-TC-02
@@ -47,17 +47,15 @@ UT_Delete_Node    HAIPMI-TC-13
 UT_Delete_Wrong_Node_Name    HAIPMI-TC-14
 UT_Delete_Node_Wrong_Cluster_ID    HAIPMI-TC-15
 UT_List_Node    HAIPMI-TC-16
-UT_List_Node_IPMI_Status    HAIPMI-TC-32
-UT_List_Node_Wrong_Cluster_ID    HAIPMI-TC-08
+UT_List_Node_IPMI_Status    HAIPMI-TC-17
+UT_List_Node_Wrong_Cluster_ID    HAIPMI-TC-18
 #================Instance=================
-UT_Add_Instance    HAIPMI-TC-09
-UT_Add_Wrong_Instance    HAIPMI-TC-09
-UT_Add_Duplicate_Instance    HAIPMI-TC-09
-UT_Add_Instance_Wrong_Cluster_ID    HAIPMI-TC-09
-UT_Delete_Instance    HAIPMI-TC-10
-UT_Delete_Instance_Wrong_ID    HAIPMI-TC-10
-UT_Delete_Instance_Wrong_Cluster_ID    HAIPMI-TC-10
-UT_List_Instance    HAIPMI-TC-11
-UT_List_Instance_Wrong_Cluster_ID    HAIPMI-TC-11
-#==================Local Host==================
-#UT_Execute_Compute_Node_UnitTest
+UT_Add_Instance    HAIPMI-TC-19
+UT_Add_Wrong_Instance    HAIPMI-TC-20
+UT_Add_Duplicate_Instance    HAIPMI-TC-21
+UT_Add_Instance_Wrong_Cluster_ID    HAIPMI-TC-22
+UT_Delete_Instance    HAIPMI-TC-23
+UT_Delete_Instance_Wrong_ID    HAIPMI-TC-24
+UT_Delete_Instance_Wrong_Cluster_ID    HAIPMI-TC-25
+UT_List_Instance    HAIPMI-TC-26
+UT_List_Instance_Wrong_Cluster_ID    HAIPMI-TC-27

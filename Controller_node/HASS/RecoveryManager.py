@@ -279,7 +279,8 @@ class RecoveryManager(object):
     def restartDetectionService(self, fail_node, version):
         agent_path = self.config.get("path", "agent_path")
         find_detection_cmd = "ps aux | grep '[D]etectionAgent.py'"
-        start_detection_cmd = "cd /home/%s/%s/ ; python DetectionAgent.py" % (fail_node.name, agent_path)  # not daemon
+        # start_detection_cmd = "cd /home/%s/%s/ ; python DetectionAgent.py" % (fail_node.name, agent_path)  # not daemon
+        start_detection_cmd = "systemctl restart detectionagent.service"
         try:
             # kill crash detection agent
             agent_pid = find_detection_cmd.split()[1]

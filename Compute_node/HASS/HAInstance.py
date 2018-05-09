@@ -31,7 +31,7 @@ class HAInstance():
 
     @staticmethod
     def getInstanceFromController():
-        host_instance = {}
+        # host_instance = {}
         try:
             cluster_list = HAInstance.server.listCluster()
             for cluster in cluster_list:
@@ -41,7 +41,6 @@ class HAInstance():
             for cluster_id, instance_list in host_instance.iteritems():
                 for instance in instance_list:
                     HAInstance.addInstance(cluster_id, instance)
-            # return host_instance
         except Exception as e:
             message = "HAInstance getInstanceFromController Except:" + str(e)
             logging.error(message)
@@ -83,6 +82,7 @@ class HAInstance():
         for instance in HAInstance.instance_list:
             if instance.name == name:
                 return instance
+        return None
 
     @staticmethod
     def updateHAInstance():
