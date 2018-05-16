@@ -166,6 +166,8 @@ class RecoveryManager(object):
         for instance in protected_instance_list:
             try:
                 if target_host.instanceOverlappingInLibvirt(instance):
+                    logging.info("instance %s overlapping in %s" % (instance.name, target_host.name))
+                    logging.info("start undefine instance in %s" % target_host.name)
                     print "instance %s overlapping in %s" % (instance.name, target_host.name)
                     print "start undefine instance in %s" % target_host.name
                     target_host.undefineInstance(instance)
@@ -192,10 +194,12 @@ class RecoveryManager(object):
         #     logging.error("RecoverManager : check vm status false")
 
         print "update instance"
+        logging.info("update instance")
         cluster.updateInstance()
 
         if self.iii_support:
             self.iii_database = IIIDatabaseManager()
+            logging.info("start modify iii database")
             print "start modify iii database"
             for instance in protected_instance_list:
                 try:
@@ -204,6 +208,7 @@ class RecoveryManager(object):
                     print str(e)
                     logging.error("%s" % str(e))
             print "end modify iii database"
+            logging.info("end modify iii database")
 
     def recoverNodeByReboot(self, fail_node):
         print "start recover node by reboot"

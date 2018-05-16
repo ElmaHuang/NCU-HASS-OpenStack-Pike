@@ -15,6 +15,7 @@ from DetectionThread import DetectionThread
 from IPMIModule import IPMIManager
 import ConfigParser
 import socket
+import logging
 
 
 class NodeInterface(object):
@@ -78,10 +79,16 @@ class NodeInterface(object):
         }
 
     def sendUpdateInstance(self):
-        so = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        so.connect((self.name, 5001))
-        so.send("update instance")
-        so.close()
+        # try:
+        #     logging.info("Init update instance socket to %s" % self.name)
+        #     so = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        #     so.settimeout(10)
+        #     so.connect((self.name, 5001))
+        #     so.send("update instance")
+        #     so.close()
+        # except Exception as e:
+        #     logging.error("send updata instance fail %s" % str(e))
+        pass
 
 if __name__ == "__main__":
     a = NodeInterface("compute1", "23", True)

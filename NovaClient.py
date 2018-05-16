@@ -92,7 +92,7 @@ class NovaClient(object):
         instance = self.getVM(instance_id)
         return getattr(instance, "OS-EXT-SRV-ATTR:instance_name")
 
-    def getInstanceHost(self, instance_id, check_timeout=60):
+    def getInstanceHost(self, instance_id, check_timeout=120):
         status = None
         while status != "ACTIVE" and check_timeout > 0:
             instance = self.getVM(instance_id)

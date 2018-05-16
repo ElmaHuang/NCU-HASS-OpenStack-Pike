@@ -116,6 +116,7 @@ class InstanceFailure(threading.Thread):
         return stateString[event][detail]
 
     def recoverFailedInstance(self):
+        HAInstance.updateHAInstance()  # for live migration host info
         print "get ha vm"
         ha_instance = HAInstance.getInstanceList()
         print "ha list :", ha_instance
@@ -126,7 +127,7 @@ class InstanceFailure(threading.Thread):
             for fail_instance in self.failed_instances:
                 try:
                     result = self.recovery_vm.recoverInstance(fail_instance)
-                    return result
+                    return result 
                 except Exception as e:
                     print str(e)
         else:  # fail instance is not HA instance
@@ -137,9 +138,15 @@ class InstanceFailure(threading.Thread):
         if ha_instance == {}:
             return
         for failed_vm in self.failed_instances[:]:
-            for id, instance in ha_instance.iteritems():
-                if failed_vm[0] not in instance.name:
-                    self.failed_instances.remove(failed_vm)
+            if not self.FailInstanceInHAInstance(ha_instance, failed_vm):
+                self.failed_instances.remove(failed_vm)
+
+    def FailInstanceInHAInstance(self, ha_instance, failed_instance):
+        result = False
+        for id, instance in ha_instance.iteritems():
+            if failed_instance[0] in instance.name:
+                result = True
+        return result
 
     '''
     def readlog(self):

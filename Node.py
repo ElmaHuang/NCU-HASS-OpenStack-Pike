@@ -78,6 +78,11 @@ class Node(NodeInterface):
             print "Excpeption : %s" % str(e)
             return None
 
+    def delete_ssh_client(self):
+        if self.client:
+            self.client.close()
+            logging.info("ssh client closed")
+
     def check_connection(self):
         try:
             self.client.exec_command('ls', timeout=5)

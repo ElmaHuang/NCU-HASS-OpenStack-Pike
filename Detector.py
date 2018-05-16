@@ -37,9 +37,10 @@ class Detector(object):
             print "[" + self.node + "] create socket connection"
             self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             self.sock.setblocking(0)
-            self.sock.settimeout(1)
+            self.sock.settimeout(10)
             self.sock.connect((self.node, self.port))
         except Exception as e:
+            logging.error("detector connect error %s" % str(e))
             print str(e)
             print "Init [" + self.node + "] connection failed"
 

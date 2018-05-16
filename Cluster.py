@@ -14,6 +14,7 @@ from ClusterInterface import ClusterInterface
 from Response import Response
 from Node import Node
 from Instance import Instance
+from IPMIModule import IPMIManager
 import socket
 import uuid
 import logging
@@ -23,6 +24,7 @@ import ConfigParser
 class Cluster(ClusterInterface):
     def __init__(self, id, name):
         super(Cluster, self).__init__(id, name)
+        self.ipmi = IPMIManager()
         self.config = ConfigParser.RawConfigParser()
         self.config.read('hass.conf')
 
@@ -36,6 +38,7 @@ class Cluster(ClusterInterface):
         try:
             for node_name in node_name_list:
                 if self._isInComputePool(node_name):
+                #if self._isInComputePool(node_name) and self.ipmi._getIPMIStatus(node_name) == True:
                     # print node_name_list
                     node = Node(name=node_name, cluster_id=self.id)
                     self.node_list.append(node)
@@ -47,7 +50,7 @@ class Cluster(ClusterInterface):
                                       message=message,
                                       data={"clusterId": self.id, "node": self.getAllNodeList()})
                 else:
-                    message += "the node %s is illegal.  " % node_name
+                    message += "the node %s is illegal. may be without IPMI support or not in the compute pool, please check the configuration.  " % node_name
                     result = Response(code="failed",
                                       message=message,
                                       data={"clusterId": self.id, "node": self.getAllNodeList()})
@@ -69,6 +72,7 @@ class Cluster(ClusterInterface):
             node = self.getNodeByName(node_name)
             # stop Thread
             node.deleteDetectionThread()
+            node.delete_ssh_client()
             self.deleteInstanceByNode(node)
             self.node_list.remove(node)
             # ret = self.getAllNodeInfo()
@@ -303,7 +307,9 @@ class Cluster(ClusterInterface):
     def updateInstance(self):
         for instance in self.instance_list:
             instance.updateInfo()
+            self.sendUpdateInstance(instance.host)
             print "instance %s update host to %s" % (instance.name, instance.host)
+            logging.info("instance %s update host to %s" % (instance.name, instance.host))
             # instance.host = host
 
     def checkInstanceHost(self, instance_id):
