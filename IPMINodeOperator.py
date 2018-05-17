@@ -32,7 +32,7 @@ class Operator(object):
         self.ipmi_module = IPMIManager()
         self.cluster_list = ClusterManager.getClusterList()
         config = ConfigParser.RawConfigParser()
-        config.read('hass.conf')
+        config.read('/etc/hass.conf')
         self.port = int(config.get("detection", "polling_port"))
 
     def startNode(self, node_name, default_wait_time=300):

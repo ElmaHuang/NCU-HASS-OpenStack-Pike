@@ -20,7 +20,7 @@ import sys
 class DatabaseManager(object):
     def __init__(self):
         self.config = ConfigParser.RawConfigParser()
-        self.config.read('hass.conf')
+        self.config.read('/etc/hass.conf')
         self.db_conn = None
         self.db = None
         try:
@@ -196,7 +196,7 @@ class DatabaseManager(object):
 class IIIDatabaseManager(object):
     def __init__(self):
         self.config = ConfigParser.RawConfigParser()
-        self.config.read('hass.conf')
+        self.config.read('/etc/hass.conf')
         self.db_conn = None
         self.db = None
         try:

@@ -34,7 +34,7 @@ class DetectionThread(threading.Thread):
         self.polling_interval = polling_interval
         self.loop_exit = False
         self.config = ConfigParser.RawConfigParser()
-        self.config.read('hass.conf')
+        self.config.read('/etc/hass.conf')
         self.detector = Detector(node, port)
         self.function_map = [self.detector.checkPowerStatus, self.detector.checkOSStatus,
                              self.detector.checkNetworkStatus, self.detector.checkServiceStatus]

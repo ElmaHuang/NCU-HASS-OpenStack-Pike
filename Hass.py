@@ -60,7 +60,7 @@ class RequestHandler(SimpleXMLRPCRequestHandler):
             decodedString = decodedBytes.decode()
             (username, password) = decodedString.split(':')
             config = ConfigParser.RawConfigParser()
-            config.read('hass.conf')
+            config.read('/etc/hass.conf')
             if username == config.get("rpc", "rpc_username") and password == config.get("rpc", "rpc_password"):
                 print "Login"
                 return True

@@ -27,7 +27,7 @@ from Response import Response
 class IPMIManager(object):
     def __init__(self):
         self.config = ConfigParser.RawConfigParser()
-        self.config.read('hass.conf')
+        self.config.read('/etc/hass.conf')
         self.ip_dict = dict(self.config._sections['ipmi'])
         self.user_dict = dict(self.config._sections['ipmi_user'])
         self.vendor = self.config.get("ipmi", "vendor")

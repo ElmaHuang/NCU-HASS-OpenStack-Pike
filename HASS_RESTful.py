@@ -19,7 +19,7 @@ from Authenticator import Authenticator
 app = Flask(__name__)
 
 config = ConfigParser.RawConfigParser()
-config.read('hass.conf')
+config.read('/etc/hass.conf')
 
 rpc_username = config.get("rpc","rpc_username")
 rpc_password = config.get("rpc","rpc_password")

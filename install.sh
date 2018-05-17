@@ -17,6 +17,7 @@ install_script_start() {
     DATE=`date`
     echo "==========$DATE HASS install script start=============" >> $LOG_FILE
     apt-get install python-mysqldb -y >> $LOG_FILE 2>> $LOG_FILE
+    cp $CWD/hass.conf /etc/.
     upstart_setting
 }
 

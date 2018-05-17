@@ -25,7 +25,7 @@ def enum(**enums):
 class HassAPI():
     def __init__(self):
         self.config = ConfigParser.RawConfigParser()
-        self.config.read('hass.conf')
+        self.config.read('/etc/hass.conf')
         self.authUrl = "http://" + self.config.get("rpc", "rpc_username") + ":" + self.config.get("rpc",
                                                                                                   "rpc_password") + "@127.0.0.1:" + self.config.get(
             "rpc", "rpc_bind_port")

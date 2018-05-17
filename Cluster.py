@@ -26,7 +26,7 @@ class Cluster(ClusterInterface):
         super(Cluster, self).__init__(id, name)
         self.ipmi = IPMIManager()
         self.config = ConfigParser.RawConfigParser()
-        self.config.read('hass.conf')
+        self.config.read('/etc/hass.conf')
 
     def addNode(self, node_name_list):
         # create node list

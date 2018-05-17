@@ -4,7 +4,7 @@ import json
 import logging
 
 config = ConfigParser.RawConfigParser()
-config.read('hass.conf')
+config.read('/etc/hass.conf')
 
 keystone_port = int(config.get("keystone_auth","port"))
 

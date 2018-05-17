@@ -27,7 +27,7 @@ class NodeInterface(object):
         self.nova_client = NovaClient.getInstance()
         self.detection_thread = None
         self.config = ConfigParser.RawConfigParser()
-        self.config.read('hass.conf')
+        self.config.read('/etc/hass.conf')
         self.initDetectionThread()
 
     def setNodeName(self, name):

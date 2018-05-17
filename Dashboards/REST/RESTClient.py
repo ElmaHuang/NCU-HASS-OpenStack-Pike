@@ -4,7 +4,7 @@ import ConfigParser
 import json
 
 config = ConfigParser.RawConfigParser()
-config.read('/usr/share/openstack-dashboard/openstack_dashboard/REST/hass.conf')
+config.read('/etc/hass.conf')
 REST_host = config.get("RESTful","host")
 REST_port = int(config.get("RESTful","port"))
 

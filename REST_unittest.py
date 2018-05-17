@@ -8,7 +8,7 @@ import HASS_RESTful
 from Hass import Hass
 
 config = ConfigParser.RawConfigParser()
-config.read('hass.conf')
+config.read('/etc/hass.conf')
 
 REST_host = config.get("RESTful","host")
 REST_port = int(config.get("RESTful","port"))

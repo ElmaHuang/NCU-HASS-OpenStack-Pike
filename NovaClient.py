@@ -26,7 +26,7 @@ class NovaClient(object):
 
     def __init__(self):
         self.config = ConfigParser.RawConfigParser()
-        self.config.read('hass.conf')
+        self.config.read('/etc/hass.conf')
         self.version = self.config.get("openstack_version", "version")
         if NovaClient._instance != None:
             raise Exception("This class is a singleton! , cannot initialize twice")

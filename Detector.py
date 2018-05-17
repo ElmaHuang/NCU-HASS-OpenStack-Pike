@@ -28,7 +28,7 @@ class Detector(object):
         self.port = port
         self.sock = None
         self.config = ConfigParser.RawConfigParser()
-        self.config.read('hass.conf')
+        self.config.read('/etc/hass.conf')
         self.connect()
 
     def connect(self):

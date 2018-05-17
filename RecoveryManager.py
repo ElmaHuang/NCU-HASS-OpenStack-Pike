@@ -26,7 +26,7 @@ class RecoveryManager(object):
     def __init__(self):
         self.nova_client = NovaClient.getInstance()
         self.config = ConfigParser.RawConfigParser()
-        self.config.read('hass.conf')
+        self.config.read('/etc/hass.conf')
         self.recover_function = {State.NETWORK_FAIL: self.recoverNetworkIsolation,
                                  State.SERVICE_FAIL: self.recoverServiceFail,
                                  State.POWER_FAIL: self.recoverPowerOff,
