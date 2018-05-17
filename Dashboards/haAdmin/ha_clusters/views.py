@@ -15,6 +15,8 @@ from openstack_dashboard.dashboards.haAdmin.ha_clusters import tables as project
 from openstack_dashboard.dashboards.haAdmin.ha_clusters \
     import workflows as ha_cluster_workflows
 
+from openstack_dashboard.REST.RESTClient import RESTClient
+
 import xmlrpclib
 
 import ConfigParser
@@ -25,6 +27,8 @@ LOG = logging.getLogger(__name__)
 
 config = ConfigParser.RawConfigParser()
 config.read('/refactor-HASS/hass.conf')
+
+server = RESTClient.getInstance()
 
 class Response(object):
 	def __init__(self, code, message=None, data=None):
@@ -67,8 +71,8 @@ class IndexView(tables.DataTableView):
     #         
     def get_data(self):
 	authUrl = "http://user:0928759204@127.0.0.1:61209"
-	server = xmlrpclib.ServerProxy(authUrl)
-	result = server.listCluster()
+	#server = xmlrpclib.ServerProxy(authUrl)
+	result = server.list_cluster()["data"]
 	clusters = []
 	for cluster in result:
 	    node_info = []
@@ -77,11 +81,11 @@ class IndexView(tables.DataTableView):
 	    name = cluster["cluster_name"]
 	    node_number = 0
 	    instance_number = 0
-	    node_info = server.listNode(uuid)
+	    node_info = server.list_node(uuid)
 	    node_info = Response(code=node_info["code"], message=node_info["message"], data=node_info["data"])
 	    if (node_info != "" ):
 		node_number = len(node_info.data.get("nodeList"))
-	    instance_info = server.listInstance(uuid)
+	    instance_info = server.list_instance(uuid)
             instance_info = Response(code=instance_info["code"], message=instance_info["message"], data=instance_info["data"])
 	    if (instance_info != ""):
 		instance_number = len(instance_info.data.get("instanceList"))
@@ -94,8 +98,8 @@ class DetailView(tables.DataTableView):
     page_title = _("HA Cluster (uuid:{{cluster_id}})") 
     def get_data(self):
 	authUrl = "http://user:0928759204@127.0.0.1:61209"
-        server = xmlrpclib.ServerProxy(authUrl)
-        result = server.listNode(self.kwargs["cluster_id"])
+        #server = xmlrpclib.ServerProxy(authUrl)
+        result = server.list_node(self.kwargs["cluster_id"])
 	result = Response(code=result["code"], message=result["message"], data=result["data"])
 	if result.code == "succeed" : # Success
 	    computing_nodes = []
@@ -108,7 +112,7 @@ class DetailView(tables.DataTableView):
 		    #node_anme_list.append(name)
 	    	    #instance_id = 0
 		    #for name in result:
-		    full_instance_information = server.listInstance(self.kwargs["cluster_id"])
+		    full_instance_information = server.list_instance(self.kwargs["cluster_id"])
 		    full_instance_information = Response(code=full_instance_information["code"], message=full_instance_information["message"], data=full_instance_information["data"])
 		    instance_number  = self.get_instance_number(name, full_instance_information)
 	            computing_nodes.append(ComputingNode(instance_id, name, instance_number))

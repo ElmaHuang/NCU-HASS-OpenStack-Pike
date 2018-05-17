@@ -16,6 +16,9 @@ from openstack_dashboard.dashboards.haProject.ha_instances\
 
 import xmlrpclib
 
+from openstack_dashboard.REST.RESTClient import RESTClient
+server = RESTClient.getInstance()
+
 class Response(object):
 	def __init__(self, code, message=None, data=None):
 		self.code = code
@@ -72,14 +75,14 @@ class IndexView(tables.DataTableView):
 
     def get_data(self):
 	authUrl = "http://user:0928759204@127.0.0.1:61209"
-        server = xmlrpclib.ServerProxy(authUrl)
-        clusters = server.listCluster()
+        #server = xmlrpclib.ServerProxy(authUrl)
+        clusters = server.list_cluster()["data"]
         instances = []
         ha_instances = []
 	for cluster in clusters:
 	    uuid = cluster["cluster_id"]
 	    name = cluster["cluster_name"]
-            _cluster_instances = server.listInstance(uuid)
+            _cluster_instances = server.list_instance(uuid)
             _cluster_instances = Response(code=_cluster_instances["code"], message=_cluster_instances["message"], data=_cluster_instances["data"])
             #result,cluster_instances = _cluster_instances.split(";")
 	    result = _cluster_instances.code

@@ -4,23 +4,17 @@ import xmlrpclib
 import subprocess
 from Instance import Instance
 
+from RESTClient import RESTClient
 
 class HAInstance():
     instance_list = None
     HA_instance_list = None
-    server = None
+    server = RESTClient.getInstance()
 
     @staticmethod
     def init():
         HAInstance.instance_list = []
         HAInstance.HA_instance_list = {}
-        config = ConfigParser.RawConfigParser()
-        config.read('hass_node.conf')
-        authUrl = "http://" + config.get("rpc", "rpc_username") + ":" + config.get("rpc",
-                                                                               "rpc_password") + "@" + config.get("rpc",
-                                                                                                                  "rpc_controller") + ":" + config.get(
-        "rpc", "rpc_bind_port")
-        HAInstance.server = xmlrpclib.ServerProxy(authUrl)
 
     @staticmethod
     def addInstance(ha_instance):
@@ -53,7 +47,7 @@ class HAInstance():
     @staticmethod
     def getInstanceFromController():
         host_instance = []
-        cluster_list = HAInstance.server.listCluster()
+        cluster_list = HAInstance.server.list_cluster()["data"]
         for cluster in cluster_list:
             clusterId = cluster["cluster_id"]
             instance_list = HAInstance._getHAInstance(clusterId)
@@ -64,7 +58,7 @@ class HAInstance():
     @staticmethod
     def _getHAInstance(clusterId):
         try:
-            instance_list = HAInstance.server.listInstance(clusterId, False)["data"]["instanceList"]
+            instance_list = HAInstance.server.list_instance(clusterId)["data"]["instanceList"]
         except Exception as e:
             print "get ha instance fail" + str(e)
             instance_list = []

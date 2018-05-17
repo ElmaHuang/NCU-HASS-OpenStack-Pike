@@ -10,6 +10,8 @@ import xmlrpclib
 import sys
 import ConfigParser
 from Response import Response
+import time
+from Authenticator import Authenticator
 
 # for POST method, need to specify the 'Content-Type = application/json' in the request header.
 # for GET method, need to specify the parameter after the url.
@@ -26,58 +28,11 @@ rpc_port = int(config.get("rpc","rpc_bind_port"))
 REST_host = config.get("RESTful","host")
 REST_port = int(config.get("RESTful","port"))
 
-keystone_port = int(config.get("keystone_auth","port"))
-
-openstack_user_name = config.get("openstack", "openstack_admin_account")
-openstack_domain = config.get("openstack", "openstack_user_domain_id")
-openstack_password = config.get("openstack", "openstack_admin_password")
-
 HASS = None
 authenticator = None
 
 def _convert_res_to_JSON(response):
   return json.dumps(response.__dict__)
-
-class Authenticator(object):
-  def __init__(self):
-    self.access_token = self.get_access_token()
-
-  def success(self, token):
-    return self.is_token_valid(token)
-
-  def get_access_token(self):
-    try:
-      data = '{ "auth": { "identity": { "methods": [ "password" ], "password": { "user": { "name": \"%s\", "domain": { "name": \"%s\" }, "password": \"%s\" } } } } }' % (openstack_user_name, openstack_domain, openstack_password)
-      headers = {"Content-Type": "application/json"}
-      http_client = httplib.HTTPConnection(REST_host, keystone_port, timeout=30)
-      http_client.request("POST", "/v3/auth/tokens", body=data, headers=headers)
-      return http_client.getresponse().getheaders()[1][1]
-    finally:
-      if http_client:
-        http_client.close()
-
-  def refresh_access_token(self):
-    self.access_token = self.get_access_token()
-
-  def is_token_valid(self, token):
-    if not token:
-      return False
-    try:
-      headers = {"X-Auth-Token": self.access_token, "X-Subject-Token": token}
-      http_client = httplib.HTTPConnection(REST_host, keystone_port, timeout=30)
-      http_client.request("GET", "/v3/auth/tokens", headers=headers)
-      response = http_client.getresponse()
-      if response.status == httplib.UNAUTHORIZED:
-        self.refresh_access_token()
-        return self.is_token_valid(token)
-      map_response = json.loads(response.read())
-      if "error" in map_response and \
-        map_response["error"]["code"] == httplib.NOT_FOUND:
-        return False
-      return True
-    finally:
-      if http_client:
-        http_client.close()
 
 class RESTfulThread(threading.Thread):
   def __init__(self, input_HASS):
@@ -207,6 +162,21 @@ class RESTfulThread(threading.Thread):
   def list_instance(cluster_id):
     res = HASS.listInstance(cluster_id)
     return _convert_res_to_JSON(res)
+
+  @app.route("/HASS/api/recover", methods=['POST'])
+  @requires_auth
+  def recover():
+    fail_type = request.json["fail_type"]
+    cluster_id = request.json["cluster_id"]
+    node_name = request.json["node_name"]
+    res = HASS.recover(fail_type, cluster_id, node_name)
+    return json.dumps(res)
+
+  @app.route("/HASS/api/updateDB", methods=['GET'])
+  @requires_auth
+  def update_db():
+    res = HASS.updateDB()
+    return json.dumps(res)
 
 if __name__ == '__main__':
   pass

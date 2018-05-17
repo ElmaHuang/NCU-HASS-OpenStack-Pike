@@ -17,6 +17,9 @@ from horizon import messages
 from openstack_dashboard import policy
 from openstack_dashboard import api
 
+from openstack_dashboard.REST.RESTClient import RESTClient
+server = RESTClient.getInstance()
+
 class DeleteHACluster(tables.DeleteAction):
     @staticmethod
     def action_present(count):
@@ -34,11 +37,9 @@ class DeleteHACluster(tables.DeleteAction):
             count
         )
     def handle(self, table, request, obj_ids):
-	authUrl = "http://user:0928759204@127.0.0.1:61209"
-        server = xmlrpclib.ServerProxy(authUrl)
 	name = []
 	for uuid in obj_ids:
-            result = server.deleteCluster(uuid)
+            result = server.delete_cluster(uuid)
 	    name.append(self.table.get_object_by_id(uuid).cluster_name) # get cluster's name
 	    if result["code"] == "failed":
 	        err_msg = result["message"]
@@ -68,12 +69,12 @@ class DeleteComputingNode(tables.DeleteAction):
 
     def handle(self, table, request, obj_ids):
 	authUrl = "http://user:0928759204@127.0.0.1:61209"
-        server = xmlrpclib.ServerProxy(authUrl)	
+        #server = xmlrpclib.ServerProxy(authUrl)	
 	cluster_id = self.table.kwargs["cluster_id"]
 	node_names = []
 	for obj_id in obj_ids:
 	    node_name = self.table.get_object_by_id(obj_id).computing_node_name
-            result = server.deleteNode(cluster_id, node_name)
+            result = server.delete_node(cluster_id, node_name)
 	    node_names.append(node_name)
             if result["code"] == 'failed':
 	        err_msg = result["message"]

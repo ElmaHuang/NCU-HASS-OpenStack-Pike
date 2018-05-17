@@ -24,6 +24,9 @@ from openstack_dashboard import api
 import xmlrpclib
 import re
 
+from openstack_dashboard.REST.RESTClient import RESTClient
+server = RESTClient.getInstance()
+
 class SetHAClusterInfoAction(workflows.Action):
     name = forms.CharField(label=_("Name"),
                            max_length=255)
@@ -154,7 +157,7 @@ class CreateHAClusterWorkflow(workflows.Workflow):
 
     def handle(self, request, context):
 	authUrl = "http://user:0928759204@127.0.0.1:61209"
-        server = xmlrpclib.ServerProxy(authUrl)	
+        #server = xmlrpclib.ServerProxy(authUrl)	
 
 	context_computing_nodes = context['computing_nodes']
 	name = context['name']
@@ -162,7 +165,7 @@ class CreateHAClusterWorkflow(workflows.Workflow):
 	for node in context_computing_nodes:
 	    node_list.append(node)
 	   
-        result = server.createCluster(name, node_list)
+        result = server.create_cluster(name, node_list)
 	if 'overlapping node' in result["message"]:
 	    self.failure_message = result["message"]
 	    return False
@@ -180,13 +183,13 @@ class AddComputingNodeWorkflow(workflows.Workflow):
 
     def handle(self, request, context): 
         authUrl = "http://user:0928759204@127.0.0.1:61209"
-        server = xmlrpclib.ServerProxy(authUrl)	
+        #server = xmlrpclib.ServerProxy(authUrl)	
         context_computing_nodes = context['computing_nodes']
         node_list = []
         for node in context_computing_nodes:
             node_list.append(node)
         cluster_id = self.get_cluster_id(self.get_absolute_url())
-        result = server.addNode(cluster_id,node_list)
+        result = server.add_node(cluster_id,node_list)
         self.success_url = urlresolvers.reverse(self.success_url, args=[cluster_id])
         if result["code"] == 'failed': # error
             self.failure_message = result["message"]

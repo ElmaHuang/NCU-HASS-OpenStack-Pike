@@ -22,6 +22,7 @@ import State
 import prctl
 
 from Detector import Detector
+from RESTClient import RESTClient
 
 
 class DetectionThread(threading.Thread):
@@ -37,10 +38,11 @@ class DetectionThread(threading.Thread):
         self.detector = Detector(node, port)
         self.function_map = [self.detector.checkPowerStatus, self.detector.checkOSStatus,
                              self.detector.checkNetworkStatus, self.detector.checkServiceStatus]
-        self.authUrl = "http://" + self.config.get("rpc", "rpc_username") + ":" + self.config.get("rpc",
-                                                                                                  "rpc_password") + "@127.0.0.1:" + self.config.get(
-            "rpc", "rpc_bind_port")
-        self.server = xmlrpclib.ServerProxy(self.authUrl)
+        # self.authUrl = "http://" + self.config.get("rpc", "rpc_username") + ":" + self.config.get("rpc",
+        #                                                                                           "rpc_password") + "@127.0.0.1:" + self.config.get(
+        #     "rpc", "rpc_bind_port")
+        # self.server = xmlrpclib.ServerProxy(self.authUrl)
+        self.server = RESTClient.getInstance()
 
     def run(self):
         prctl.set_name(self.node.name)

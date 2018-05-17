@@ -34,6 +34,8 @@ from openstack_dashboard import api
 from openstack_dashboard.dashboards.project.instances \
     import tables as project_tables
 
+from openstack_dashboard.REST.RESTClient import RESTClient
+server = RESTClient.getInstance()
 
 LOG = logging.getLogger(__name__)
 
@@ -51,7 +53,7 @@ class AddForm(forms.SelfHandlingForm):
     def __init__(self, request, *args, **kwargs):
         super(AddForm, self).__init__(request, *args, **kwargs)
         authUrl = "http://user:0928759204@127.0.0.1:61209"
-        server = xmlrpclib.ServerProxy(authUrl)
+        #server = xmlrpclib.ServerProxy(authUrl)
         instance_choices = [('', _("Select an instance"))]
 
         instances = []
@@ -73,9 +75,9 @@ class AddForm(forms.SelfHandlingForm):
 
     def handle(self, request, data):
         authUrl = "http://user:0928759204@127.0.0.1:61209"
-        server = xmlrpclib.ServerProxy(authUrl)
+        #server = xmlrpclib.ServerProxy(authUrl)
 	
-	clusters = server.listCluster()
+	clusters = server.list_cluster()["data"]
 	
 	if not clusters:
 	    err_msg = _("There is no available HA Cluster in system.")
@@ -83,7 +85,7 @@ class AddForm(forms.SelfHandlingForm):
 	    return False
 
 	random_cluster = random.choice(clusters)
-        result = server.addInstance(random_cluster[0], data['instance_id'])
+        result = server.add_instance(random_cluster[0], data['instance_id'])
 	result = Response(code=result["code"], message=result["message"], data=result["data"])
         if result.code == 'failed':
             err_msg = _(result.message)
@@ -126,11 +128,11 @@ class UpdateForm(forms.SelfHandlingForm):
 
     def handle(self, request, data):
 	authUrl = "http://user:0928759204@127.0.0.1:61209"
-        server = xmlrpclib.ServerProxy(authUrl)
+        #server = xmlrpclib.ServerProxy(authUrl)
         err_msg = _('Unable to remove protection of HA instance: %s ' % data['name'])
         if data['protection'] == 'False':
             cluster_id = self.get_cluster_by_instance(server, data['instance_id'])
-            result = server.deleteInstance(cluster_id, data['instance_id'])
+            result = server.delete_instance(cluster_id, data['instance_id'])
 	    result = Response(code=result["code"], message=result["message"], data=result["data"])
             if result.code  == 'failed':
                 err_msg = result.message
@@ -148,12 +150,12 @@ class UpdateForm(forms.SelfHandlingForm):
         return True
 
     def get_cluster_by_instance(self, server, instance_id):
-        clusters = server.listCluster()
+        clusters = server.list_cluster()["data"]
         cluster_uuid = ""
         for cluster in clusters:
 	    uuid = cluster["cluster_id"]
 	    name = cluster["cluster_name"]
-            _ha_instances = server.listInstance(uuid)
+            _ha_instances = server.list_instance(uuid)
             _ha_instances = Response(code=_ha_instances["code"], message=_ha_instances["message"], data=_ha_instances["data"])
             #result,ha_instances = _ha_instances.split(";")
 	    result = _ha_instances.code
