@@ -21,12 +21,13 @@ import logging
 class NodeInterface(object):
     def __init__(self, name, cluster_id):
         self.name = name
-        # self.protected_instance_list = []
         self.cluster_id = cluster_id
         self.ipmi = IPMIManager()
         self.ipmi_status = self.ipmi._getIPMIStatus(self.name)
         self.nova_client = NovaClient.getInstance()
         self.detection_thread = None
+        self.config = ConfigParser.RawConfigParser()
+        self.config.read('hass.conf')
         self.initDetectionThread()
 
     def setNodeName(self, name):
@@ -53,14 +54,12 @@ class NodeInterface(object):
     '''
 
     def initDetectionThread(self):
-        config = ConfigParser.RawConfigParser()
-        config.read('hass.conf')
 
         cluster_id = self.cluster_id
         node = self
-        polling_port = int(config.get("detection", "polling_port"))
+        polling_port = int(self.config.get("detection", "polling_port"))
         # ipmi_status = self.ipmi_status
-        polling_interval = float(config.get("detection", "polling_interval"))
+        polling_interval = float(self.config.get("detection", "polling_interval"))
 
         self.detection_thread = DetectionThread(cluster_id, node, polling_port, polling_interval)
 
@@ -90,8 +89,29 @@ class NodeInterface(object):
         #     logging.error("send updata instance fail %s" % str(e))
         pass
 
+    def undefine_instance_via_socket(self, instance):
+        port = int(self.config.get("detection", "polling_port"))
+        try:
+            sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            sock.setblocking(0)
+            sock.settimeout(10)
+            sock.connect((self.name, port))
+
+            msg = "undefine %s" % instance.name
+            sock.sendall(msg)
+            data, addr = sock.recvfrom(1024)
+            if data != "OK":
+                logging.error("undefine instance fail msg %s" % data)
+        except Exception as e:
+            logging.error("socket send undefine instance fail %s" % str(e))
+        finally:
+            if sock:
+                sock.close()
+                print "sock close"
+
+
 if __name__ == "__main__":
-    a = NodeInterface("compute1", "23", True)
-    a.startDetectionThread()
+    a = NodeInterface("compute1", "23")
+    a.send_undefine_instance_via_socket("instance-00000052")
     while True:
         pass

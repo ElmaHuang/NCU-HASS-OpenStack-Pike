@@ -7,7 +7,8 @@ if [ $EUID -ne 0 ] ; then
     set -e
 fi
 
-LOG_FILE=/mnt/drbd/HASS/install.log
+CWD=$PWD
+LOG_FILE=$CWD/install.log
 if [ ! -e "$LOG_FILE" ] ; then
     touch $LOG_FILE
 fi
@@ -20,7 +21,7 @@ install_script_start() {
 }
 
 upstart_setting() {
-    UPSTART_CONF_FILE=/mnt/drbd/HASS/example/HASSd.service
+    UPSTART_CONF_FILE=$CWD/example/HASSd.service
     cp $UPSTART_CONF_FILE /etc/systemd/system/.
     systemctl daemon-reload
     systemctl enable HASSd.service >> $LOG_FILE
@@ -60,10 +61,10 @@ dashboard_setting() {
     OPENSTACK_ENABLE_DIR=/usr/share/openstack-dashboard/openstack_dashboard/enabled/
     rm -rf "$OPENSTACK_DASHBOARD_DIR"haAdmin/
     rm -rf "$OPENSTACK_DASHBOARD_DIR"haProject/
-    cp -r /mnt/drbd/HASS/Dashboards/haAdmin/ $OPENSTACK_DASHBOARD_DIR
-    cp -r /mnt/drbd/HASS/Dashboards/haProject/ $OPENSTACK_DASHBOARD_DIR
-    cp /mnt/drbd/HASS/Dashboards/_2400_haProject.py $OPENSTACK_ENABLE_DIR
-    cp /mnt/drbd/HASS/Dashboards/_2600_haAdmin.py $OPENSTACK_ENABLE_DIR
+    cp -r $CWD/Dashboards/haAdmin/ $OPENSTACK_DASHBOARD_DIR
+    cp -r $CWD/Dashboards/haProject/ $OPENSTACK_DASHBOARD_DIR
+    cp $CWD/Dashboards/_2400_haProject.py $OPENSTACK_ENABLE_DIR
+    cp $CWD/Dashboards/_2600_haAdmin.py $OPENSTACK_ENABLE_DIR
     service apache2 restart >> $LOG_FILE
     start_HASS_service
 }
@@ -78,5 +79,5 @@ install_script_end() {
     echo "============$DATE HASS install script end==================" >> $LOG_FILE
 }
 
-#install_script_start
-dashboard_setting
+install_script_start
+#dashboard_setting

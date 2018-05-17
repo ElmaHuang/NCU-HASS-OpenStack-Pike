@@ -30,6 +30,8 @@ class HostFailures(asyncore.dispatcher):
             else:
                 check_result = "error:" + check_result
                 self.sendto(check_result, addr)
+        if "undefine" in data:
+            self.handle_undefine_instance(data, addr)
 
     def check_services(self):
         message = ""
@@ -75,3 +77,22 @@ class HostFailures(asyncore.dispatcher):
             print str(e)
             return False
         return True
+
+    def handle_undefine_instance(self, data, addr):
+        instance_name = data.split(' ')[1]
+        if self.libvirt_contain_instance(instance_name):
+            self.undefine_instance(instance_name)
+        if not self.libvirt_contain_instance(instance_name):
+            self.sendto("OK", addr)
+        else:
+            self.sendto("error:undefine %s" % instance_name, addr)
+
+    def libvirt_contain_instance(self, instance_name):
+        res = subprocess.check_output(['virsh', 'list', '--all'])
+        return (instance_name in res)
+
+    def undefine_instance(self, instance_name):
+        res = subprocess.check_output(['virsh', 'destroy', instance_name])
+        print res
+        res = subprocess.check_output(['virsh', 'undefine', instance_name])
+        print res

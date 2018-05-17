@@ -175,10 +175,12 @@ class RecoveryManager(object):
             except Exception as e:
                 logging.error("instance overlapping in libvirt exception")
                 logging.error(str(e))
-                logging.info("undefineInstance second chance")
-                if target_host.instanceOverlappingInLibvirt(instance):
-                    target_host.undefineInstance(instance)
-
+                logging.info("undefineInstance second chance via socket")
+                try:
+                    target_host.undefine_instance_via_socket(instance)
+                except Exception as e:
+                    logging.error("undefine instance sencond chance fail %s" % str(e))
+                    pass
             try:
                 print "start evacuate"
                 logging.info("start evacuate")

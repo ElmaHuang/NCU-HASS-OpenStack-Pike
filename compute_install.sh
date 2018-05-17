@@ -6,7 +6,7 @@ if [ $EUID -ne 0 ] ; then
     echo "This script must be run as root" 1>&2
     set -e
 fi
-
+CWD=$PWD
 LOG_FILE=/home/localadmin/log/hass_compute_install.log
 if [ ! -e "$LOG_FILE" ] ; then
     touch $LOG_FILE
@@ -86,7 +86,7 @@ configure_watchdog_and_ipmitool() {
 }
 
 install_compute_service() {
-    DIR=/home/localadmin/HASS/
+    DIR=$CWD
     cp -r $DIR/compute_node /home/localadmin/.
     cp $DIR/example/Detectionagentd.service /etc/systemd/system/.
     systemctl daemon-reload
