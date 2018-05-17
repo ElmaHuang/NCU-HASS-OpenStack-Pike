@@ -62,6 +62,7 @@ dashboard_setting() {
     OPENSTACK_REST_DIR=/usr/share/openstack-dashboard/openstack_dashboard/
     rm -rf "$OPENSTACK_DASHBOARD_DIR"haAdmin/
     rm -rf "$OPENSTACK_DASHBOARD_DIR"haProject/
+    cp $CWD/hass.conf $CWD/Dashboards/REST/
     cp -r $CWD/Dashboards/haAdmin/ $OPENSTACK_DASHBOARD_DIR
     cp -r $CWD/Dashboards/haProject/ $OPENSTACK_DASHBOARD_DIR
     cp -r $CWD/Dashboards/REST/ $OPENSTACK_REST_DIR

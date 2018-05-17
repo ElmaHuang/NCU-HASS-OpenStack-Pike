@@ -18,7 +18,6 @@ class RESTClient(object):
 		self.authenticator = Authenticator()
 		RESTClient._instance = self
 
-
 	@staticmethod
 	def getInstance():
 		if not RESTClient._instance:
