@@ -23,7 +23,7 @@ install_watchdog_and_ipmitool() {
     # ipmitool installation
     apt-get install ipmitool -y >> $LOG_FILE 2>> $LOG_FILE
     result=$?
-    if [[ $result -eq 0 ]];
+    if [ $result -eq 0 ];
     then
 	echo "=============ipmitool install success=============" >> $LOG_FILE
     else
@@ -33,7 +33,7 @@ install_watchdog_and_ipmitool() {
     # watchdog installation
     apt-get install watchdog -y >> $LOG_FILE 2>> $LOG_FILE
     result=$?
-    if [[ $result -eq 0 ]];
+    if [ $result -eq 0 ];
     then
         echo "=============watchdog install success=============" >> $LOG_FILE
     else
@@ -44,7 +44,7 @@ install_watchdog_and_ipmitool() {
     # git installation
     apt-get install git -y >> $LOG_FILE 2>> $LOG_FILE
     result=$?
-    if [[ $result -eq 0 ]];
+    if [ $result -eq 0 ];
     then
         echo "=============git install success=============" >> $LOG_FILE
     else

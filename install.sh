@@ -32,7 +32,7 @@ upstart_setting() {
 ipmitool_install() {
     apt-get install ipmitool -y >> $LOG_FILE 2>> $LOG_FILE
     result=$?
-    if [[ $result -eq 0 ]] ;
+    if [ $result -eq 0 ] ;
     then
 	echo "===========ipmitool install success============" >> $LOG_FILE
     else
