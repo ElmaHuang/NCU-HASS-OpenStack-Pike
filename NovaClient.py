@@ -100,11 +100,10 @@ class NovaClient(object):
             print "getInstanceHost in nova-client : %s , %s" % (status, getattr(instance, "name"))
             check_timeout -= 1
             time.sleep(1)
-        # state == ACTIVE or timeout
-        instance = self.getVM(instance_id)
-        if status != "ACTIVE":
+        if self.getInstanceState(instance_id) != "ACTIVE":
+            logging.error("NovaClient getInstanceHost fail,time out and state is not ACTIVE")
             print "NovaClient getInstanceHost fail,time out and state is not ACTIVE"
-        return getattr(instance, "OS-EXT-SRV-ATTR:host")
+        return getattr(self.getVM(instance_id), "OS-EXT-SRV-ATTR:host")
 
     def getInstanceNetwork(self, instance_id):
         instance = self.getVM(instance_id)
@@ -146,7 +145,6 @@ class NovaClient(object):
         return NovaClient._helper.services.force_down(node.name, "nova-compute", True)
 
     def liveMigrateVM(self, instance_id, target_host, check_timeout=60):
-        # print ""
         instance = self.getVM(instance_id)
         instance.live_migrate(host=target_host)
         return self.getInstanceHost(instance_id)

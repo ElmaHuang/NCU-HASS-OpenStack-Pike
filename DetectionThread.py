@@ -59,7 +59,7 @@ class DetectionThread(threading.Thread):
                         self.detector.connect()
                     else:  # recover fail
                         print "recover fail delete node %s from the cluster" % self.node.name
-                        self.server.deleteNode(self.cluster_id, self.node.name)
+                        self.server.delete_node(self.cluster_id, self.node.name)
                         self.stop()
                 except Exception as e:
                     print "Exception : " + str(e)
@@ -83,10 +83,10 @@ class DetectionThread(threading.Thread):
     def verify(self, func):
         index = self.function_map.index(func)
         cloned_function_map = self.function_map[:]  # clone from function map
-        cloned_function_map = cloned_function_map[0:index + 1]  # remove uneeded detection function
+        cloned_function_map = cloned_function_map[0:index]  # remove uneeded detection function
         reversed_function_map = self._reverse(cloned_function_map)
 
-        fail = None
+        fail =  State.SERVICE_FAIL
         for _ in reversed_function_map:
             state = _()
             if state == State.HEALTH and _ == func:

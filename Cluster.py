@@ -307,10 +307,9 @@ class Cluster(ClusterInterface):
     def updateInstance(self):
         for instance in self.instance_list:
             instance.updateInfo()
-            self.sendUpdateInstance(instance.host)
+            instance.host = self.nova_client.getInstanceHost(instance.id)
             print "instance %s update host to %s" % (instance.name, instance.host)
             logging.info("instance %s update host to %s" % (instance.name, instance.host))
-            # instance.host = host
 
     def checkInstanceHost(self, instance_id):
         host = self.nova_client.getInstanceHost(instance_id)

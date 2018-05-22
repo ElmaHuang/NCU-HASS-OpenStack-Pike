@@ -260,13 +260,8 @@ class RecoveryManager(object):
     def restartDetectionService(self, fail_node, version):
         print "Start service failure recovery by starting Detection Agent"
         agent_path = self.config.get("path", "agent_path")
-        #cmd = "cd %s ; python DetectionAgent.py" % (agent_path)  # not daemon
-        cmd = "service detectionagentd restart"
+        cmd = "service Detectionagentd restart"
         print cmd
-        # if version = 16:
-        # 	cmd = "systemctl restart DetectionAgent.py" # 16 daemon
-        # elif version = 14:
-        # 	cmd = "service DetectionAgent.py restart" # 14 daemon
         try:
             fail_node.remote_exec(cmd)  # restart DetectionAgent service
             time.sleep(5)
