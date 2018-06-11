@@ -1,75 +1,113 @@
+#########################################################
+#:Date: 2018/2/13
+#:Version: 1
+#:Authors:
+#    - Elma Huang <huanghuei0206@gmail.com>
+#    - LSC <sclee@g.ncu.edu.tw>
+#:Python_Version: 2.7
+#:Platform: Unix
+#:Description:
+#   This is a static class which maintains all the ha virtual machine data structure.
+##########################################################
 
-import ConfigParser
-import xmlrpclib
+
+from __future__ import print_function
+
+import logging
 import subprocess
-from Instance import Instance
 
+from Instance import Instance
 from RESTClient import RESTClient
 
-class HAInstance():
-    instance_list = None
-    HA_instance_list = None
+
+class HAInstance(object):
     server = RESTClient.getInstance()
+    ha_instance_list = None
+    instance_list = None
+    host = subprocess.check_output(['hostname']).strip()
 
     @staticmethod
     def init():
         HAInstance.instance_list = []
-        HAInstance.HA_instance_list = {}
+        HAInstance.ha_instance_list = {}
 
     @staticmethod
-    def addInstance(ha_instance):
-        id = ha_instance.id
-        HAInstance.HA_instance_list[id] = ha_instance
-        print len(HAInstance.HA_instance_list)
-
-    @staticmethod
-    def getInstanceList():
-        return HAInstance.HA_instance_list
-
-    @staticmethod
-    def getInstance(name):
-        for id, instance in HAInstance.HA_instance_list.iteritems():
-            if instance.name == name:
-                return instance
-
-    @staticmethod
-    def updateHAInstance():
-        # self.clearlog()
-        HAInstance.init()
-        instance_list = HAInstance.getInstanceFromController()
-        for instance in instance_list[:]:
-            # [self.id, self.name, self.host, self.status, self.network]
-            vm = Instance(ha_instance=instance)
-            HAInstance.addInstance(vm)
-        print HAInstance.HA_instance_list
-            # self.writelog(ha_vm)
-
-    @staticmethod
-    def getInstanceFromController():
-        host_instance = []
-        cluster_list = HAInstance.server.list_cluster()["data"]
-        for cluster in cluster_list:
-            clusterId = cluster["cluster_id"]
-            instance_list = HAInstance._getHAInstance(clusterId)
-            print "HA instacne list:", instance_list
-            host_instance = HAInstance._getInstanceByNode(instance_list)
-        return host_instance
-
-    @staticmethod
-    def _getHAInstance(clusterId):
+    def get_instance_from_controller():
         try:
-            instance_list = HAInstance.server.list_instance(clusterId)["data"]["instanceList"]
+            cluster_list = HAInstance.server.list_cluster()["data"]
+            print (cluster_list)
+            for cluster in cluster_list:
+                cluster_uuid = cluster["cluster_id"]
+                HAInstance.ha_instance_list[cluster_uuid] = HAInstance._get_ha_instance(cluster_uuid)
+            host_instance = HAInstance._get_instance_by_node(HAInstance.ha_instance_list)
+            for cluster_id, instance_list in host_instance.iteritems():
+                for instance in instance_list:
+                    HAInstance.add_instance(cluster_id, instance)
         except Exception as e:
-            print "get ha instance fail" + str(e)
-            instance_list = []
+            message = "HAInstance get_instance_from_controller Except:" + str(e)
+            logging.error(message)
+            print(message)
+
+    @staticmethod
+    def _get_ha_instance(cluster_id):
+        instance_list = []
+        try:
+            instance_list = HAInstance.server.list_instance(cluster_id)["data"]["instanceList"]
+        except Exception as e:
+            message = "_get_ha_instance--get instance list from controller(rpc server) fail" + str(e)
+            # instance_list = []
+            logging.error(message)
         finally:
             return instance_list
 
     @staticmethod
-    def _getInstanceByNode(instance_list):
-        host_instance = []
-        host = subprocess.check_output(['hostname']).strip()
-        for instance in instance_list:
-            if host in instance["host"]:
-                host_instance.append(instance)
-        return host_instance
+    def _get_instance_by_node(instance_lists):
+        for id, instance_list in instance_lists.iteritems():
+            for instance in instance_list[:]:
+                if HAInstance.host not in instance["host"]:
+                    instance_list.remove(instance)
+        return instance_lists
+
+    @staticmethod
+    def add_instance(cluster_id, instance):
+        """
+
+        :param cluster_id:
+        :param instance:
+        """
+        print("add vm")
+        vm = Instance(cluster_id = cluster_id, ha_instance = instance)
+        HAInstance.instance_list.append(vm)
+
+    @staticmethod
+    def get_instance_list():
+        """
+
+        :return:
+        """
+        return HAInstance.instance_list
+
+    @staticmethod
+    def get_instance(name):
+        """
+
+        :param name:
+        :return:
+        """
+        for instance in HAInstance.instance_list:
+            if instance.name == name:
+                return instance
+        return None
+
+    @staticmethod
+    def is_HA_instance(name):
+        for instance in HAInstance.instance_list:
+            if instance.name == name:
+                return True
+        return False
+
+    @staticmethod
+    def update_ha_instance():
+        HAInstance.init()
+        HAInstance.get_instance_from_controller()
+        print("update HA Instance finish")

@@ -1,25 +1,42 @@
+##########################################################
+#:Date: 2018/2/12
+#:Version: 1
+#:Authors:
+#    - Elma Huang <huanghuei0206@gmail.com>
+#    - LSC <sclee@g.ncu.edu.tw>
+#:Python_Version: 2.7
+#:Platform: Unix
+#:Description:
+#   This is a class which detects whether virtual machine happens error or not.
+###########################################################
+
+
+from __future__ import print_function
+
+import logging
 import subprocess
+import sys
 import threading
 import time
+
 import libvirt
+
 # import ConfigParse
 import InstanceEvent
+import subprocess
 from HAInstance import HAInstance
+from NovaClient import NovaClient
 from RecoveryInstance import RecoveryInstance
 
 
 class InstanceFailure(threading.Thread):
     def __init__(self):
         threading.Thread.__init__(self)
-        # self.host = host
+        self.nova_client = NovaClient.get_instance()
         self.recovery_vm = RecoveryInstance()
-        self.failed_instances = []
-        # failed_instance
-        '''
-        while True:
-            self._startDetection()
-            time.sleep(2)
-        '''
+        self.libvirt_uri = "qemu:///system"
+        self.host_name = subprocess.check_output(['hostname']).strip()
+        HAInstance.update_ha_instance()
 
     def __virEventLoopNativeRun(self):
         while True:
@@ -28,166 +45,270 @@ class InstanceFailure(threading.Thread):
     def run(self):
         while True:
             try:
-                self.createLibvirtDetectionThread()
-                # libvirt_connection
+                self.create_libvirt_detection_thread()
                 libvirt_connection = self.getLibvirtConnection()
-                libvirt_connection.domainEventRegister(self._checkVMState, None)  # event handler(callback,self)
+                # time.sleep(5)
+                libvirt_connection.domainEventRegister(self._check_vm_state, None)  # event handler(callback,self)
                 libvirt_connection.domainEventRegisterAny(None, libvirt.VIR_DOMAIN_EVENT_ID_WATCHDOG,
-                                                          self._checkVMWatchdog, None)
+                                                          self._check_vm_watchdog, None)
                 # Adds a callback to receive notifications of arbitrary domain events occurring on a domain.
-
-                # self._checkNetwork()
-            except Exception as e:
-                print "failed to run detection method , please check libvirt is alive.exception :", str(e)
-            finally:
                 while True:
+                    #self._check_network()
                     time.sleep(5)
-                    if self.failed_instances != []:
-                        # libvirt_connect.close()
-                        try:
-                            result = self.recoverFailedInstance()
-                            if not result:
-                                print "recovery " + str(
-                                    self.failed_instances) + "fail or the instance is not HA instance."
-                            else:
-                                print "recovery " + str(self.failed_instances) + " success"
-                        except Exception as e:
-                            print str(e)
-                        finally:
-                            self.failed_instances = []
-                    elif not libvirt_connection.isAlive() == 1:
-                        # 1 if alive, 0 if dead, -1 on error
+                    if not self.check_libvirt_connect(libvirt_connection):  # 1 if alive, 0 if dead, -1 on error
                         break
-                        # time.sleep(5)
 
-    def createLibvirtDetectionThread(self):
+            except Exception as e:
+                message = "failed to run detection method , please check libvirt is alive.exception :" + str(e)
+                logging.error(message)
+                sys.exit(1)
+
+    def create_libvirt_detection_thread(self):
         try:
             # set event loop thread
             libvirt.virEventRegisterDefaultImpl()
-            eventLoopThread = threading.Thread(target=self.__virEventLoopNativeRun, name="libvirtEventLoop")
-            eventLoopThread.setDaemon(True)
-            eventLoopThread.start()
+            event_loop_thread = threading.Thread(target = self.__virEventLoopNativeRun, name = "libvirtEventLoop")
+            event_loop_thread.setDaemon(True)
+            event_loop_thread.start()
         except Exception as e:
-            print "failed to create libvirt detection thread " + str(e)
+            message = "failed to create libvirt detection thread " + str(e)
+            print(message)
+            logging.error(message)
+
+    def check_libvirt_connect(self, connection):
+        """
+
+        :param connection:
+        :return:
+        """
+        try:
+            if connection.isAlive() == 1:
+                return True
+            else:
+                return False
+        except Exception as e:
+            mes = "fail to check libvirt connection isAlive()" + str(e)
+            connection.close()
+            logging.error(mes)
+            return False
 
     def getLibvirtConnection(self):
+        """
+
+        :return: 
+        """
         try:
-            connection = libvirt.openReadOnly('qemu:///system')
-            if connection == None:
-                print "failed to open connection to qemu:///system"
+            connection = libvirt.openReadOnly(self.libvirt_uri)
+            if connection is None:
+                print("failed to open connection to qemu:///system")
             else:
                 return connection
         except Exception as e:
-            print "failed to open connection --exception" + str(e)
+            message = "failed to open connection --exception" + str(e)
+            print(message)
+            logging.error(message)
 
-    def _checkVMState(self, connect, domain, event, detail, opaque):
-        # event:cloume,detail:row
-        print "domain name :", domain.name(), " domain id :", domain.ID(), "event:", event, "detail:", detail
-        recovery_type = "State"
-        event_string = self.transformDetailToString(event, detail)
-        failedString = InstanceEvent.Event_failed
-        print "state event string :", event_string
-        if event_string in failedString:
-            self.failed_instances.append([domain.name(), event_string, recovery_type])
-            # print "fail instance--State:",self.failed_instances
+    def _check_vm_state(self, connect, domain, event, detail, opaque):
+        # event:column,detail:row
+        print("domain name :", domain.name(), " domain id :", domain.ID(), "event:", event, "detail:", detail)
+        event_string = self.transform_detail_to_string(event, detail)
+        print("state event string :", event_string)
+        recovery_type = self._find_failure(event_string, domain.name())
+        if recovery_type != "":
+            fail_instance = [domain.name(), event_string, recovery_type]
+            logging.info(str(fail_instance))
+            result = self.recover_failed_instance(fail_instance = fail_instance)
+            print(self.show_result(result))
 
-    def _checkNetwork(self):
+    def _find_failure(self, event_string, domain_name):
+        recovery_type = ""
+        if self._check_vm_crash(event_string):
+            recovery_type = "Crash"
+            return recovery_type
+        elif self._check_vm_migrated(event_string):
+            recovery_type = "Migration"
+            return recovery_type
+        elif self._check_vm_destroyed(event_string, domain_name):
+            recovery_type = "Delete"
+        return recovery_type
+
+    def _check_vm_crash(self, event_string):
+        failed_string = InstanceEvent.Event_failed
+        if event_string in failed_string:
+            print("crash--state event string :", event_string)
+            return True
+        return False
+
+    def _check_vm_destroyed(self, event_string, instance_name):
+        destroyed_string = InstanceEvent.Event_destroyed
+        if event_string in destroyed_string:
+            time.sleep(5)
+            print("destroy--state event string :", event_string)
+            if self.nova_client.get_vm_by_name(instance_name) == None:
+                return True
+        return False
+
+
+    def _check_vm_migrated(self, event_string):
+        migrated_string = InstanceEvent.Event_migrated
+        if "Migrated" in event_string and event_string in migrated_string:
+            print("migrate--state event string :", event_string)
+            time.sleep(5)
+            return True
+        return False
+
+    def _check_network(self):
+        if not self.is_health(): return
         recovery_type = "Network"
-        ha_instance = HAInstance.getInstanceList()
-        for id, instance in ha_instance.iteritems():
-            ip = instance.network_provider
-            try:
-                response = subprocess.check_output(['timeout', '2', 'ping', '-c', '1', ip], stderr=subprocess.STDOUT,
-                                                   universal_newlines=True)
-            except subprocess.CalledProcessError:
-                self.failed_instances.append([instance.name, ip, recovery_type])
+        ha_instance_list = self.nova_client.get_instance_list_by_node(self.host_name)
+        if not ha_instance_list:
+            return
+        for ha_instance in ha_instance_list:
+            if ha_instance.status == "SHUTOFF":
+                continue
+            ip = self.nova_client.get_external_ip_from_instance(ha_instance)
+            print("check net %s" % ip)
+            if not self.ping_instance(ip):
+                if self.check_network_down(ha_instance):
+                    fail_instance = [getattr(ha_instance, "OS-EXT-SRV-ATTR:instance_name"), ip, recovery_type]
+                    # print fail_instance
+                    result = self.recover_failed_instance(fail_instance = fail_instance)
+                    print(self.show_result(result))
 
-    def _checkVMWatchdog(self, connect, domain, action, opaque):
-        print "domain name:", domain.name(), " domain id:", domain.ID(), "action:", action
+    def _check_vm_watchdog(self, connect, domain, action, opaque):
+        print("domain name:", domain.name(), " domain id:", domain.ID(), "action:", action)
         recovery_type = "Watchdog"
         watchdog_string = InstanceEvent.Event_watchdog_action
-        # print "watchdog event string:",watchdogString
         if action in watchdog_string:
-            self.failed_instances.append([domain.name(), action, recovery_type])
-            # print "fail instance--WD:",self.failed_instances
+            fail_instance = [domain.name(), action, recovery_type]
+            result = self.recover_failed_instance(fail_instance = fail_instance)
+            print(self.show_result(result))
 
-    def transformDetailToString(self, event, detail):
+    def transform_detail_to_string(self, event, detail):
+        """
+
+        :param event: 
+        :param detail: 
+        :return: 
+        """
         stateString = InstanceEvent.Event_string
         return stateString[event][detail]
 
-    def recoverFailedInstance(self):
-        HAInstance.updateHAInstance()  # for live migration host info
-        print "get ha vm"
-        ha_instance = HAInstance.getInstanceList()
-        print "ha list :", ha_instance
-        # check instance is protected
-        self.checkRecoveryVM(ha_instance)
-        # any instance shoule be recovery
-        if self.failed_instances != []:
-            for fail_instance in self.failed_instances:
-                try:
-                    result = self.recovery_vm.recoverInstance(fail_instance)
-                    return result 
-                except Exception as e:
-                    print str(e)
-        else:  # fail instance is not HA instance
-            return True
+    def recover_failed_instance(self, fail_instance):
+        """
 
-    def checkRecoveryVM(self, ha_instance):
-        # find all fail_vm in self.failed_instances is ha vm or not
-        if ha_instance == {}:
-            return
-        for failed_vm in self.failed_instances[:]:
-            if not self.FailInstanceInHAInstance(ha_instance, failed_vm):
-                self.failed_instances.remove(failed_vm)
-
-    def FailInstanceInHAInstance(self, ha_instance, failed_instance):
+        :param fail_instance: 
+        :return: 
+        """
+        # print "get ha vm"
         result = False
-        for id, instance in ha_instance.iteritems():
-            if failed_instance[0] in instance.name:
+        print("start recover fail instance")
+        try:
+            result = self.recovery_vm.recover_instance(fail_instance)
+        except Exception as e:
+            logging.error("InstanceFailures recover_failed_instance Except:" + str(e))
+            print(str(e))
+        finally:
+            return result  # True/False
+
+    def check_recovery_vm(self, failed_instance, ha_instance_list):
+        """
+
+        :param failed_instance: 
+        :param ha_instance_list: 
+        :return: 
+        """
+        # find all fail_vm in self.failed_instances is ha vm or not
+        # print ha_instance_list
+        result = None
+        if not ha_instance_list:
+            return result
+        for ha_instance in ha_instance_list:
+            if failed_instance[0] in ha_instance.name:
                 result = True
         return result
 
-    '''
-    def readlog(self):
-        ha_instance = []
-        with open('./HAInstance.py', 'r') as ff:
-            for lines in ff:
-                instances = lines.split("\n")
-                #[['id:8f3340f3-0c48-4333-98e3-96f62df41f21', 'name:instance-00000346', 'host:compute3', 'status:ACTIVE', "network:{'selfservice':", "['192.168.1.8',", "'192.168.0.212']}\n"]]
-                for instance in instances:
-                    #id:219046ce-1c1e-4a73-ac53-4cacafd08e79 name:instance-00000342 host:compute3 status:ACTIVE network:{'provider': ['192.168.0.207']}
-                    instance = self._splitString(instance)
-                    if instance != []:ha_instance.append(instance)
-        ff.close()
-        return ha_instance
+    def check_network_down(self, instance, time_out = 12):
+        """
 
-    def _splitString(self,string):
-        instance = []
-        inst = re.sub('[\[\]{}\'"]', '', string)
-        #['id:8f3340f3-0c48-4333-98e3-96f62df41f21', ' name:instance-00000346', ' host:compute3', ' status:ACTIVE', ' network:selfservice:', ' 192.168.1.8', '', ' 192.168.0.212']
-        inst = "".join(inst)
-        inst = inst.split(" ")
-        for str in inst:
-            str = re.split(r'[:\s]\s*', str)
-            for c in str :
-                if c =="":
-                    str.remove(c)
-            if str != []:instance.append(str)
-            #[
-            # ['id', '8f3340f3-0c48-4333-98e3-96f62df41f21'],
-            # ['name', 'instance-00000346'],
-            # ['host', 'compute3'],
-            # ['status', 'ACTIVE'],
-            # ['network', 'selfservice'],
-            # ['192.168.1.8'],
-            # ['192.168.0.212']
-            # ]
-        return instance
-    '''
+        :param instance: 
+        :param time_out: 
+        :return: 
+        """
+        # check network state is down
+        print("start to check network state second time")
+        while time_out > 0:
+            time.sleep(5)
+            state = self.get_instance_state(instance.id)
+            # maybe vm just be reboot
+            if "ACTIVE" in state:
+                ip = self.nova_client.get_external_ip_from_instance(instance)
+                network_state = self.ping_instance(ip)
+                if network_state:
+                    # network state is not down
+                    return False
+                    # network state is temporary down
+                time_out -= 1
+            else:
+                # vm is deleted or shutoff
+                return False
+        return True
+
+    def ping_instance(self, ip):
+        """
+
+        :param ip: 
+        :return: 
+        """
+        try:
+            response = subprocess.check_output(['timeout', '2', 'ping', '-c', '1', ip],
+                                               stderr = subprocess.STDOUT,
+                                               universal_newlines = True)
+            print("ping %s success" % ip)
+            return True
+        except Exception as e:
+            print("ping %s fail" % ip)
+            print("ping_instance--Exception:", str(e))
+            return False
+
+    def is_health(self):
+        try:
+            response = subprocess.check_output(['timeout', '2', 'ping', '-c', '1', "8.8.8.8"],
+                                               stderr = subprocess.STDOUT,
+                                               universal_newlines = True)
+            return True
+        except Exception as e:
+            return False
+
+    def get_instance_state(self, instance_id):
+        """
+
+        :param instance_id: 
+        :return: 
+        """
+        try:
+            state = self.nova_client.get_instance_state(instance_id)
+            return state
+        except Exception as e:
+            print("get_instance_state--Exception:", str(e))
+            return None
+
+    def show_result(self, result):
+        """
+
+        :param result: 
+        :return: 
+        """
+        if result is None:
+            return '\033[92m' + "[it is not HA instance] " + '\033[0m'
+        elif result:
+            return '\033[92m' + "[recover instance success] " + '\033[0m'
+        elif not result:
+            return '\033[91m' + "[recover instance fail] " + '\033[0m'
+        else:
+            return result
 
 
 if __name__ == '__main__':
     a = InstanceFailure()
     a.start()
-    # a._splitString("[['id:8f3340f3-0c48-4333-98e3-96f62df41f21', 'name:instance-00000346', 'host:compute3', 'status:ACTIVE', \"network:{'selfservice':\", \"['192.168.1.8',\", \"'192.168.0.212']}")

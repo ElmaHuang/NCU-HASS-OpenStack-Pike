@@ -11,8 +11,9 @@
 ##########################################################
 
 HEALTH = "health"
-NETWORK_FAIL = "network"
 SERVICE_FAIL = "service"
+NETWORK_FAIL = "network"
+OS_FAIL = "os"
 POWER_FAIL = "power"
 SENSOR_FAIL = "sensor"
-OS_FAIL = "os"
+FAIL_LEVEL = [POWER_FAIL, OS_FAIL, NETWORK_FAIL, SERVICE_FAIL]

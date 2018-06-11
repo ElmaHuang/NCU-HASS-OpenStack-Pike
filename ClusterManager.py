@@ -198,7 +198,7 @@ class ClusterManager():
             return result
 
     @staticmethod
-    def addInstance(cluster_id, instance_id, write_DB=True):
+    def addInstance(cluster_id, instance_id, write_DB=True, check_power_on=True):
         cluster = ClusterManager.getCluster(cluster_id)
         message = ""
         if not cluster:
@@ -214,7 +214,7 @@ class ClusterManager():
                     return Response(code="failed",
                                     message="instance %s is already being protected" % instance_id,
                                     data={"instance": instance_id})
-                result = cluster.addInstance(instance_id)
+                result = cluster.addInstance(instance_id, check_power_on = check_power_on)
                 if write_DB:
                     ClusterManager.syncToDatabase()
                 logging.info(
@@ -364,6 +364,13 @@ class ClusterManager():
         ClusterManager._cluster_dict = {}
         logging.info("ClusterManager--reset DB ,reset_DB = %s" % ClusterManager._RESET_DB)
 
+
+    @staticmethod
+    def updateAllClusters():
+        for cluster_id, cluster in ClusterManager._cluster_dict.items():
+            cluster.updateInstance()
+        ClusterManager.syncToDatabase()
+
     @staticmethod
     def syncFromDatabase():
         ClusterManager.reset()
@@ -374,7 +381,7 @@ class ClusterManager():
                 if cluster["node_list"] != []:
                     ClusterManager.addNode(cluster["cluster_id"], cluster["node_list"], False)
                 for instance in cluster["instance_list"]:
-                    ClusterManager.addInstance(cluster["cluster_id"], instance)
+                    ClusterManager.addInstance(cluster["cluster_id"], instance, check_power_on = False)
             logging.info("ClusterManager--synco from DB finish")
         except Exception as e:
             print str(e)

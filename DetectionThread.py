@@ -20,6 +20,7 @@ import xmlrpclib
 import json
 import State
 import prctl
+import datetime
 
 from Detector import Detector
 from RESTClient import RESTClient
@@ -38,19 +39,15 @@ class DetectionThread(threading.Thread):
         self.detector = Detector(node, port)
         self.function_map = [self.detector.checkPowerStatus, self.detector.checkOSStatus,
                              self.detector.checkNetworkStatus, self.detector.checkServiceStatus]
-        # self.authUrl = "http://" + self.config.get("rpc", "rpc_username") + ":" + self.config.get("rpc",
-        #                                                                                           "rpc_password") + "@127.0.0.1:" + self.config.get(
-        #     "rpc", "rpc_bind_port")
-        # self.server = xmlrpclib.ServerProxy(self.authUrl)
         self.server = RESTClient.getInstance()
 
     def run(self):
-        prctl.set_name(self.node.name)
         while not self.loop_exit:
             state = self.detect()
             print "[" + self.node.name + "] " + state
 
             if state != State.HEALTH:
+                print datetime.datetime.now()
                 logging.error("[" + self.node.name + "] " + state)
                 try:
                     recover_success = self.server.recover(state, self.cluster_id, self.node.name)
@@ -86,7 +83,7 @@ class DetectionThread(threading.Thread):
         cloned_function_map = cloned_function_map[0:index]  # remove uneeded detection function
         reversed_function_map = self._reverse(cloned_function_map)
 
-        fail =  State.SERVICE_FAIL
+        fail = State.FAIL_LEVEL[index]
         for _ in reversed_function_map:
             state = _()
             if state == State.HEALTH and _ == func:
@@ -103,11 +100,12 @@ class DetectionThread(threading.Thread):
 
 
 if __name__ == "__main__":
-    config = ConfigParser.RawConfigParser()
-    config.read('hass.conf')
-    authUrl = "http://" + config.get("rpc", "rpc_username") + ":" + config.get("rpc",
-                                                                               "rpc_password") + "@127.0.0.1:" + config.get(
-        "rpc", "rpc_bind_port")
-    server = xmlrpclib.ServerProxy(authUrl)
+    # config = ConfigParser.RawConfigParser()
+    # config.read('hass.conf')
+    # authUrl = "http://" + config.get("rpc", "rpc_username") + ":" + config.get("rpc",
+    #                                                                            "rpc_password") + "@127.0.0.1:" + config.get(
+    #     "rpc", "rpc_bind_port")
+    # server = xmlrpclib.ServerProxy(authUrl)
 
-    server.test()
+    # server.test()
+    print State.FAIL_LEVEL[3]

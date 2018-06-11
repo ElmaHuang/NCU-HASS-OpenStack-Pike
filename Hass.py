@@ -404,6 +404,12 @@ class Hass(object):
         except Exception as e:
             logging.error("HASS--update database fail : %s" % str(e))
 
+    def updateAllClusters(self):
+        try:
+            ClusterManager.updateAllClusters()
+        except Exception as e:
+            logging.error("HASS--updateAllCluster fail :" + str(e))
+
 
 def main():
     config = ConfigParser.RawConfigParser()

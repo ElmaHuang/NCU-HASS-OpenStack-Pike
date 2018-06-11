@@ -97,12 +97,13 @@ class NovaClient(object):
         while status != "ACTIVE" and check_timeout > 0:
             instance = self.getVM(instance_id)
             status = self.getInstanceState(instance_id)
+            if status == "SHUTOFF": break
             print "getInstanceHost in nova-client : %s , %s" % (status, getattr(instance, "name"))
             check_timeout -= 1
             time.sleep(1)
-        if self.getInstanceState(instance_id) != "ACTIVE":
-            logging.error("NovaClient getInstanceHost fail,time out and state is not ACTIVE")
-            print "NovaClient getInstanceHost fail,time out and state is not ACTIVE"
+        if status != "ACTIVE" and status != "SHUTOFF":
+            logging.error("NovaClient getInstanceHost fail,time out and state is not ACTIVE or SHUTOFF")
+            print "NovaClient getInstanceHost fail,time out and state is not ACTIVE or SHUTOFF"
         return getattr(self.getVM(instance_id), "OS-EXT-SRV-ATTR:host")
 
     def getInstanceNetwork(self, instance_id):

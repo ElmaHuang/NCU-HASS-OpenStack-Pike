@@ -20,6 +20,7 @@ import logging
 import ConfigParser
 import time
 import subprocess
+import datetime
 
 
 class RecoveryManager(object):
@@ -214,6 +215,7 @@ class RecoveryManager(object):
 
     def recoverNodeByReboot(self, fail_node):
         print "start recover node by reboot"
+        prev = datetime.datetime.now()
         result = fail_node.reboot()
         print "boot node result : %s" % result.message
         message = "RecoveryManager recover "
@@ -221,6 +223,8 @@ class RecoveryManager(object):
             logging.info(message + result.message)
             boot_up = self.checkNodeBootSuccess(fail_node)
             if boot_up:
+                end = datetime.datetime.now()
+                print "host recovery time : %s" % (end - prev)
                 print "Node %s recovery finished." % fail_node.name
                 return True
             else:
@@ -241,6 +245,7 @@ class RecoveryManager(object):
 
     def recoverNodeByStart(self, fail_node):
         print "start recover node by start"
+        prev = datetime.datetime.now()
         result = fail_node.start()
         print "boot node result : %s" % result.message
         message = "RecoveryManager recover"
@@ -248,6 +253,8 @@ class RecoveryManager(object):
             logging.info(message + result.message)
             boot_up = self.checkNodeBootSuccess(fail_node)
             if boot_up:
+                end = datetime.datetime.now()
+                print "host recovery time : %s" % (end - prev)
                 print "Node %s recovery finished." % fail_node.name
                 return True
             else:

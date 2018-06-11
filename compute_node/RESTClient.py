@@ -67,6 +67,9 @@ class RESTClient(object):
 	def updateDB(self):
 		return self._get_response("/HASS/api/updateDB", "GET")
 
+	def update_all_cluster(self):
+		return self._get_response("/HASS/api/updateClusters", "GET")
+
 	def _get_response(self, endpoint, method, data=None):
 		conn = httplib.HTTPConnection(REST_host, REST_port, timeout=500)
 		headers = {'Content-Type' : 'application/json',

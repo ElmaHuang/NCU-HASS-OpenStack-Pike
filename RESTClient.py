@@ -2,6 +2,7 @@ from Authenticator import Authenticator
 import httplib
 import ConfigParser
 import json
+import time
 
 config = ConfigParser.RawConfigParser()
 config.read('/etc/hass.conf')
@@ -69,11 +70,17 @@ class RESTClient(object):
 		return self._get_response("/HASS/api/updateDB", "GET")
 
 	def _get_response(self, endpoint, method, data=None):
-		conn = httplib.HTTPConnection(REST_host, REST_port, timeout=500)
-		headers = {'Content-Type' : 'application/json',
-				   'X-Auth-Token' : self.authenticator.get_access_token()}
-		data = json.dumps(data)
-		conn.request(method, endpoint, body=data, headers=headers)
-		response = json.loads(conn.getresponse().read())
-		conn.close()
-		return response
+		try:
+			conn = httplib.HTTPConnection(REST_host, REST_port, timeout=500)
+			headers = {'Content-Type' : 'application/json',
+					   'X-Auth-Token' : self.authenticator.get_access_token()}
+			request_data = json.dumps(data)
+			conn.request(method, endpoint, body=request_data, headers=headers)
+			response = json.loads(conn.getresponse().read())
+			conn.close()
+			return response
+		except Exception as e:
+			print str(e)
+			print "sleep 5 second, and try again"
+			time.sleep(5)
+			return self._get_response(endpoint, method, data)

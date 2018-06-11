@@ -37,7 +37,7 @@ class Detector(object):
             print "[" + self.node + "] create socket connection"
             self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             self.sock.setblocking(0)
-            self.sock.settimeout(10)
+            self.sock.settimeout(1)
             self.sock.connect((self.node, self.port))
         except Exception as e:
             logging.error("detector connect error %s" % str(e))
@@ -45,23 +45,23 @@ class Detector(object):
             print "Init [" + self.node + "] connection failed"
 
     def checkNetworkStatus(self):
-        heartbeat_time = int(self.config.get("default", "heartbeat_time"))
-        fail = False
+        heartbeat_time = int(self.config.get("default","heartbeat_time"))
+        network_fail_time = 0
         while heartbeat_time > 0:
             try:
-                response = subprocess.check_output(['timeout', '0.2', 'ping', '-c', '1', self.node],
+                response = subprocess.check_output(['timeout', '0.2', 'ping', '-c', '1', self.controller],
                                                    stderr=subprocess.STDOUT, universal_newlines=True)
-                fail = False
             except Exception as e:
-                logging.error("transient network fail")
-                fail = True
+                logging.error("network transient failure")
+                network_fail_time += 1
                 pass
             finally:
                 time.sleep(1)
                 heartbeat_time -= 1
-        if not fail:
-            return State.HEALTH
-        return State.NETWORK_FAIL
+        heartbeat_time = int(self.config.get("default","heartbeat_time"))
+        if network_fail_time == heartbeat_time:
+            return State.NETWORK_FAIL
+        return State.HEALTH
 
     def checkServiceStatus(self):
         try:

@@ -106,7 +106,7 @@ class Cluster(ClusterInterface):
             ret.append(node.getInfo())
         return ret
 
-    def addInstance(self, instance_id):
+    def addInstance(self, instance_id, check_power_on = True):
         if not self.checkInstanceExist(instance_id):
             return Response(code="failed",
                             message="instance %s doesn't exist" % instance_id,
@@ -115,7 +115,7 @@ class Cluster(ClusterInterface):
             return Response(code="failed",
                             message="instance %s doesn't booted from volume" % instance_id,
                             data=None)
-        elif not self.checkInstancePowerOn(instance_id):
+        elif check_power_on and not self.checkInstancePowerOn(instance_id):
             return Response(code="failed",
                             message="instance %s is not power on" % instance_id,
                             data=None)
@@ -320,9 +320,8 @@ class Cluster(ClusterInterface):
 
     def liveMigrateInstance(self, instance_id):
         host = self.nova_client.getInstanceHost(instance_id)
-        host = self.getNodeByName(host)
         target_host = self.findTargetHost(host)
-        print "start live migrate vm from ", host.name, "to ", target_host.name
+        print "start live migrate vm from ", host, "to ", target_host.name
         final_host = self.nova_client.liveMigrateVM(instance_id, target_host.name)
         # print final_host
         return final_host

@@ -178,5 +178,11 @@ class RESTfulThread(threading.Thread):
     res = HASS.updateDB()
     return json.dumps(res)
 
+  @app.route("/HASS/api/updateClusters", methods=['GET'])
+  @requires_auth
+  def update_all_clusters():
+    res = HASS.updateAllClusters()
+    return json.dumps(res)
+
 if __name__ == '__main__':
   pass
