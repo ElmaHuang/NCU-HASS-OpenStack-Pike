@@ -56,7 +56,7 @@ class RecoveryInstance(object):
         if self.recovery_type in Failure.OS_CRASH.value or self.recovery_type in Failure.OS_HANGED.value:
             result = self.hard_reboot_instance(self.vm_name)
         elif self.recovery_type in Failure.MIGRATED.value:
-            result = self.update_db()
+            result = self.update_db(self.vm_name)
         elif self.recovery_type in Failure.SHUTOFF_OR_DELETED.value:
             result = self.delete_instance(self.vm_name)
         elif self.recovery_type in Failure.NETWORK_ISOLATION.value:
@@ -96,11 +96,15 @@ class RecoveryInstance(object):
         self.nova_client.soft_reboot(instance.id)
         return self.check_recover_state(instance.id)
 
-    def update_db(self):
+    def update_db(self, fail_instance_name):
         # instance = self.get_ha_instance(fail_instance_name)
         try:
-            self.server.updateAllCluster()
-            return True
+            instance = self.get_ha_instance(fail_instance_name)
+            if self.check_recover_state(instance.id):
+                self.server.updateAllCluster()
+                return True
+            else:
+                raise Exception("live migration time out")
         except Exception as e:
             logging.error("RecoveryInstance update_db--except:" + str(e))
             return False

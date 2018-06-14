@@ -175,9 +175,6 @@ class HassAPI(object):
         parser_instance_list.add_argument("-i", "--uuid", help = "HA cluster uuid", required = True)
 
     def Input_Command_function(self):
-        """
-
-        """
         args = self.parser.parse_args()
         if args.command == "cluster-create":
             try:

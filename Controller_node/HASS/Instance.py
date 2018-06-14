@@ -33,11 +33,14 @@ class Instance(object):
         self.ext_net = self.getExternalNetwork(self.network)
 
     def getInfo(self):
+        info = []
         try:
             self.updateInfo()
-            return [self.id, self.name, self.host, self.status, self.network]
+            info = [self.id, self.name, self.host, self.status, self.network]
         except Exception as e:
             print("instance--getInfo-fail" + str(e))
+        finally:
+            return info
 
     def getExternalNetwork(self, network):
         """
