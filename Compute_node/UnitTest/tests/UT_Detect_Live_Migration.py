@@ -8,9 +8,13 @@ fail_index = [5, 3]
 
 
 def run():
+    """
+
+    :return: 
+    """
     try:
-        crash_event = instance_thread.transformDetailToString(fail_index[0], fail_index[1])
-        recover = instance_thread._findfailure(crash_event, "")
+        crash_event = instance_thread.transform_detail_to_string(fail_index[0], fail_index[1])
+        recover = instance_thread._find_failure(crash_event, "")
         if recover == "Migration":
             print "detect vm migration successfully"
             return True
@@ -22,8 +26,8 @@ def run():
         return False
 
 # def reboot_vm(instance_id, detect_time=5):
-#     novaClient = NovaClient.getInstance()
-#     novaClient.hardReboot(instance_id)
+#     novaClient = NovaClient.get_instance()
+#     novaClient.hard_reboot(instance_id)
 #     result = False
 #     try:
 #         boot = _check_boot_up(detect_time)

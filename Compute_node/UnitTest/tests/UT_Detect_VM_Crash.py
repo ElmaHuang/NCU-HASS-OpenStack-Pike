@@ -8,9 +8,13 @@ fail_index = [5, 2]
 
 
 def run():
+    """
+
+    :return: 
+    """
     try:
-        crash_event = instance_thread.transformDetailToString(fail_index[0], fail_index[1])
-        recover = instance_thread._findfailure(crash_event, "")
+        crash_event = instance_thread.transform_detail_to_string(fail_index[0], fail_index[1])
+        recover = instance_thread._find_failure(crash_event, "")
         if recover == "Crash":
             print "detect vm crash successfully"
             return True

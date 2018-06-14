@@ -11,8 +11,11 @@
 ##########################################################
 
 
+from __future__ import print_function
+
 import logging
 import subprocess
+import time
 
 from enum import Enum
 
@@ -31,65 +34,85 @@ class Failure(Enum):
 
 class RecoveryInstance(object):
     def __init__(self):
-        self.nova_client = NovaClient.getInstance()
-        self.server = RPCServer.getRPCServer()
+        self.nova_client = NovaClient.get_instance()
+        self.server = RPCServer.get_rpc_server()
         self.vm_name = None
         self.failed_info = None
         self.recovery_type = ""
 
-    def recoverInstance(self, fail_vm):
+    def recover_instance(self, fail_vm):
+        """
+
+        :param fail_vm: 
+        :return: 
+        """
         # fail_vm = ['instance-00000344', 'Failed',State]
         self.vm_name = fail_vm[0]
         self.failed_info = fail_vm[1]
         self.recovery_type = fail_vm[2]
         result = False
-        print "start recover:" + self.recovery_type
+        print("start recover:" + self.recovery_type)
         # print Failure.SHUTOFF_OR_DELETED.value
         if self.recovery_type in Failure.OS_CRASH.value or self.recovery_type in Failure.OS_HANGED.value:
-            result = self.hardRebootInstance(self.vm_name)
+            result = self.hard_reboot_instance(self.vm_name)
         elif self.recovery_type in Failure.MIGRATED.value:
-            result = self.updateDB()
+            result = self.update_db()
         elif self.recovery_type in Failure.SHUTOFF_OR_DELETED.value:
-            result = self.deleteInstance(self.vm_name)
+            result = self.delete_instance(self.vm_name)
         elif self.recovery_type in Failure.NETWORK_ISOLATION.value:
-            if self.softRebootInstance(self.vm_name):
-                print "soft reboot successfully"
-                result = self.chekNetworkState(self.failed_info)
+            if self.soft_reboot_instance(self.vm_name):
+                print("soft reboot successfully")
+                result = self.check_network_state(self.failed_info)
                 if result:
                     message = "ping vm successfully"
-                    print message
+                    print(message)
                     logging.info(message)
                 else:
                     message = "ping vm fail"
-                    print message
+                    print(message)
                     logging.error(message)
-        print "recover %s finish" % self.recovery_type
-        # print result
-        HAInstance.updateHAInstance()
+        print("recover %s finish" % self.recovery_type)
+        print("result :", result)
+        HAInstance.update_ha_instance()
         return result
 
-    def hardRebootInstance(self, fail_instance_name):
-        instance = self.getHAInstance(fail_instance_name)
-        self.nova_client.hardReboot(instance.id)
-        return self.checkRecoverState(instance.id)
+    def hard_reboot_instance(self, fail_instance_name):
+        """
 
-    def softRebootInstance(self, fail_instance_name):
-        instance = self.getHAInstance(fail_instance_name)
-        self.nova_client.softReboot(instance.id)
-        return self.checkRecoverState(instance.id)
+        :param fail_instance_name: 
+        :return: 
+        """
+        instance = self.get_ha_instance(fail_instance_name)
+        self.nova_client.hard_reboot(instance.id)
+        return self.check_recover_state(instance.id)
 
-    def updateDB(self):
-        # instance = self.getHAInstance(fail_instance_name)
+    def soft_reboot_instance(self, fail_instance_name):
+        """
+
+        :param fail_instance_name: 
+        :return: 
+        """
+        instance = self.get_ha_instance(fail_instance_name)
+        self.nova_client.soft_reboot(instance.id)
+        return self.check_recover_state(instance.id)
+
+    def update_db(self):
+        # instance = self.get_ha_instance(fail_instance_name)
         try:
             self.server.updateAllCluster()
             return True
         except Exception as e:
-            logging.error("RecoveryInstance updateDB--except:" + str(e))
+            logging.error("RecoveryInstance update_db--except:" + str(e))
             return False
 
-    def deleteInstance(self, fail_instance_name):
-        instance = self.getHAInstance(fail_instance_name)
-        # state = self.checkDestroyState(instance.id)
+    def delete_instance(self, fail_instance_name):
+        """
+
+        :param fail_instance_name: 
+        :return: 
+        """
+        instance = self.get_ha_instance(fail_instance_name)
+        # state = self.check_destroy_state(instance.id)
         # if not state:
         #     return "instance state is ACTIVE!!!"
         try:
@@ -98,36 +121,57 @@ class RecoveryInstance(object):
                 return True
             return False
         except Exception as e:
-            logging.error("RecoveryInstance deleteInstance--except:" + str(e))
+            logging.error("RecoveryInstance delete_instance--except:" + str(e))
             return False
 
-    def chekNetworkState(self, ip, time_out=60):
+    def check_network_state(self, ip, time_out = 60):
+        """
+
+        :param ip: 
+        :param time_out: 
+        :return: 
+        """
         # check network state is up
         while time_out > 0:
             try:
-                response = subprocess.check_output(['timeout', '2', 'ping', '-c', '1', ip], stderr=subprocess.STDOUT,
-                                                   universal_newlines=True)
+                print("ping ", ip)
+                response = subprocess.check_output(['timeout', '2', 'ping', '-c', '1', ip],
+                                                   stderr = subprocess.STDOUT,
+                                                   universal_newlines = True)
                 logging.info("recover network isolation success")
                 return True
             except subprocess.CalledProcessError:
+                time.sleep(1)
                 time_out -= 1
         logging.error("recover vm network isolation fail")
         return False
 
-    def getHAInstance(self, name):
-        return HAInstance.getInstance(name)
+    def get_ha_instance(self, name):
+        """
 
-    def checkRecoverState(self, id, check_timeout=60):
+        :param name: 
+        :return: 
+        """
+        return HAInstance.get_instance(name)
+
+    def check_recover_state(self, id, check_timeout = 60):
+        """
+
+        :param id: 
+        :param check_timeout: 
+        :return: 
+        """
         while check_timeout > 0:
-            state = self.nova_client.getInstanceState(id)
+            state = self.nova_client.get_instance_state(id)
             if "ACTIVE" in state:
                 return True
             else:
+                time.sleep(1)
                 check_timeout -= 1
         return False
 
 
 if __name__ == '__main__':
     a = RecoveryInstance()
-    # a.softRebootInstance("instance-000000cc")
-    # a.nova_client.softReboot("ef554e3d-72a2-46fb-91e1-274f6de85f23")
+    # a.soft_reboot_instance("instance-000000cc")
+    # a.nova_client.soft_reboot("ef554e3d-72a2-46fb-91e1-274f6de85f23")

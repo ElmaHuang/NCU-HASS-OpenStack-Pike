@@ -11,6 +11,8 @@
 ##########################################################
 
 
+from __future__ import print_function
+
 import ConfigParser
 import logging
 import sys
@@ -27,18 +29,18 @@ class DatabaseManager(object):
         self.db = None
         try:
             self.connect()
-        except MySQLdb.Error, e:
+        except MySQLdb.Error as e:
             logging.error("Hass AccessDB - connect to database failed (MySQL Error: %s)", str(e))
-            print "MySQL Error: %s" % str(e)
+            print("MySQL Error: %s" % str(e))
             sys.exit(1)
 
     def connect(self):
-        self.db_conn = MySQLdb.connect(host=self.config.get("mysql", "mysql_ip"),
-                                       user=self.config.get("mysql", "mysql_username"),
-                                       passwd=self.config.get("mysql", "mysql_password"),
-                                       db=self.config.get("mysql", "mysql_db"),
+        self.db_conn = MySQLdb.connect(host = self.config.get("mysql", "mysql_ip"),
+                                       user = self.config.get("mysql", "mysql_username"),
+                                       passwd = self.config.get("mysql", "mysql_password"),
+                                       db = self.config.get("mysql", "mysql_db"),
                                        )
-        self.db = self.db_conn.cursor(cursorclass=MySQLdb.cursors.DictCursor)
+        self.db = self.db_conn.cursor(cursorclass = MySQLdb.cursors.DictCursor)
 
     def checkDB(self):
         try:
@@ -84,10 +86,10 @@ class DatabaseManager(object):
                             ON DELETE CASCADE
                             );
                             """)
-        except MySQLdb.Error, e:
+        except MySQLdb.Error as e:
             self.closeDB()
             logging.error("Hass AccessDB - Create Table failed (MySQL Error: %s)", str(e))
-            print "createTable--MySQL Error: %s" % str(e)
+            print("createTable--MySQL Error: %s" % str(e))
             sys.exit(1)
 
     def syncFromDB(self):
@@ -113,20 +115,28 @@ class DatabaseManager(object):
                     node_list.append(node["node_name"])
                 for instance in ha_instance_date:
                     instance_list.append(instance["instance_id"])
-                # cluster_id = cluster["cluster_uuid"][:8]+"-"+cluster["cluster_uuid"][8:12]+"-"+cluster["cluster_uuid"][12:16]+"-"+cluster["cluster_uuid"][16:20]+"-"+cluster["cluster_uuid"][20:]
-                exist_cluster.append({"cluster_id": cluster_id, "cluster_name": cluster_name, "node_list": node_list,
-                                      "instance_list": instance_list})
+                # cluster_id = cluster["cluster_uuid"][:8]+"-"+cluster["cluster_uuid"][8:12]+"-"+cluster[
+                # "cluster_uuid"][12:16]+"-"+cluster["cluster_uuid"][16:20]+"-"+cluster["cluster_uuid"][20:]
+                exist_cluster.append({
+                    "cluster_id": cluster_id, "cluster_name": cluster_name,
+                    "node_list": node_list,
+                    "instance_list": instance_list
+                    })
                 # cluster_manager.createCluster(cluster_name = name , cluster_id = cluster_id)
                 # cluster_manager.addNode(cluster_id, node_list)
             logging.info("Hass AccessDB - Read data success")
             return exist_cluster
-        except MySQLdb.Error, e:
+        except MySQLdb.Error as e:
             self.closeDB()
             logging.error("Hass AccessDB - Read data failed (MySQL Error: %s)", str(e))
-            print "MySQL Error: %s" % str(e)
+            print("MySQL Error: %s" % str(e))
             sys.exit(1)
 
     def syncToDB(self, cluster_list):
+        """
+
+        :param cluster_list: 
+        """
         self.checkDB()
         self.resetAll()
         try:
@@ -143,34 +153,44 @@ class DatabaseManager(object):
                 # sync instance
                 instance_list = cluster.getProtectedInstanceList()
                 for instance in instance_list:
-                    data = {"instance_id": instance.id, "below_cluster": cluster_id, "host": instance.host,
-                            "status": instance.status, "network": str(instance.network)}
+                    data = {
+                        "instance_id": instance.id, "below_cluster": cluster_id, "host": instance.host,
+                        "status": instance.status, "network": str(instance.network)
+                        }
                     self.writeDB("ha_instance", data)
-        except MySQLdb.Error, e:
+        except MySQLdb.Error as e:
             self.closeDB()
             logging.error("Hass database manager - sync data failed (MySQL Error: %s)", str(e))
-            print "MySQL Error: %s" % str(e)
+            print("MySQL Error: %s" % str(e))
             sys.exit(1)
 
     def writeDB(self, dbName, data):
+        """
+
+        :param dbName: 
+        :param data: 
+        """
         self.checkDB()
         try:
             cmd = ""
             if dbName == "ha_cluster":
-                # format = "INSERT INTO ha_cluster (cluster_uuid,cluster_name) VALUES (%(cluster_uuid)s, %(cluster_name)s);"
-                cmd = self._insertCMD("ha_cluster (cluster_uuid,cluster_name)", "(%(cluster_uuid)s, %(cluster_name)s)")
+                # format = "INSERT INTO ha_cluster (cluster_uuid,cluster_name) VALUES (%(cluster_uuid)s,
+                # %(cluster_name)s);"
+                cmd = self._insertCMD("ha_cluster (cluster_uuid,cluster_name)",
+                                      "(%(cluster_uuid)s, %(cluster_name)s)")
             elif dbName == "ha_node":
                 # format = "INSERT INTO ha_node (node_name,below_cluster) VALUES (%(node_name)s, %(below_cluster)s);"
                 cmd = self._insertCMD("ha_node (node_name,below_cluster)", "(%(node_name)s, %(below_cluster)s)")
             elif dbName == "ha_instance":
-                # format = "INSERT INTO ha_instance (instance_id, below_cluster, host, status, network) VALUES (%(instance_id)s, %(below_cluster)s, %(host)s, %(status)s, %(network)s);"
+                # format = "INSERT INTO ha_instance (instance_id, below_cluster, host, status, network) VALUES (%(
+                # instance_id)s, %(below_cluster)s, %(host)s, %(status)s, %(network)s);"
                 cmd = self._insertCMD("ha_instance (instance_id, below_cluster, host, status, network)",
                                       "(%(instance_id)s, %(below_cluster)s, %(host)s, %(status)s, %(network)s)")
             self.db.execute(cmd, data)
             self.db_conn.commit()
         except Exception as e:
             logging.error("Hass AccessDB - write data to DB Failed (MySQL Error: %s)", str(e))
-            print "MySQL Error: %s" % str(e)
+            print("MySQL Error: %s" % str(e))
             raise
 
     def _insertCMD(self, table_index, value):
@@ -220,26 +240,32 @@ class IIIDatabaseManager(object):
         self.db = None
         try:
             self.connect()
-        except MySQLdb.Error, e:
+        except MySQLdb.Error as e:
             logging.error("Hass AccessDB(III) - connect to database failed (MySQL Error: %s)", str(e))
-            print "MySQL Error: %s" % str(e)
+            print("MySQL Error: %s" % str(e))
             sys.exit(1)
 
     def connect(self):
-        self.db_conn = MySQLdb.connect(host=self.config.get("iii", "mysql_ip"),
-                                       user=self.config.get("iii", "mysql_username"),
-                                       passwd=self.config.get("iii", "mysql_password"),
-                                       db=self.config.get("iii", "mysql_db"),
+        self.db_conn = MySQLdb.connect(host = self.config.get("iii", "mysql_ip"),
+                                       user = self.config.get("iii", "mysql_username"),
+                                       passwd = self.config.get("iii", "mysql_password"),
+                                       db = self.config.get("iii", "mysql_db"),
                                        )
-        self.db = self.db_conn.cursor(cursorclass=MySQLdb.cursors.DictCursor)
+        self.db = self.db_conn.cursor(cursorclass = MySQLdb.cursors.DictCursor)
 
     def updateInstance(self, instance_id, node):
+        """
+
+        :param instance_id: 
+        :param node: 
+        :return: 
+        """
         self.checkDB()
         compute_num = self._getComputeNum(node)
         instance_resource_id = self.getInstanceResourceID(instance_id)
 
         if not instance_resource_id:
-            print "%s not a iii VM, don't need to modify the database!" % instance_id
+            print("%s not a iii VM, don't need to modify the database!" % instance_id)
             logging.info("%s not a iii VM, don't need to modify the database!" % instance_id)
             return
 
@@ -253,10 +279,16 @@ class IIIDatabaseManager(object):
         self.db_conn.commit()
 
     def getInstanceResourceID(self, instance_id):
+        """
+
+        :param instance_id: 
+        :return: 
+        """
         self.checkDB()
         self.db.execute("SELECT * FROM `Resource` WHERE `OID`= '%s' AND `type`=1" % instance_id)
         data = self.db.fetchall()
-        if len(data) == 0: return None
+        if len(data) == 0:
+            return None
         return str(data[0]["id"])
 
     def _getComputeNum(self, node):

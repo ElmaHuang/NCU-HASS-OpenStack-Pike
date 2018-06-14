@@ -8,10 +8,14 @@ from prettytable import PrettyTable
 
 cwd = os.path.dirname(os.path.abspath(__file__))  # current work directory
 TEST_CASE_DIR = cwd + "/tests/"
-co_name = "testcase.co"
+co_name = "compute_node_testcase.co"
 
 
-class Test:
+class Test(object):
+    """
+
+    """
+
     def __init__(self, name, description, run_func):
         self.name = name
         self.description = description
@@ -20,23 +24,42 @@ class Test:
         self.result = None
 
     def run(self):
+        """
+
+        :return: 
+        """
         return self.run_func()
 
     def passed(self):
+        """
+
+        """
         print self.name + "(execution time " + str(
             self.time_elapsed.microseconds) + "ms) : " + '\033[92m' + "PASS!" + '\033[0m'
         self.result = True
 
     def failed(self):
+        """
+
+        """
         print self.name + "(execution time: " + str(
             self.time_elapsed.microseconds) + "ms) : " + '\033[91m' + "FAIL!" + '\033[0m'
         self.result = False
 
     def set_time_elapsed(self, time_elapsed):
+        """
+
+        :param time_elapsed: 
+        """
         self.time_elapsed = time_elapsed
 
 
 def get_run_func(test_case_name):
+    """
+
+    :param test_case_name: 
+    :return: 
+    """
     f, p, d = imp.find_module(test_case_name, [TEST_CASE_DIR])
     test_module = imp.load_module(test_case_name, f, p, d)
     f.close()
@@ -44,6 +67,10 @@ def get_run_func(test_case_name):
 
 
 def transfer_co_to_test_list():
+    """
+
+    :return: 
+    """
     test_list = []
     f = open(cwd + "/" + co_name, 'r')
     line = f.readline().rstrip('\n')
@@ -64,11 +91,21 @@ def transfer_co_to_test_list():
 
 
 def percentage(part, whole):
+    """
+
+    :param part: 
+    :param whole: 
+    :return: 
+    """
     result = 100 * float(part) / float(whole)
     return str(result) + "%"
 
 
 def generate_test_case_table(test_list):
+    """
+
+    :param test_list: 
+    """
     report_table = PrettyTable(["Number", "Test Case Name", "Time Elapsed", "Pass/Fail"])
     number = 1
     for test_case in test_list:
@@ -83,6 +120,10 @@ def generate_test_case_table(test_list):
 
 
 def generate_result_table(test_list):
+    """
+
+    :param test_list: 
+    """
     total_case = 0
     pass_case = 0
     fail_case = 0
@@ -106,6 +147,9 @@ def generate_result_table(test_list):
 
 
 def main():
+    """
+
+    """
     test_list = transfer_co_to_test_list()
 
     for test_case in test_list:

@@ -11,11 +11,12 @@
 ##########################################################
 
 
+from __future__ import print_function
+
 import logging
 
 import paramiko
 
-from Instance import Instance
 from NodeInterface import NodeInterface
 
 
@@ -34,19 +35,33 @@ class Node(NodeInterface):
         return self.ipmi.rebootNode(self.name)
 
     def instanceOverlappingInLibvirt(self, instance):
+        """
+
+        :param instance: 
+        :return: 
+        """
         return instance.name in self._get_virsh_list()
 
     def undefineInstance(self, instance):
+        """
+
+        :param instance: 
+        """
         stdin, stdout, stderr = self.remote_exec("virsh destroy %s" % instance.name)
-        print stdout.read()
+        print(stdout.read())
         stdin, stdout, stderr = self.remote_exec("virsh undefine %s" % instance.name)
-        print stdout.read()
+        print(stdout.read())
 
     def _get_virsh_list(self):
         stdin, stdout, stderr = self.remote_exec("virsh list --all")
         return stdout.read()
 
     def remote_exec(self, cmd):
+        """
+
+        :param cmd: 
+        :return: 
+        """
         if not self.client:
             logging.error("RecoveryManager : cannot create ssh connection")
             return
@@ -54,34 +69,34 @@ class Node(NodeInterface):
             logging.error("ssh connection lost")
             self.client = self._create_ssh_client()
             logging.info("ssh connection re-established")
-        stdin, stdout, stderr = self.client.exec_command(cmd, timeout=5)
+        stdin, stdout, stderr = self.client.exec_command(cmd, timeout = 5)
         return stdin, stdout, stderr
 
-    def _create_ssh_client(self, default_timeout=1):
+    def _create_ssh_client(self, default_timeout = 1):
         client = paramiko.SSHClient()
         client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         try:
-            client.connect(self.name, username='root', timeout=default_timeout)
+            client.connect(self.name, username = 'root', timeout = default_timeout)
             return client
         except Exception as e:
-            print "Excpeption : %s" % str(e)
+            print("Excpeption : %s" % str(e))
             return None
 
     def check_connection(self):
         try:
-            self.client.exec_command('ls', timeout=5)
+            self.client.exec_command('ls', timeout = 5)
             return True
         except Exception as e:
-            print "Connection lost : %s" % str(e)
+            print("Connection lost : %s" % str(e))
             return False
 
 
 if __name__ == "__main__":
     a = Node("compute2", "123")
-    b = Instance("xx", "instance-0000023e", "compute2")
+    # b = Instance ( "xx" , "instance-0000023e" , "compute2" )
     # print a.undefineInstance(b)
     i, out, err = a.remote_exec("echo 123")
-    print out.read()
+    print(out.read())
     # print a.remote_exec("cd /home/compute2/Desktop/Hass-Newton/computing_node/ ;python DetectionAgent.py")
     # q,w,e =  a.remote_exec("ps -aux")
     # print w.read()

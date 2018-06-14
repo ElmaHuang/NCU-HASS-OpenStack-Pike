@@ -15,6 +15,8 @@
 
 
 # from ClusterManager import ClusterManager
+from __future__ import print_function
+
 import ConfigParser
 import logging
 import time
@@ -43,24 +45,24 @@ class NovaClient(object):
         if not NovaClient._instance:
             NovaClient()
         if not NovaClient._helper:
-            NovaClient._instance.initializeHelper()
+            NovaClient._instance.initialize_helper()
         return NovaClient._instance
 
     def initializeHelper(self):
         NovaClient._helper = self.getHelper()
 
     def getHelper(self):
-        auth = v3.Password(auth_url='http://controller:5000/v3',
-                           username=self.config.get("openstack", "openstack_admin_account"),
-                           password=self.config.get("openstack", "openstack_admin_password"),
-                           project_name=self.config.get("openstack", "openstack_project_name"),
-                           user_domain_name=self.config.get("openstack", "openstack_user_domain_id"),
-                           project_domain_name=self.config.get("openstack", "openstack_project_domain_id"))
-        sess = session.Session(auth=auth)
+        auth = v3.Password(auth_url = 'http://controller:5000/v3',
+                           username = self.config.get("openstack", "openstack_admin_account"),
+                           password = self.config.get("openstack", "openstack_admin_password"),
+                           project_name = self.config.get("openstack", "openstack_project_name"),
+                           user_domain_name = self.config.get("openstack", "openstack_user_domain_id"),
+                           project_domain_name = self.config.get("openstack", "openstack_project_domain_id"))
+        sess = session.Session(auth = auth)
         if self.version == "16":
-            novaClient = client.Client(2.29, session=sess)
+            novaClient = client.Client(2.29, session = sess)
         else:
-            novaClient = client.Client(2.25, session=sess)
+            novaClient = client.Client(2.25, session = sess)
         return novaClient
 
     def getComputePool(self):
@@ -71,58 +73,100 @@ class NovaClient(object):
         return compute_pool
 
     def isInComputePool(self, name):
+        """
+
+        :param name: 
+        :return: 
+        """
         return name in self.getComputePool()
 
     def _getHostList(self):
         return NovaClient._helper.hypervisors.list()
 
     def getVM(self, id):
+        """
+
+        :param id: 
+        :return: 
+        """
         # vm = None
         try:
             vm = NovaClient._helper.servers.get(id)
             return vm
         except Exception as e:
-            print "novaclient--getvm-exception:", str(e)
+            print("novaclient--getvm-exception:", str(e))
 
     def getInstanceState(self, instance_id):
+        """
+
+        :param instance_id: 
+        :return: 
+        """
         instance = self.getVM(instance_id)
         # if instance == None:return None
         return getattr(instance, "status")
 
     def getAllInstanceList(self):
-        return NovaClient._helper.servers.list(search_opts={'all_tenants': 1})
+        return NovaClient._helper.servers.list(search_opts = {'all_tenants': 1})
 
     def getInstanceName(self, instance_id):
+        """
+
+        :param instance_id: 
+        :return: 
+        """
         instance = self.getVM(instance_id)
         # if instance == None:return None
         return getattr(instance, "OS-EXT-SRV-ATTR:instance_name")
 
-    def checkInstanceStatus(self, instance_id, check_timeout=60):
+    def checkInstanceStatus(self, instance_id, check_timeout = 60):
+        """
+
+        :param instance_id: 
+        :param check_timeout: 
+        :return: 
+        """
         status = None
         instance = self.getVM(instance_id)
         while status != "ACTIVE" and check_timeout > 0:
             status = self.getInstanceState(instance_id)
-            print "checkInstanceStatus in nova-client : %s , %s" % (status, getattr(instance, "name"))
+            print("checkInstanceStatus in nova-client : %s , %s" % (status, getattr(instance, "name")))
             check_timeout -= 1
             time.sleep(1)
         # timeout
         if status != "ACTIVE":
-            message = "NovaClient checkInstanceStatus fail,time out and state is not ACTIVE.instance_id = %s" % instance_id
-            print message
+            message = "NovaClient checkInstanceStatus fail,time out and state is not ACTIVE.instance_id = %s" % \
+                      instance_id
+            print(message)
             logging.error(message)
             return False
         return True
 
     def getInstanceHost(self, instance_id):
+        """
+
+        :param instance_id: 
+        :return: 
+        """
         instance = self.getVM(instance_id)
         return getattr(instance, "OS-EXT-SRV-ATTR:host")
 
     def getInstanceNetwork(self, instance_id):
+        """
+
+        :param instance_id: 
+        :return: 
+        """
         instance = self.getVM(instance_id)
         network = getattr(instance, "networks")
         return network
 
     def getInstanceExternalNetwork(self, ip):
+        """
+
+        :param ip: 
+        :return: 
+        """
         ext_ip = self.config.get("openstack", "openstack_external_network_gateway_ip").split(".")
         ext_ip = ext_ip[0:-1]
         check_ip = ip.split(".")
@@ -131,6 +175,11 @@ class NovaClient(object):
         return None
 
     def isInstancePowerOn(self, id):
+        """
+
+        :param id: 
+        :return: 
+        """
         vm = self.getVM(id)
         power_state = getattr(vm, "OS-EXT-STS:power_state")
         if power_state != 1:
@@ -138,24 +187,50 @@ class NovaClient(object):
         return True
 
     def getVolumes(self, id):
+        """
+
+        :param id: 
+        :return: 
+        """
         return NovaClient._helper.volumes.get_server_volumes(id)
 
     def isInstanceGetVolume(self, id):
+        """
+
+        :param id: 
+        :return: 
+        """
         volume = self.getVolumes(id)
         if not volume:
             return False
         return True
 
     def novaServiceUp(self, node):
+        """
+
+        :param node: 
+        :return: 
+        """
         return NovaClient._helper.services.force_down(node.name, "nova-compute", False)
 
     def novaServiceDown(self, node):
+        """
+
+        :param node: 
+        :return: 
+        """
         return NovaClient._helper.services.force_down(node.name, "nova-compute", True)
 
     def liveMigrateVM(self, instance_id, target_host):
+        """
+
+        :param instance_id: 
+        :param target_host: 
+        :return: 
+        """
         try:
             instance = self.getVM(instance_id)
-            instance.live_migrate(host=target_host)
+            instance.live_migrate(host = target_host)
             status = self.checkInstanceStatus(instance_id)
             if status:
                 return self.getInstanceHost(instance_id)
@@ -165,11 +240,18 @@ class NovaClient(object):
             logging.error(message)
 
     def evacuate(self, instance, target_host, fail_node):
+        """
+
+        :param instance: 
+        :param target_host: 
+        :param fail_node: 
+        :return: 
+        """
         try:
             self.novaServiceDown(fail_node)
             openstack_instance = self.getVM(instance.id)
             if self.version == "16":
-                NovaClient._helper.servers.evacuate(openstack_instance, target_host.name, force=True)
+                NovaClient._helper.servers.evacuate(openstack_instance, target_host.name, force = True)
             else:
                 NovaClient._helper.servers.evacuate(openstack_instance, target_host.name)
             self.novaServiceUp(fail_node)
@@ -187,7 +269,7 @@ if __name__ == "__main__":
     '''
     def getInstanceListByNode(self, node_name):
         ret = []
-        instance_list = self.getAllInstanceList()
+        instance_list = self.get_all_instance_list()
         for instance in instance_list:
             name = getattr(instance, "OS-EXT-SRV-ATTR:hypervisor_hostname")
             if name == node_name:

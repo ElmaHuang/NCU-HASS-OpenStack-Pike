@@ -32,58 +32,89 @@ class NovaClient(object):
         if NovaClient._instance is not None:
             raise Exception("This class is a singleton! , cannot initialize twice")
         else:
-            self.initializeHelper()
+            self.initialize_helper()
             NovaClient._instance = self
 
     @staticmethod
-    def getInstance():
+    def get_instance():
         if not NovaClient._instance:
             NovaClient()
         if not NovaClient._helper:
-            NovaClient._instance.initializeHelper()
+            NovaClient._instance.initialize_helper()
         return NovaClient._instance
 
-    def initializeHelper(self):
-        NovaClient._helper = self.getHelper()
+    def initialize_helper(self):
+        NovaClient._helper = self.get_helper()
 
-    def getHelper(self):
-        auth = v3.Password(auth_url='http://controller:5000/v3',
-                           username=self.config.get("openstack", "openstack_admin_account"),
-                           password=self.config.get("openstack", "openstack_admin_password"),
-                           project_name=self.config.get("openstack", "openstack_project_name"),
-                           user_domain_name=self.config.get("openstack", "openstack_user_domain_id"),
-                           project_domain_name=self.config.get("openstack", "openstack_project_domain_id"))
-        sess = session.Session(auth=auth)
-        novaClient = client.Client(2.29, session=sess)
+    def get_helper(self):
+        auth = v3.Password(auth_url = 'http://controller:5000/v3',
+                           username = self.config.get("openstack", "openstack_admin_account"),
+                           password = self.config.get("openstack", "openstack_admin_password"),
+                           project_name = self.config.get("openstack", "openstack_project_name"),
+                           user_domain_name = self.config.get("openstack", "openstack_user_domain_id"),
+                           project_domain_name = self.config.get("openstack", "openstack_project_domain_id"))
+        sess = session.Session(auth = auth)
+        novaClient = client.Client(2.29, session = sess)
         return novaClient
 
-    def getVM(self, id):
+    def get_vm(self, id):
+        """
+
+        :param id: 
+        :return: 
+        """
         return NovaClient._helper.servers.get(id)
 
-    def getAllInstanceList(self):
-        return NovaClient._helper.servers.list(search_opts={'all_tenants': 1})
+    def get_all_instance_list(self):
+        """
 
-    def getInstanceState(self, instance_id):
-        instance = self.getVM(instance_id)
-        return getattr(instance, "status")
+        :return: 
+        """
+        return NovaClient._helper.servers.list(search_opts = {'all_tenants': 1})
 
-    def hardReboot(self, id):
+    def get_instance_state(self, instance_id):
+        """
+
+        :param instance_id: 
+        :return: 
+        """
         try:
-            instance = self.getVM(id)
-            NovaClient._helper.servers.reboot(instance, reboot_type='HARD')
+            instance = self.get_vm(instance_id)
+            return getattr(instance, "status")
+        except Exception as e:
+            print("get_instance_state--Exception:", str(e))
+            return None
+
+    def hard_reboot(self, id):
+        """
+
+        :param id: 
+        """
+        try:
+            instance = self.get_vm(id)
+            NovaClient._helper.servers.reboot(instance, reboot_type = 'HARD')
             logging.info("hard reboot success--vm id = %s" % id)
         except Exception as e:
             logging.error(str(e))
 
-    def softReboot(self, id):
+    def soft_reboot(self, id):
+        """
+
+        :param id: 
+        """
         try:
-            instance = self.getVM(id)
-            NovaClient._helper.servers.reboot(instance, reboot_type='SOFT')
+            instance = self.get_vm(id)
+            NovaClient._helper.servers.reboot(instance, reboot_type = 'SOFT')
             logging.info("soft reboot success--vm id = %s" % id)
         except Exception as e:
             logging.error(str(e))
 
-    def getInstanceExternalNetwork(self, ip):
+    def get_instance_external_network(self, ip):
+        """
+
+        :param ip: 
+        :return: 
+        """
         ext_ip = self.config.get("openstack", "openstack_external_network_gateway_ip").split(".")
         ext_ip = ext_ip[0:-1]
         check_ip = ip.split(".")
@@ -91,16 +122,16 @@ class NovaClient(object):
             return ip
         return None
 
-    # def getAllInstanceList(self):
+    # def get_all_instance_list(self):
     #     return NovaClient._helper.servers.list(search_opts={'all_tenants': 1})
     #
     # def getInstanceNetwork(self, instance_id):
-    #     instance = self.getVM(instance_id)
+    #     instance = self.get_vm(instance_id)
     #     network = getattr(instance, "networks")
     #     return network
     #
     # def isInstancePowerOn(self, id):
-    #     vm = self.getVM(id)
+    #     vm = self.get_vm(id)
     #     power_state = getattr(vm, "OS-EXT-STS:power_state")
     #     if power_state != 1:
     #         return False
@@ -109,5 +140,5 @@ class NovaClient(object):
 
 if __name__ == "__main__":
     pass
-    # a = NovaClient.getInstance()
-    # a.hardReboot("21ffc94c-343e-4813-96b6-5d7d593a6449")
+    # a = NovaClient.get_instance()
+    # a.hard_reboot("21ffc94c-343e-4813-96b6-5d7d593a6449")

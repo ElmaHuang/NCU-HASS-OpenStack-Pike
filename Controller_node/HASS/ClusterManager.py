@@ -11,6 +11,8 @@
 ##########################################################
 
 
+from __future__ import print_function
+
 import logging
 import uuid
 
@@ -20,7 +22,10 @@ from NovaClient import NovaClient
 from Response import Response
 
 
-class ClusterManager():
+class ClusterManager(object):
+    def __init__(self):
+        pass
+
     _cluster_dict = None
     _db = None
     _RESET_DB = False
@@ -34,7 +39,14 @@ class ClusterManager():
         ClusterManager.syncFromDatabase()
 
     @staticmethod
-    def createCluster(cluster_name, cluster_id=None, write_DB=True):
+    def createCluster(cluster_name, cluster_id = None, write_DB = True):
+        """
+
+        :param cluster_name: 
+        :param cluster_id: 
+        :param write_DB: 
+        :return: 
+        """
         if ClusterManager._isNameOverLapping(cluster_name):
             message = "ClusterManager - cluster name overlapping"
             data = {"cluster_id": cluster_id}
@@ -47,7 +59,13 @@ class ClusterManager():
         return result
 
     @staticmethod
-    def deleteCluster(cluster_id, write_DB=True):
+    def deleteCluster(cluster_id, write_DB = True):
+        """
+
+        :param cluster_id: 
+        :param write_DB: 
+        :return: 
+        """
         result = None
         message = ""
         data = {"cluster_id": cluster_id}
@@ -90,7 +108,15 @@ class ClusterManager():
         return res
 
     @staticmethod
-    def addNode(cluster_id, node_name_list, write_DB=True):
+    def addNode(cluster_id, node_name_list, write_DB = True):
+        """
+
+        :param cluster_id: 
+        :param node_name_list: 
+        :param write_DB: 
+        :return: 
+        """
+        global tmp_list
         result = None
         data = {"cluster_id": cluster_id}
         message = ""
@@ -99,7 +125,7 @@ class ClusterManager():
             tmp_list = node_name_list[:]
             for node_name in tmp_list[:]:
                 if not ClusterManager._checkNodeOverlappingForAllCluster(node_name):
-                    print "%s is already in a HA cluster. " % node_name
+                    print("%s is already in a HA cluster. " % node_name)
                     message += "%s is overlapping node" % node_name
                     tmp_list.remove(node_name)
             # check node list
@@ -111,7 +137,7 @@ class ClusterManager():
             else:
                 cluster = ClusterManager.getCluster(cluster_id)
                 if not cluster:
-                    message += "ClusterManager--Add the node to cluster failed. The cluster is not found. (cluster_id = %s)" % cluster_id
+                    message += "ClusterManager--Add the node to cluster failed. The cluster is not found. (cluster_id %s)" % cluster_id
                     result = ClusterManager.failResult(message, data)
                 else:
                     result = cluster.addNode(tmp_list)
@@ -127,7 +153,14 @@ class ClusterManager():
             return result
 
     @staticmethod
-    def deleteNode(cluster_id, node_name, write_DB=True):
+    def deleteNode(cluster_id, node_name, write_DB = True):
+        """
+
+        :param cluster_id: 
+        :param node_name: 
+        :param write_DB: 
+        :return: 
+        """
         result = None
         data = {"cluster_id": cluster_id}
         try:
@@ -151,11 +184,17 @@ class ClusterManager():
 
     @staticmethod
     def listNode(cluster_id):
+        """
+
+        :param cluster_id: 
+        :return: 
+        """
         result = None
         try:
             cluster = ClusterManager.getCluster(cluster_id)
             if not cluster:
-                message = "ClusterManager--Add the instance to cluster failed. The cluster is not found. (cluster_id = %s)" % cluster_id
+                message = "ClusterManager--Add the instance to cluster failed. The cluster is not found. (cluster_id " \
+                          "= %s)" % cluster_id
                 data = {"cluster_id": cluster_id}
                 result = ClusterManager.failResult(message, data)
             else:
@@ -173,13 +212,22 @@ class ClusterManager():
             return result
 
     @staticmethod
-    def addInstance(cluster_id, instance_id, send_flag=True, write_DB=True):
+    def addInstance(cluster_id, instance_id, send_flag = True, write_DB = True):
+        """
+
+        :param cluster_id: 
+        :param instance_id: 
+        :param send_flag: 
+        :param write_DB: 
+        :return: 
+        """
         result = None
         data = {"cluster_id": cluster_id}
         try:
             cluster = ClusterManager.getCluster(cluster_id)
             if not cluster:
-                message = "ClusterManager--Add the instance to cluster failed. The cluster is not found. (cluster_id = %s)" % cluster_id
+                message = "ClusterManager--Add the instance to cluster failed. The cluster is not found. (cluster_id " \
+                          "= %s)" % cluster_id
                 result = ClusterManager.failResult(message, data)
             else:
                 if not ClusterManager._checkInstanceNOTOverlappingForAllCluster(instance_id):
@@ -202,13 +250,23 @@ class ClusterManager():
             return result
 
     @staticmethod
-    def deleteInstance(cluster_id, instance_id, send_flag=True, write_DB=True):
+    def deleteInstance(cluster_id, instance_id, send_flag = True, write_DB = True):
+        """
+
+        :param cluster_id: 
+        :param instance_id: 
+        :param send_flag: 
+        :param write_DB: 
+        :return: 
+        """
         result = None
         data = {"cluster_id": cluster_id, "instance_id": instance_id}
+        print("start delete instance")
         try:
             cluster = ClusterManager.getCluster(cluster_id)
             if not cluster:
-                message = "delete the instance to cluster failed. The cluster is not found. (cluster_id = %s)" % cluster_id
+                message = "delete the instance to cluster failed. The cluster is not found. (cluster_id = %s)" % \
+                          cluster_id
                 result = ClusterManager.failResult(message, data)
             else:
                 result = cluster.deleteInstance(instance_id, send_flag)
@@ -216,15 +274,22 @@ class ClusterManager():
                     ClusterManager.syncToDatabase()
                 logging.info("ClusterManager--delete instance finish")
         except Exception as e:
-            message = "ClusterManager--delete instance failed. this instance is not being protected (instance_id = %s),%s" % (
-                instance_id, str(e))
+            message = "ClusterManager--delete instance failed. this instance is not being protected (instance_id = " \
+                      "%s),%s" % (
+                          instance_id, str(e))
             result = ClusterManager.failResult(message, data)
             logging.error(message)
         finally:
             return result
 
     @staticmethod
-    def listInstance(cluster_id, send_flag=True):
+    def listInstance(cluster_id, send_flag = True):
+        """
+
+        :param cluster_id: 
+        :param send_flag: 
+        :return: 
+        """
         result = None
         data = {"cluster_id": cluster_id}
         try:
@@ -237,32 +302,34 @@ class ClusterManager():
                 # delete illegal instance
                 # if illegal_instance:
                 #     for instance in illegal_instance:
-                #         ClusterManager.deleteInstance(cluster_id, instance[0], send_flag=False)
+                #         ClusterManager.delete_instance(cluster_id, instance[0], send_flag=False)
                 # if user live migration vm by openstack
                 # if send_flag:
                 #     for instance in instance_list[:]:
                 #          cluster.sendUpdateInstance(instance[2])  # info[2]
                 #     for instance in illegal_instance[:]:
                 #         cluster.sendUpdateInstance(instance[1])  # prev_host
-                message = "ClusterManager--listInstance,getInstanceList success,instanceList is %s" % instance_list
+                message = "ClusterManager--listInstance,get_instance_list success,instanceList is %s" % instance_list
                 data["instance_list"] = instance_list
                 result = ClusterManager.successResult(message, data)
                 logging.info(message)
         except Exception as e:
-            message = "ClusterManager--listInstance,getInstanceList fail" + str(e)
+            message = "ClusterManager--listInstance,get_instance_list fail" + str(e)
             result = ClusterManager.failResult(message, data)
             logging.error(message)
         finally:
             return result
 
     @staticmethod
-    def _addToClusterList(cluster_name, cluster_id=None):
+    def _addToClusterList(cluster_name, cluster_id = None):
+        global data
         result = None
         try:
             if cluster_id:
-                cluster = Cluster(id=cluster_id, name=cluster_name)
+                cluster = Cluster(id = cluster_id, name = cluster_name)
                 ClusterManager._cluster_dict[cluster_id] = cluster
-                message = "ClusterManager -syncofromDB-- createCluster._addToCluster success,cluster id = %s" % cluster_id
+                message = "ClusterManager -syncofromDB-- createCluster._addToCluster success,cluster id = %s" % \
+                          cluster_id
                 data = {"cluster_id": cluster_id}
                 result = ClusterManager.successResult(message, data)
                 logging.info(message)
@@ -270,7 +337,7 @@ class ClusterManager():
                 # create a new cluster
                 cluster_id = str(uuid.uuid4())
                 data = {"cluster_id": cluster_id}
-                cluster = Cluster(id=cluster_id, name=cluster_name)
+                cluster = Cluster(id = cluster_id, name = cluster_name)
                 ClusterManager._cluster_dict[cluster_id] = cluster
                 message = "ClusterManager - createCluster._addToClusterList success,cluster id = %s" % cluster_id
                 result = ClusterManager.successResult(message, data)
@@ -301,6 +368,11 @@ class ClusterManager():
 
     @staticmethod
     def getCluster(cluster_id):
+        """
+
+        :param cluster_id: 
+        :return: 
+        """
         if not ClusterManager._isCluster(cluster_id):
             logging.error("cluster not found id %s" % cluster_id)
             return None
@@ -338,11 +410,12 @@ class ClusterManager():
             ClusterManager.reset()
             exist_cluster = ClusterManager._db.syncFromDB()
             for cluster in exist_cluster:
-                ClusterManager.createCluster(cluster["cluster_name"], cluster["cluster_id"], write_DB=False)
+                ClusterManager.createCluster(cluster["cluster_name"], cluster["cluster_id"],
+                                             write_DB = False)
                 if cluster["node_list"]:
-                    ClusterManager.addNode(cluster["cluster_id"], cluster["node_list"], write_DB=False)
+                    ClusterManager.addNode(cluster["cluster_id"], cluster["node_list"], write_DB = False)
                 for instance in cluster["instance_list"]:
-                    ClusterManager.addInstance(cluster["cluster_id"], instance, write_DB=False)
+                    ClusterManager.addInstance(cluster["cluster_id"], instance, write_DB = False)
             logging.info("ClusterManager--synco from DB finish")
         except Exception as e:
             logging.error("ClusterManagwer--synco from DB fail.%s" % str(e))
@@ -354,16 +427,28 @@ class ClusterManager():
 
     @staticmethod
     def successResult(message, data):
-        result = Response(code="succeed",
-                          message=message,
-                          data=data)
+        """
+
+        :param message: 
+        :param data: 
+        :return: 
+        """
+        result = Response(code = "succeed",
+                          message = message,
+                          data = data)
         return result
 
     @staticmethod
     def failResult(message, data):
-        result = Response(code="failed",
-                          message=message,
-                          data=data)
+        """
+
+        :param message: 
+        :param data: 
+        :return: 
+        """
+        result = Response(code = "failed",
+                          message = message,
+                          data = data)
         return result
 
 

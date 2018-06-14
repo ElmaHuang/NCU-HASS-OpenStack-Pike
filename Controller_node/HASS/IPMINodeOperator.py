@@ -13,6 +13,8 @@
 ##########################################################
 
 
+from __future__ import print_function
+
 import ConfigParser
 import logging
 import socket
@@ -32,7 +34,13 @@ class Operator(object):
         self.config.read('hass.conf')
         self.port = int(self.config.get("detection", "polling_port"))
 
-    def startNode(self, node_name, default_wait_time=180):
+    def startNode(self, node_name, default_wait_time = 180):
+        """
+
+        :param node_name: 
+        :param default_wait_time: 
+        :return: 
+        """
         message = ""
         data = {"node_name": node_name}
         result = None
@@ -62,7 +70,8 @@ class Operator(object):
                     logging.error(message)
             else:
                 # node is not ipmi node
-                message += " IPMIOperator--node is not in compute pool or is not a IPMI PC . The node is %s." % node_name
+                message += " IPMIOperator--node is not in compute pool or is not a IPMI PC . The node is %s." % \
+                           node_name
                 result = self.failResult(message, data)
                 logging.error(message)
         except Exception as e:
@@ -73,12 +82,17 @@ class Operator(object):
             return result
 
     def shutOffNode(self, node_name):
+        """
+
+        :param node_name: 
+        :return: 
+        """
         message = ""
         data = {"node_name": node_name}
         result = None
         try:
             if self._checkNodeIPMI(node_name) and self._checkNodeInComputePool(
-                    node_name) and self._checkNodeNotInCluster(node_name):
+                node_name) and self._checkNodeNotInCluster(node_name):
                 ipmi_result = self.ipmi_module.shutOffNode(node_name)
                 # check power status in IPMIModule
                 if ipmi_result.code == "succeed":
@@ -90,7 +104,8 @@ class Operator(object):
                     result = self.failResult(message, data)
                     logging.error(message)
             else:
-                message += " IPMIOperator--node is not in compute pool or is not a IPMI PC or is already be protected. The node is %s." % node_name
+                message += " IPMIOperator--node is not in compute pool or is not a IPMI PC or is already be " \
+                           "protected. The node is %s." % node_name
                 result = self.failResult(message, data)
                 logging.error(message)
         except Exception as e:
@@ -101,13 +116,19 @@ class Operator(object):
         finally:
             return result
 
-    def rebootNode(self, node_name, default_wait_time=180):
+    def rebootNode(self, node_name, default_wait_time = 180):
+        """
+
+        :param node_name: 
+        :param default_wait_time: 
+        :return: 
+        """
         result = None
         data = {"node_name": node_name}
         message = ""
         try:
             if self._checkNodeIPMI(node_name) and self._checkNodeInComputePool(
-                    node_name) and self._checkNodeNotInCluster(node_name):
+                node_name) and self._checkNodeNotInCluster(node_name):
                 ipmi_result = self.ipmi_module.rebootNode(node_name)
                 if ipmi_result.code == "succeed":
                     message += "reboot node success.The node is %s." % node_name
@@ -122,7 +143,8 @@ class Operator(object):
                     result = self.failResult(message, data)
                     logging.error(message)
             else:
-                message += " IPMIOperator--node is not in compute pool or is not a IPMI PC or is already be protected. The node is %s." % node_name
+                message += " IPMIOperator--node is not in compute pool or is not a IPMI PC or is already be " \
+                           "protected. The node is %s." % node_name
                 result = self.failResult(message, data)
                 logging.error(message)
         except Exception as e:
@@ -133,6 +155,12 @@ class Operator(object):
             return result
 
     def getAllInfoByNode(self, node_name):
+        """
+
+        :param node_name: 
+        :return: 
+        """
+        global result
         try:
             result = self.ipmi_module.getAllInfoByNode(node_name)
         except Exception as e:
@@ -143,6 +171,13 @@ class Operator(object):
             return result
 
     def getNodeInfoByType(self, node_name, sensor_type):
+        """
+
+        :param node_name: 
+        :param sensor_type: 
+        :return: 
+        """
+        global result
         try:
             result = self.ipmi_module.getNodeInfoByType(node_name, sensor_type)
         except Exception as e:
@@ -181,7 +216,8 @@ class Operator(object):
             for cluster_id, cluster in self.cluster_list.iteritems():
                 node_list = cluster.getAllNodeStr()
                 if node_name in node_list:
-                    logging.error(" Node is in HA cluster. The node is %s, cluster id is %s" % (node_name, cluster_id))
+                    logging.error(
+                        " Node is in HA cluster. The node is %s, cluster id is %s" % (node_name, cluster_id))
                     result = False
         return result
 
@@ -191,7 +227,7 @@ class Operator(object):
         while not status:
             if check_timeout > 0:
                 result = self.ipmi_module.getPowerStatus(nodeName)
-                print result, check_timeout
+                print(result, check_timeout)
                 if result == "OK":
                     status = True
                 else:
@@ -212,7 +248,7 @@ class Operator(object):
             sock.settimeout(0.5)
             sock.connect((nodeName, self.port))
         except Exception as e:
-            print "create socket fail", str(e)
+            print("create socket fail", str(e))
         while not status:
             time.sleep(5)
             if check_timeout > 0:
@@ -220,13 +256,13 @@ class Operator(object):
                     sock.sendall("polling request")
                     data, addr = sock.recvfrom(2048)
                 except Exception as e:
-                    print str(e)
+                    print(str(e))
                 if "OK" in data:
                     status = True
                     sock.close()
                 else:
                     # time.sleep(1)
-                    print "waiting:", check_timeout
+                    print("waiting:", check_timeout)
                     check_timeout -= 5
             else:
                 # timeout
@@ -235,13 +271,25 @@ class Operator(object):
         return status
 
     def successResult(self, message, data):
-        result = Response(code="succeed",
-                          message=message,
-                          data=data)
+        """
+
+        :param message: 
+        :param data: 
+        :return: 
+        """
+        result = Response(code = "succeed",
+                          message = message,
+                          data = data)
         return result
 
     def failResult(self, message, data):
-        result = Response(code="failed",
-                          message=message,
-                          data=data)
+        """
+
+        :param message: 
+        :param data: 
+        :return: 
+        """
+        result = Response(code = "failed",
+                          message = message,
+                          data = data)
         return result

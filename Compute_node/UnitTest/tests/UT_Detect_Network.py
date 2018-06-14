@@ -13,17 +13,21 @@ wrong_ip = "7.7.7.7"
 
 
 def run():
+    """
+
+    :return: 
+    """
     instance_id = Preprocess.create_instance()
     try:
         ip = Preprocess._get_instance_ip()
         print "check vm boot"
         time.sleep(30)
-        #ssh = Preprocess.create_ssh_client(ip)
-        #stdin, stdout, stderr = Preprocess._remote_exec(ssh, CMD)
-        result = instance_thread.pingInstance(ip)
+        # ssh = Preprocess.create_ssh_client(ip)
+        # stdin, stdout, stderr = Preprocess._remote_exec(ssh, CMD)
+        result = instance_thread.ping_instance(ip)
         if result:
             print "detect network isolation successfully"
-            result = instance_thread.pingInstance(wrong_ip)
+            result = instance_thread.ping_instance(wrong_ip)
             if not result:
                 return True
             else:
@@ -38,9 +42,15 @@ def run():
         Preprocess._deleteInstance()
 
 
-def reboot_vm(instance_id, detect_time=5):
-    novaClient = NovaClient.getInstance()
-    novaClient.hardReboot(instance_id)
+def reboot_vm(instance_id, detect_time = 5):
+    """
+
+    :param instance_id: 
+    :param detect_time: 
+    :return: 
+    """
+    novaClient = NovaClient.get_instance()
+    novaClient.hard_reboot(instance_id)
     result = False
     try:
         boot = _check_boot_up(detect_time)
@@ -50,7 +60,7 @@ def reboot_vm(instance_id, detect_time=5):
         return False
 
 
-def _check_boot_up(time_out=30):
+def _check_boot_up(time_out = 30):
     try:
         while time_out > 0:
             state = Preprocess._get_instance_status()

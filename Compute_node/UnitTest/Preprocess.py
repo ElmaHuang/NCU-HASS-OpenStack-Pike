@@ -15,10 +15,17 @@ import UnitTestInstance
 
 
 def do():
+    """
+
+    """
     pass
 
 
 def create_instance():
+    """
+
+    :return: 
+    """
     return UnitTestInstance.create_Instance_in_local_host()
 
 
@@ -31,11 +38,16 @@ def _get_instance_ip():
 
 
 def create_ssh_client(ip):
+    """
+
+    :param ip: 
+    :return: 
+    """
     return UnitTestInstance.create_ssh_client(ip)
 
 
 def _remote_exec(client, cmd):
-    stdin, stdout, stderr = client.exec_command(cmd, timeout=5)
+    stdin, stdout, stderr = client.exec_command(cmd, timeout = 5)
     return stdin, stdout, stderr
 
 
@@ -44,6 +56,9 @@ def _deleteInstance():
 
 
 def test():
+    """
+
+    """
     print "test"
 
 

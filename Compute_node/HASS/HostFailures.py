@@ -11,6 +11,8 @@
 ##########################################################
 
 
+from __future__ import print_function
+
 import ConfigParser
 import logging
 import socket
@@ -35,12 +37,12 @@ class HostFailures(threading.Thread):
         # self.set_reuse_addr()
         # self.bind(('', self.port))
         self.libvirt_uri = "qemu:///system"
-        print "host failure port:", self.port
+        print("host failure port:", self.port)
 
     def run(self):
         while True:
             data, addr = self.s.recvfrom(1024)
-            print data
+            print(data)
             if "polling request" in data:
                 check_result = self.check_services()
                 if check_result == "":
@@ -66,16 +68,16 @@ class HostFailures(threading.Thread):
     def check_services(self):
         message = ""
         # check libvirt
-        if not self._checkLibvirt():
+        if not self._check_libvirt():
             message = "libvirt;"
         # check nova-compute
-        if not self._checkNovaCompute():
+        if not self._check_nova_compute():
             message += "nova;"
-        if not self._checkQEMUKVM():
+        if not self._check_qemu_kvm():
             message += "qemukvm;"
         return message
 
-    def _checkLibvirt(self):
+    def _check_libvirt(self):
         try:
             conn = libvirt.open(self.libvirt_uri)
             if not conn:
@@ -86,7 +88,7 @@ class HostFailures(threading.Thread):
         conn.close()
         return True
 
-    def _checkNovaCompute(self):
+    def _check_nova_compute(self):
         try:
             output = subprocess.check_output(['ps', '-A'])
             if "nova-compute" not in output:
@@ -96,7 +98,7 @@ class HostFailures(threading.Thread):
             return False
         return True
 
-    def _checkQEMUKVM(self):
+    def _check_qemu_kvm(self):
         try:
             output = subprocess.check_output(['service', 'qemu-kvm', 'status'])
             if self.version == 14:

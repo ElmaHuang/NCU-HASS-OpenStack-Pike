@@ -8,10 +8,14 @@ from HASS.NovaClient import NovaClient
 
 
 def run():
+    """
+
+    :return: 
+    """
     try:
-        novaClient = NovaClient.getInstance()
+        novaClient = NovaClient.get_instance()
         instance_id = Preprocess.create_instance()
-        novaClient.softReboot(instance_id)
+        novaClient.soft_reboot(instance_id)
         time.sleep(10)
         return True
     except Exception as e:

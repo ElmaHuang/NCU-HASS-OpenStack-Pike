@@ -12,6 +12,10 @@ GET_HASS_PID = "ps xu | grep Hass | grep -v grep | awk '{ print $2 }'"
 
 
 def deleteInstance():
+    """
+
+    :return:
+    """
     return UnitTestInstance.delete()
 
 
@@ -30,11 +34,12 @@ def deleteInstance():
 
 
 def _local_exec(cmd):
-    p = subprocess.Popen(cmd.split(), stdin=subprocess.PIPE, shell=False, stdout=open(os.devnull, 'w'))
+    p = subprocess.Popen(cmd.split(), stdin = subprocess.PIPE, shell = False,
+                         stdout = open(os.devnull, 'w'))
     return p.communicate()
 
 
 def _local_get_output(cmd):
-    result = subprocess.check_output(cmd, shell=True)
+    result = subprocess.check_output(cmd, shell = True)
     # print str(result)
     return result

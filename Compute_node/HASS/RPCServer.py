@@ -15,16 +15,18 @@ import ConfigParser
 import xmlrpclib
 
 
-class RPCServer():
+class RPCServer(object):
     config = ConfigParser.RawConfigParser()
     config.read('hass_node.conf')
     authUrl = "http://" + config.get("rpc", "rpc_username") + ":" + config.get("rpc",
-                                                                               "rpc_password") + "@" + config.get("rpc",
-                                                                                                                  "rpc_controller") + ":" + config.get(
+                                                                               "rpc_password") + "@" + \
+              config.get(
+                  "rpc",
+                  "rpc_controller") + ":" + config.get(
         "rpc", "rpc_bind_port")
     # self.authUrl = "http://user:0928759204@192.168.0.112:61209"
     server = xmlrpclib.ServerProxy(authUrl)
 
     @staticmethod
-    def getRPCServer():
+    def get_rpc_server():
         return RPCServer.server

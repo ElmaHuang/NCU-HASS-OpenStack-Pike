@@ -11,6 +11,8 @@
 ##########################################################
 
 
+from __future__ import print_function
+
 from NovaClient import NovaClient
 
 
@@ -35,9 +37,14 @@ class Instance(object):
             self.updateInfo()
             return [self.id, self.name, self.host, self.status, self.network]
         except Exception as e:
-            print "instance--getInfo-fail" + str(e)
+            print("instance--getInfo-fail" + str(e))
 
     def getExternalNetwork(self, network):
+        """
+
+        :param network: 
+        :return: 
+        """
         ext_ip = None
         for router_name, ip_list in network.iteritems():
             for ip in ip_list:

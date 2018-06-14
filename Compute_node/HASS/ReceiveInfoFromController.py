@@ -11,6 +11,8 @@
 ##########################################################
 
 
+from __future__ import print_function
+
 import socket
 import threading
 
@@ -27,7 +29,8 @@ class ReceiveInfoFromController(threading.Thread):
         self.config = ConfigParser.RawConfigParser()
         self.config.read('hass_node.conf')
         self.authUrl = "http://" + self.config.get("rpc", "rpc_username") + ":" + self.config.get("rpc",
-                                                                                                  "rpc_password") + "@" + self.config.get(
+                                                                                                  "rpc_password") + 
+                                                                                                  "@" + self.config.get(
             "rpc", "rpc_controller") + ":" + self.config.get("rpc", "rpc_bind_port")
         # self.authUrl = "http://user:0928759204@192.168.0.112:61209"
         self.server = xmlrpclib.ServerProxy(self.authUrl)
@@ -36,13 +39,13 @@ class ReceiveInfoFromController(threading.Thread):
     def run(self):
         while True:
             cs, addr = self.s.accept()
-            print "addr:", addr
+            print("addr:", addr)
             data = cs.recv(1024)
-            print data
+            print(data)
             if "update instance" in data:
-                print "get update mesg from controller"
-                HAInstance.updateHAInstance()
+                print("get update mesg from controller")
+                HAInstance.update_ha_instance()
         # for instance in instance_list[:]:
         #     # [self.id, self.name, self.host, self.status, self.network]
         #     vm = Instance(ha_instance=instance)
-        #     HAInstance.addInstance(vm)
+        #     HAInstance.add_instance(vm)

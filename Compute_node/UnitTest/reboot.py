@@ -3,6 +3,9 @@ import time
 
 
 def main():
+    """
+
+    """
     print "reboot after 200 seconds"
     time.sleep(float(200))
     os.system("sudo reboot")

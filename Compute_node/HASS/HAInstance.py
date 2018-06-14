@@ -11,6 +11,8 @@
 ##########################################################
 
 
+from __future__ import print_function
+
 import logging
 import subprocess
 
@@ -18,8 +20,8 @@ from Instance import Instance
 from RPCServer import RPCServer
 
 
-class HAInstance():
-    server = RPCServer.getRPCServer()
+class HAInstance(object):
+    server = RPCServer.get_rpc_server()
     instance_list = None
     ha_instance_list = None
     host = subprocess.check_output(['hostname']).strip()
@@ -30,36 +32,36 @@ class HAInstance():
         HAInstance.ha_instance_list = {}
 
     @staticmethod
-    def getInstanceFromController():
+    def get_instance_from_controller():
         # host_instance = {}
         try:
             cluster_list = HAInstance.server.listCluster()
             for cluster in cluster_list:
                 cluster_uuid = cluster[0]
-                HAInstance.ha_instance_list[cluster_uuid] = HAInstance._getHAInstance(cluster_uuid)
-            host_instance = HAInstance._getInstanceByNode(HAInstance.ha_instance_list)
+                HAInstance.ha_instance_list[cluster_uuid] = HAInstance._get_ha_instance(cluster_uuid)
+            host_instance = HAInstance._get_instance_by_node(HAInstance.ha_instance_list)
             for cluster_id, instance_list in host_instance.iteritems():
                 for instance in instance_list:
-                    HAInstance.addInstance(cluster_id, instance)
+                    HAInstance.add_instance(cluster_id, instance)
         except Exception as e:
-            message = "HAInstance getInstanceFromController Except:" + str(e)
+            message = "HAInstance get_instance_from_controller Except:" + str(e)
             logging.error(message)
-            print message
+            print(message)
 
     @staticmethod
-    def _getHAInstance(clusterId):
+    def _get_ha_instance(cluster_id):
         instance_list = []
         try:
-            instance_list = HAInstance.server.listInstance(clusterId, False)["data"]["instance_list"]
+            instance_list = HAInstance.server.listInstance(cluster_id, False)["data"]["instance_list"]
         except Exception as e:
-            message = "_getHAInstance--get instance list from controller(rpc server) fail" + str(e)
+            message = "_get_ha_instance--get instance list from controller(rpc server) fail" + str(e)
             # instance_list = []
             logging.error(message)
         finally:
             return instance_list
 
     @staticmethod
-    def _getInstanceByNode(instance_lists):
+    def _get_instance_by_node(instance_lists):
         for id, instance_list in instance_lists.iteritems():
             for instance in instance_list[:]:
                 if HAInstance.host not in instance[2]:
@@ -68,24 +70,34 @@ class HAInstance():
         return instance_lists
 
     @staticmethod
-    def addInstance(cluster_id, instance):
-        print "add vm"
-        vm = Instance(cluster_id=cluster_id, ha_instance=instance)
+    def add_instance(cluster_id, instance):
+        """
+
+        :param cluster_id:
+        :param instance:
+        """
+        print("add vm")
+        vm = Instance(cluster_id = cluster_id, ha_instance = instance)
         HAInstance.instance_list.append(vm)
 
     @staticmethod
-    def getInstanceList():
+    def get_instance_list():
         return HAInstance.instance_list
 
     @staticmethod
-    def getInstance(name):
+    def get_instance(name):
+        """
+
+        :param name:
+        :return:
+        """
         for instance in HAInstance.instance_list:
             if instance.name == name:
                 return instance
         return None
 
     @staticmethod
-    def updateHAInstance():
+    def update_ha_instance():
         HAInstance.init()
-        HAInstance.getInstanceFromController()
-        print "update HA Instance finish"
+        HAInstance.get_instance_from_controller()
+        print("update HA Instance finish")

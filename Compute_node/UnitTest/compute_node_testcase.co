@@ -1,44 +1,17 @@
 # test case sample:
 # test_case_name	description
-#===============Auth===================
-#UT_Correct_Auth    description
-#UT_Wrong_Auth    description
-#UT_Without_Auth    description
-#==============Cluster==================
-#UT_Create_Cluster    description
-#UT_Delete_Cluster    description
-#UT_Delete_Wrong_Cluster    description
-#UT_List_Cluster    description
-#===============Node====================
-#UT_Add_Node    description
-#UT_Add_Wrong_Node    description
-#UT_Add_Duplicate_Node    description
-#UT_Add_Node_Wrong_Cluster_ID    description
-#UT_Delete_Node    description
-#UT_Delete_Node_Wrong_Cluster_ID    description
-#UT_Delete_Wrong_Node_Name    description
-#UT_List_Node    description
-#UT_List_Node_Wrong_Cluster_ID    description
+#==================Detect====================
+UT_Detect_Network    HAIPMI-TC-53
+UT_Detect_VM_Crash    HAIPMI-TC-54
+UT_Detect_Live_Migration    HAIPMI-TC-55
+UT_Detect_Delete_Instance    HAIPMI-TC-56
+#UT_Detect_OS_Hanged    HAIPMI-TC-
+#UT_Detect_ShutOff_Instance    HAIPMI-TC-
+#==================Recover===================
+UT_Hard_Reboot    HAIPMI-TC-57
+UT_Soft_Reboot    HAIPMI-TC-58
+#UT_updateDB    HAIPMI-TC-
+#UT_delete_HA_Instance    HAIPMI-TC-
 #================Instance=================
-#UT_List_Instance    description
-##UT_Delete_Instance_Wrong_ID    description
-#UT_Delete_Instance_Wrong_Cluster_ID    description
-#UT_Delete_Instance    description
-#UT_Add_Instance_Wrong_Cluster_ID    description
-#UT_Add_Instance    description
-#UT_Add_Duplicate_Instance    description
-#UT_List_Instance_Wrong_Cluster_ID    description
-#==================Recover====================
-#UT_Get_OS_Status    description
-#UT_Get_Power_Status    description
-#UT_Get_Sensor_Status    description
-#UT_Get_Sensor_Value    description
-#UT_Evacuate    description
-#UT_ShutOff_Node    description
-#UT_Start_Node    description
-#UT_Reboot_Node    description
-#UT_Recover_Qemu-KVM_Service    description
-#UT_Recover_Network_Isolation    description
-#UT_Recover_OS_Hang    description
-#UT_Recover_Power_Status    description
-UT_Recover_VM_Crash    description
+UT_Add_HA_Instance    HAIPMI-TC-59
+UT_Get_HA_Instance    HAIPMI-TC-60

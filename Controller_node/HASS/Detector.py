@@ -11,6 +11,8 @@
 ##########################################################
 
 
+from __future__ import print_function
+
 import ConfigParser
 import logging
 import socket
@@ -35,23 +37,23 @@ class Detector(object):
     def connect(self):
         # connect to FA
         try:
-            print "[" + self.node + "] create socket connection"
+            print("[" + self.node + "] create socket connection")
             self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             self.sock.setblocking(0)
             self.sock.settimeout(0.5)
             self.sock.connect((self.node, self.port))
         except Exception as e:
-            print str(e)
-            print "Init [" + self.node + "] connection failed"
+            print(str(e))
+            print("Init [" + self.node + "] connection failed")
 
     def checkNetworkStatus(self):
         heartbeat_time = int(self.config.get("default", "heartbeat_time"))
-        fail = False
+        network_fail = False
         while heartbeat_time > 0:
             try:
                 response = subprocess.check_output(['timeout', '0.2', 'ping', '-c', '1', self.node],
-                                                   stderr=subprocess.STDOUT, universal_newlines=True)
-                fail = False
+                                                   stderr = subprocess.STDOUT, universal_newlines = True)
+                network_fail = False
             except Exception as e:
                 logging.error("transient network fail" + str(e))
                 fail = True
@@ -59,7 +61,7 @@ class Detector(object):
             finally:
                 time.sleep(1)
                 heartbeat_time -= 1
-        if not fail:
+        if not network_fail:
             return State.HEALTH
         return State.NETWORK_FAIL
 
@@ -71,17 +73,17 @@ class Detector(object):
             if data == "OK":
                 return State.HEALTH
             elif "error" in data:
-                print data
-                print "[" + self.node + "]service Failed"
+                print(data)
+                print("[" + self.node + "]service Failed")
             elif not data:
-                print "[" + self.node + "]no ACK"
+                print("[" + self.node + "]no ACK")
             else:
-                print "[" + self.node + "]Receive:" + data
+                print("[" + self.node + "]Receive:" + data)
             return State.SERVICE_FAIL
         except Exception as e:
             # fail_services = "agents"
             logging.error("Detector checkServiceStatus Except:" + str(e))
-            print "[" + self.node + "] connection failed"
+            print("[" + self.node + "] connection failed")
             self.sock.connect((self.node, self.port))
             return State.SERVICE_FAIL
 
@@ -104,9 +106,11 @@ class Detector(object):
     def checkSensorStatusByConfig(self):
         if not self.ipmi_status:
             return State.HEALTH
+        print("get hass sensor setting:", time.time())
         status = self.ipmi_manager.getSensorStatusByConfig(self.node)
         if status == "OK":
             return State.HEALTH
+        print("sensor config fail")
         return State.SENSOR_CONFIG_FAIL
 
     def checkSensorStatus(self):

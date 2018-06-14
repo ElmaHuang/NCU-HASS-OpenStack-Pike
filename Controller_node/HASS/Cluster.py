@@ -11,6 +11,8 @@
 # #########################################################
 
 
+from __future__ import print_function
+
 import logging
 
 from ClusterInterface import ClusterInterface
@@ -24,6 +26,11 @@ class Cluster(ClusterInterface):
         super(Cluster, self).__init__(id, name)
 
     def addNode(self, node_name_list):
+        """
+
+        :param node_name_list:
+        :return:
+        """
         # create node list
         message = ""
         result = None
@@ -31,7 +38,7 @@ class Cluster(ClusterInterface):
             for node_name in node_name_list:
                 # check node is in computing pool
                 if self.nova_client.isInComputePool(node_name):
-                    node = Node(name=node_name, cluster_id=self.id)
+                    node = Node(name = node_name, cluster_id = self.id)
                     self.node_list.append(node)
                     node.startDetectionThread()
                     message = "Cluster--The node %s is added to cluster." % self.getAllNodeStr()
@@ -54,6 +61,11 @@ class Cluster(ClusterInterface):
             return result
 
     def deleteNode(self, node_name):
+        """
+
+        :param node_name:
+        :return:
+        """
         result = None
         try:
             node = self.getNodeByName(node_name)
@@ -67,7 +79,8 @@ class Cluster(ClusterInterface):
             result = self.successResult(message, data)
             logging.info(message)
         except Exception as e:
-            message = "Cluster--delete node fail , node maybe not in compute pool please check again! node is %s  The node list is %s.%s" % (
+            message = "Cluster--delete node fail , node maybe not in compute pool please check again! node is %s .The " \
+                      "node list is %s.%s" % (
                 node_name, self.getAllNodeStr(), str(e))
             data = {"cluster_id": self.id, "node": node_name}
             result = self.failResult(message, data)
@@ -81,7 +94,13 @@ class Cluster(ClusterInterface):
             ret.append(node.getInfo())
         return ret
 
-    def addInstance(self, instance_id, send_flag=True):
+    def addInstance(self, instance_id, send_flag = True):
+        """
+
+        :param instance_id:
+        :param send_flag:
+        :return:
+        """
         result = None
         message = ""
         try:
@@ -100,11 +119,14 @@ class Cluster(ClusterInterface):
                 final_host = self.nova_client.getInstanceHost(instance_id)
                 if final_host not in self.getAllNodeStr():
                     final_host = self.liveMigrateInstance(instance_id)
-                instance = Instance(id=instance_id,
-                                    name=self.nova_client.getInstanceName(instance_id),
-                                    host=final_host,
-                                    status=self.nova_client.getInstanceState(instance_id),
-                                    network=self.nova_client.getInstanceNetwork(instance_id))
+                if final_host in self.getAllNodeStr():
+                    instance = Instance(id = instance_id,
+                                        name = self.nova_client.getInstanceName(instance_id),
+                                        host = final_host,
+                                        status = self.nova_client.getInstanceState(instance_id),
+                                        network = self.nova_client.getInstanceNetwork(instance_id))
+                else:
+                    raise Exception("addInstance--live migration fail")
                 if send_flag:
                     self.sendUpdateInstance(final_host)
                 self.instance_list.append(instance)
@@ -121,7 +143,13 @@ class Cluster(ClusterInterface):
         finally:
             return result
 
-    def deleteInstance(self, instance_id, send_flag=True):
+    def deleteInstance(self, instance_id, send_flag = True):
+        """
+
+        :param instance_id:
+        :param send_flag:
+        :return:
+        """
         result = None
         try:
             # find instance in instance_list
@@ -131,13 +159,15 @@ class Cluster(ClusterInterface):
                     self.instance_list.remove(instance)
                     if send_flag:
                         self.sendUpdateInstance(prev_host)
-                    message = "Cluster--delete instance success. this instance is deleted (instance_id = %s)" % instance_id
+                    message = "Cluster--delete instance success. this instance is deleted (instance_id = %s)" % \
+                              instance_id
                     data = {"cluster_id": self.id, "instance_id": instance_id}
                     result = self.successResult(message, data)
                     logging.info(message)
             # if instance id not in self.instance_list:
             if result is None:
-                message = "Cluster--delete instance fail. maybe this instance is not in instance_list(instance_id = %s)" % instance_id
+                message = "Cluster--delete instance fail. maybe this instance is not in instance_list(instance_id = " \
+                          "%s)" % instance_id
                 data = {"cluster_id": self.id, "instance_id": instance_id}
                 result = self.failResult(message, data)
                 logging.error(message)
@@ -150,9 +180,13 @@ class Cluster(ClusterInterface):
             return result
 
     def deleteInstanceByNode(self, node):
+        """
+
+        :param node:
+        """
         protected_instance_list = self.getProtectedInstanceListByNode(node)
         for instance in protected_instance_list:
-            self.deleteInstance(instance.id, send_flag=False)
+            self.deleteInstance(instance.id, send_flag = False)
         self.sendUpdateInstance(node.name)
 
     # list Instance
@@ -175,17 +209,26 @@ class Cluster(ClusterInterface):
             return instance_info
 
     def sendUpdateInstance(self, host_name):
-        print "send mesg to ", host_name
+        """
+
+        :param host_name:
+        """
+        print("send mesg to ", host_name)
         host = self.getNodeByName(host_name)
         if host is None:
-            print "%s is not in cluster" % host_name
+            print("%s is not in cluster" % host_name)
         else:
             result = host.sendUpdateInstance()
             if not result:
-                print "%s host send update instance mesg fail" % host_name
+                print("%s host send update instance mesg fail" % host_name)
 
     # be deleteNode/RecoveryManager called
     def getNodeByName(self, name):
+        """
+
+        :param name:
+        :return:
+        """
         for node in self.node_list:
             if node.name == name:
                 return node
@@ -207,6 +250,11 @@ class Cluster(ClusterInterface):
         return [self.id, self.name]
 
     def checkInstanceGetVolume(self, instance_id):
+        """
+
+        :param instance_id:
+        :return:
+        """
         if not self.nova_client.isInstanceGetVolume(instance_id):
             message = "this instance not having volume! Instance id is %s " % instance_id
             logging.error(message)
@@ -214,6 +262,11 @@ class Cluster(ClusterInterface):
         return True
 
     def checkInstancePowerOn(self, instance_id):
+        """
+
+        :param instance_id:
+        :return:
+        """
         if not self.nova_client.isInstancePowerOn(instance_id):
             message = "this instance is not running! Instance id is %s " % instance_id
             logging.error(message)
@@ -221,25 +274,40 @@ class Cluster(ClusterInterface):
         return True
 
     def checkInstanceExist(self, instance_id):
+        """
+
+        :param instance_id:
+        :return:
+        """
         # node_list = self.nova_client.getComputePool()
         instance_list = self.nova_client.getAllInstanceList()
         for instance in instance_list:
             if instance.id == instance_id:
-                logging.info("Cluster--addInstance-checkInstanceExist success")
+                logging.info("Cluster--add_instance-checkInstanceExist success")
                 return True
         logging.error("this instance is not exist. Instance id is %s. " % instance_id)
         return False
 
     def isInstanceHostInCluster(self, instance):
+        """
+
+        :param instance:
+        :return:
+        """
         node_list = self.getAllNodeStr()
-        print "isInstanceHostCluster--node_list:", node_list
-        print "isInstance in cluster --host:", instance.host
+        print("isInstanceHostCluster--node_list:", node_list)
+        print("isInstance in cluster --host:", instance.host)
         if instance.host in node_list:
-            print instance.host, " in cluster"
+            print(instance.host, " in cluster")
             return True
         return False
 
     def findTargetHost(self, fail_node):
+        """
+
+        :param fail_node:
+        :return:
+        """
         import random
         target_list = [node for node in self.node_list if node != fail_node]
         target_host = random.choice(target_list)
@@ -250,34 +318,52 @@ class Cluster(ClusterInterface):
         for instance in self.instance_list:
             pre_host = instance.host
             instance.updateInfo()
-            print "pre_host:", pre_host, " host: ", instance.host
+            print("pre_host:", pre_host, " host: ", instance.host)
             if instance.host != pre_host:
-                print "instance %s update host to %s" % (instance.name, instance.host)
+                print("instance %s update host to %s" % (instance.name, instance.host))
                 self.sendUpdateInstance(pre_host)
                 # instance is still in cluster
                 if self.isInstanceHostInCluster(instance):
-                    print "send to ", instance.host
+                    print("send to ", instance.host)
                     self.sendUpdateInstance(instance.host)
                 else:
                     # if instance not in cluster, delete the instance
-                    self.deleteInstance(instance.id, send_flag=False)
+                    self.deleteInstance(instance.id, send_flag = False)
 
     def liveMigrateInstance(self, instance_id):
+        """
+
+        :param instance_id:
+        :return:
+        """
         host_name = self.nova_client.getInstanceHost(instance_id)
         host = self.getNodeByName(host_name)
         target_host = self.findTargetHost(host)
-        print "start live migrate vm from ", host_name, "to ", target_host.name
+        print("start live migrate vm from ", host_name, "to ", target_host.name)
         final_host = self.nova_client.liveMigrateVM(instance_id, target_host.name)
         return final_host
 
     def evacuate(self, instance, target_host, fail_node):
+        """
+
+        :param instance:
+        :param target_host:
+        :param fail_node:
+        :return:
+        """
         final_host = self.nova_client.evacuate(instance, target_host, fail_node)
         return final_host
 
     def getProtectedInstanceList(self):
+
         return self.instance_list
 
     def getProtectedInstanceListByNode(self, node):
+        """
+
+        :param node:
+        :return:
+        """
         ret = []
         for instance in self.instance_list:
             if instance.host == node.name:
@@ -285,15 +371,27 @@ class Cluster(ClusterInterface):
         return ret
 
     def successResult(self, message, data):
-        result = Response(code="succeed",
-                          message=message,
-                          data=data)
+        """
+
+        :param message:
+        :param data:
+        :return:
+        """
+        result = Response(code = "succeed",
+                          message = message,
+                          data = data)
         return result
 
     def failResult(self, message, data):
-        result = Response(code="failed",
-                          message=message,
-                          data=data)
+        """
+
+        :param message:
+        :param data:
+        :return:
+        """
+        result = Response(code = "failed",
+                          message = message,
+                          data = data)
         return result
 
 
@@ -336,7 +434,7 @@ if __name__ == "__main__":
             except Exception as e:
                 print "Cluster--_checkInstance-exception--" + str(e)
                 return False
-        cluster.addInstance
+        cluster.add_instance
     
     def findNodeByInstance(self, instance_id):
         for node in self.node_list:
@@ -362,7 +460,8 @@ if __name__ == "__main__":
         for instance in self.instance_list[:]:
             if instance.id == instance_id:
                 return True
-        message = "this instance is  already in the cluster. Instance id is %s. cluster id is %s .instance list is %s" % (
+        message = "this instance is  already in the cluster. Instance id is %s. cluster id is %s .instance list is 
+        %s" % (
             instance_id, self.id, self.instance_list)
         logging.error(message)
         return False

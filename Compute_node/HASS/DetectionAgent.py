@@ -28,7 +28,7 @@ dir = os.path.dirname(log_file_name)
 if not os.path.exists(dir):
     os.makedirs(dir)
 FORMAT = "%(asctime)s [%(levelname)s] : %(message)s"
-logging.basicConfig(filename=log_file_name, level=log_level, format=FORMAT)
+logging.basicConfig(filename = log_file_name, level = log_level, format = FORMAT)
 
 
 def main():

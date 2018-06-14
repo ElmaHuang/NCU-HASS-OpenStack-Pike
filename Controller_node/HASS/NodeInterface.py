@@ -1,3 +1,4 @@
+# coding=utf-8
 #########################################################
 #:Date: 2017/12/13
 #:Version: 1
@@ -31,6 +32,7 @@ class NodeInterface(object):
         self.initDetectionThread()
 
     def initDetectionThread(self):
+
         config = ConfigParser.RawConfigParser()
         config.read('hass.conf')
 
@@ -61,6 +63,7 @@ class NodeInterface(object):
             return True
         except Exception as e:
             # host is power off
+            # noinspection PyCompatibility
             print str(e)
             return False
 

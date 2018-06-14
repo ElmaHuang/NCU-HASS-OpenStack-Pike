@@ -11,6 +11,8 @@
 ##########################################################
 
 
+from __future__ import print_function
+
 import ConfigParser
 import logging
 import threading
@@ -35,28 +37,29 @@ class DetectionThread(threading.Thread):
         self.function_map = [self.detector.checkPowerStatus, self.detector.checkOSStatus,
                              self.detector.checkNetworkStatus, self.detector.checkServiceStatus]
         self.authUrl = "http://" + self.config.get("rpc", "rpc_username") + ":" + self.config.get("rpc",
-                                                                                                  "rpc_password") + "@127.0.0.1:" + self.config.get(
+                                                                                                  "rpc_password") + \
+                       "@127.0.0.1:" + self.config.get(
             "rpc", "rpc_bind_port")
         self.server = xmlrpclib.ServerProxy(self.authUrl)
 
     def run(self):
         while not self.loop_exit:
             state = self.detect()
-            print "[" + self.node.name + "] " + state
+            print("[" + self.node.name + "] " + state)
 
             if state != State.HEALTH:
                 logging.error("[" + self.node.name + "] " + state)
                 try:
                     recover_success = self.server.recover(state, self.cluster_id, self.node.name)
                     if recover_success:  # recover success
-                        print "recover success"
+                        print("recover success")
                         self.detector.connect()
                     else:  # recover fail(False) or get cluster fail(none)
-                        print "recover fail delete node %s from the cluster" % self.node.name
+                        print("recover fail delete node %s from the cluster" % self.node.name)
                         self.server.deleteNode(self.cluster_id, self.node.name)
                         self.stop()
                 except Exception as e:
-                    print "Exception : " + str(e)
+                    print("Exception : " + str(e))
                     self.stop()
                 self.server.updateDB()
             time.sleep(self.polling_interval)
@@ -77,6 +80,11 @@ class DetectionThread(threading.Thread):
         return State.HEALTH
 
     def verify(self, func):
+        """
+
+        :param func:
+        :return:
+        """
         index = self.function_map.index(func)
         cloned_function_map = self.function_map[:]  # clone from function map
         cloned_function_map = cloned_function_map[0:index + 1]  # remove uneeded detection function
@@ -102,7 +110,8 @@ if __name__ == "__main__":
     config = ConfigParser.RawConfigParser()
     config.read('hass.conf')
     authUrl = "http://" + config.get("rpc", "rpc_username") + ":" + config.get("rpc",
-                                                                               "rpc_password") + "@127.0.0.1:" + config.get(
+                                                                               "rpc_password") + "@127.0.0.1:" \
+              + config.get(
         "rpc", "rpc_bind_port")
     server = xmlrpclib.ServerProxy(authUrl)
 

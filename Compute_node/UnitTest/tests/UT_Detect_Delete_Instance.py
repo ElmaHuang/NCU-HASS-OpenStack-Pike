@@ -9,9 +9,13 @@ not_exist_vm = ""
 
 
 def run():
+    """
+
+    :return: 
+    """
     try:
-        crash_event = instance_thread.transformDetailToString(fail_index[0], fail_index[1])
-        recover = instance_thread._findfailure(crash_event, not_exist_vm)
+        crash_event = instance_thread.transform_detail_to_string(fail_index[0], fail_index[1])
+        recover = instance_thread._find_failure(crash_event, not_exist_vm)
         if recover == "Delete":
             print "detect delete vm successfully"
             return True

@@ -10,10 +10,14 @@ instance = ['4ae736be-0247-4a19-be24-5f46ca7e2920', u'instance-unit-test', u'com
 
 
 def run():
+    """
+
+    :return: 
+    """
     HAInstance.init()
     try:
-        HAInstance.addInstance(CLUSTER_ID, instance)
-        instance_list = HAInstance.getInstanceList()
+        HAInstance.add_instance(CLUSTER_ID, instance)
+        instance_list = HAInstance.get_instance_list()
         if len(instance_list) == 1:
             return True
         else:
