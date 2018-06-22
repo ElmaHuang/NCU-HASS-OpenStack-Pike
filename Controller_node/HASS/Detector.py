@@ -56,11 +56,12 @@ class Detector(object):
                 network_fail = False
             except Exception as e:
                 logging.error("transient network fail" + str(e))
-                fail = True
+                network_fail = True
                 pass
             finally:
                 time.sleep(1)
                 heartbeat_time -= 1
+        # print("network detection state:", network_fail)
         if not network_fail:
             return State.HEALTH
         return State.NETWORK_FAIL
@@ -106,7 +107,7 @@ class Detector(object):
     def checkSensorStatusByConfig(self):
         if not self.ipmi_status:
             return State.HEALTH
-        print("get hass sensor setting:", time.time())
+        # print("get hass sensor setting:", time.time())
         status = self.ipmi_manager.getSensorStatusByConfig(self.node)
         if status == "OK":
             return State.HEALTH
