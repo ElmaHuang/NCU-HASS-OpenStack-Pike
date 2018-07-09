@@ -124,7 +124,9 @@ class Cluster(ClusterInterface):
                 # Live migration VM to cluster node
                 final_host = self.checkInstanceHost(instance_id)
                 if final_host == None:
-                    final_host = self.liveMigrateInstance(instance_id)
+                    return Response(code="failed",
+                                    message="instance host not in the cluster",
+                                    data=None)
                 instance = Instance(id=instance_id,
                                     name=self.nova_client.getInstanceName(instance_id),
                                     host=final_host,

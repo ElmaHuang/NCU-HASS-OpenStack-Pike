@@ -120,7 +120,6 @@ class DatabaseManager(object):
             self.closeDB()
             logging.error("Hass AccessDB - Read data failed (MySQL Error: %s)", str(e))
             print "MySQL Error: %s" % str(e)
-            sys.exit(1)
 
     def syncToDB(self, cluster_list):
         self.checkDB()
@@ -146,7 +145,6 @@ class DatabaseManager(object):
             self.closeDB()
             logging.error("Hass database manager - sync data failed (MySQL Error: %s)", str(e))
             print "MySQL Error: %s" % str(e)
-            sys.exit(1)
 
     def writeDB(self, dbName, data):
         self.checkDB()

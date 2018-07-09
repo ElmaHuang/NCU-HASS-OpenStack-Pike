@@ -21,6 +21,7 @@ import ConfigParser
 import time
 import subprocess
 import datetime
+from RESTClient import RESTClient
 
 
 class RecoveryManager(object):
@@ -33,6 +34,7 @@ class RecoveryManager(object):
                                  State.POWER_FAIL: self.recoverPowerOff,
                                  State.SENSOR_FAIL: self.recoverSensorCritical,
                                  State.OS_FAIL: self.recoverOSHanged}
+        self.rest_client = RESTClient.getInstance()
 
         self.iii_support = self.config.getboolean("iii", "iii_support")
         self.iii_database = None
@@ -141,12 +143,7 @@ class RecoveryManager(object):
 
 
         if not status:  # restart service fail
-            print "start recovery"
-            print "fail node is %s" % fail_node.name
-            print "start recovery vm"
-            self.recoverVM(cluster, fail_node)
-            print "end recovery vm"
-            return self.recoverNodeByReboot(fail_node)
+            return rest_client.send_recover_service_failed(fail_node, fail_services)
         else:
             return status  # restart service success
 

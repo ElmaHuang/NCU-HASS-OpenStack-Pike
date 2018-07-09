@@ -15,6 +15,11 @@ openstack_password = config.get("openstack", "openstack_admin_password")
 REST_host = config.get("RESTful","host")
 REST_port = int(config.get("RESTful","port"))
 
+iserv_user = config.get("iii","user_name")
+iserv_password = config.get("iii","password")
+iserv_enterprise = config.get("iii", "enterprise")
+iserv_port = int(config.get("iii", "port"))
+
 class Authenticator(object):
   def __init__(self):
     self.access_token = self.init_access_token()
@@ -43,6 +48,21 @@ class Authenticator(object):
       self.refresh_access_token()
       logging.info("token refresh %s" % self.access_token)
     return self.access_token
+
+  def get_iserv_token(self):
+    try:
+      data = {}
+      headers = {}
+      data["userAccount"] = iserv_user
+      data["password"] = iserv_password
+      data["enterpriseName"] = iserv_enterprise
+      http_client = httplib.HTTPConnection(REST_host, iserv_port, timeout=30)
+      http_client.request("POST", "/iServCloud/users/tokens", body=data, headers=headers)
+      return json.loads(http_client.getresponse().read())["DATA"]["token"]
+    except Exception as e:
+      logging.error(str(e))
+    finally:
+      http_client.close()
 
   def is_token_valid(self, token):
     if not token:

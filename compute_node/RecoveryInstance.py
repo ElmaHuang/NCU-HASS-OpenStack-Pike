@@ -110,12 +110,13 @@ class RecoveryInstance(object):
             print (target_host)
             cluster_list = self.server.list_cluster()["data"]
             for cluster in cluster_list:
-                node_list = self.server.list_node(cluster["cluster_id"])["data"]["nodeList"]
-                for node in node_list:
-                    if target_host in node["node_name"]:
-                        print ("recover %s by update controller's data" % fail_instance_name)
-                        self.server.update_all_cluster()
-                        return True
+                if cluster["cluster_id"] == instance.cluster_id:
+                    node_list = self.server.list_node(cluster["cluster_id"])["data"]["nodeList"]
+                    for node in node_list:
+                        if target_host in node["node_name"]:
+                            print ("recover %s by update controller's data" % fail_instance_name)
+                            self.server.update_all_cluster()
+                            return True
             print ("recover %s by delete instance" % fail_instance_name)
             result = self.server.delete_instance(instance.cluster_id, instance.id)
             if result["code"] == "succeed":
