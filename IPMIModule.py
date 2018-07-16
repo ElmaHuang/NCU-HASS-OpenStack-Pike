@@ -55,7 +55,7 @@ class IPMIManager(object):
             logging.error("IpmiModule rebootNode - %s" % e)
             # code = "1"
             code = "failed"
-            rest_client.send_ipmi_failed(node_name)
+            #rest_client.send_ipmi_failed(node_name)
         finally:
             # result = {"code":code, "node":node_name, "message":message}
             result = Response(code=code,
@@ -82,7 +82,7 @@ class IPMIManager(object):
             logging.error("IpmiModule startNode - %s" % e)
             # code = "1"
             code = "failed"
-            rest_client.send_ipmi_failed(node_name)
+            #rest_client.send_ipmi_failed(node_name)
         finally:
             # result = {"code":code, "node":node_name, "message":message}
             result = Response(code=code,
@@ -109,7 +109,7 @@ class IPMIManager(object):
             logging.error("IpmiModule shutOffNode - %s" % e)
             # code = "1"
             code = "failed"
-            rest_client.send_ipmi_failed(node_name)
+            #rest_client.send_ipmi_failed(node_name)
         finally:
             # result = {"code":code, "node":node_name, "message":message}
             result = Response(code=code,
@@ -209,7 +209,7 @@ class IPMIManager(object):
                 logging.error("IpmiModule getNodeInfo - %s" % e)
                 # code = "1"
                 code = "failed"
-                rest_client.send_ipmi_failed(node_name)
+               # rest_client.send_ipmi_failed(node_name)
         print result_list
         # result = {"code":code, "info":result_list,"message":message}
         result = Response(code=code,
@@ -315,7 +315,7 @@ class IPMIManager(object):
                 "IpmiModule getPowerStatus - The Compute Node %s's IPMI session can not be established. %s" % (
                     node_name, e))
             status = "IPMI_disable"
-            rest_client.send_ipmi_failed(node_name)
+            #rest_client.send_ipmi_failed(node_name)
         finally:
             return status
 

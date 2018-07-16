@@ -18,7 +18,7 @@ import ConfigParser
 import argparse
 import xmlrpclib
 import json
-import State
+import FailureType
 import prctl
 import datetime
 
@@ -46,7 +46,7 @@ class DetectionThread(threading.Thread):
             state = self.detect()
             print "[" + self.node.name + "] " + state
 
-            if state != State.HEALTH:
+            if state != FailureType.HEALTH:
                 print datetime.datetime.now()
                 logging.error("[" + self.node.name + "] " + state)
                 try:
@@ -69,13 +69,13 @@ class DetectionThread(threading.Thread):
 
     def detect(self):
         highest_level_check = self.function_map[-1]
-        if highest_level_check() != State.HEALTH:
+        if highest_level_check() != FailureType.HEALTH:
             state = self.verify(highest_level_check)
-            if state == State.HEALTH:
-                return State.HEALTH
+            if state == FailureType.HEALTH:
+                return FailureType.HEALTH
             else:
                 return state
-        return State.HEALTH
+        return FailureType.HEALTH
 
     def verify(self, func):
         index = self.function_map.index(func)
@@ -83,14 +83,14 @@ class DetectionThread(threading.Thread):
         cloned_function_map = cloned_function_map[0:index]  # remove uneeded detection function
         reversed_function_map = self._reverse(cloned_function_map)
 
-        fail = State.FAIL_LEVEL[index]
+        fail = FailureType.FAIL_LEVEL[index]
         for _ in reversed_function_map:
             state = _()
-            if state == State.HEALTH and _ == func:
-                return State.HEALTH
-            elif state == State.HEALTH:
+            if state == FailureType.HEALTH and _ == func:
+                return FailureType.HEALTH
+            elif state == FailureType.HEALTH:
                 return fail
-            elif not state == State.HEALTH:
+            elif not state == FailureType.HEALTH:
                 fail = state
         return fail
 
@@ -108,4 +108,4 @@ if __name__ == "__main__":
     # server = xmlrpclib.ServerProxy(authUrl)
 
     # server.test()
-    print State.FAIL_LEVEL[3]
+    print FailureType.FAIL_LEVEL[3]

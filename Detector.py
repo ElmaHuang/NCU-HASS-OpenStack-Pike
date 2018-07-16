@@ -13,7 +13,7 @@
 
 import socket
 import subprocess
-import State
+import FailureType
 import time
 import logging
 import ConfigParser
@@ -29,6 +29,7 @@ class Detector(object):
         self.sock = None
         self.config = ConfigParser.RawConfigParser()
         self.config.read('/etc/hass.conf')
+        self.max_message_size = int(self.config.get("default","max_message_size"))
         self.connect()
 
     def connect(self):
@@ -49,7 +50,7 @@ class Detector(object):
         network_fail_time = 0
         while heartbeat_time > 0:
             try:
-                response = subprocess.check_output(['timeout', '0.2', 'ping', '-c', '1', self.controller],
+                response = subprocess.check_output(['timeout', '0.2', 'ping', '-c', '1', self.node],
                                                    stderr=subprocess.STDOUT, universal_newlines=True)
             except Exception as e:
                 logging.error("network transient failure")
@@ -60,16 +61,16 @@ class Detector(object):
                 heartbeat_time -= 1
         heartbeat_time = int(self.config.get("default","heartbeat_time"))
         if network_fail_time == heartbeat_time:
-            return State.NETWORK_FAIL
-        return State.HEALTH
+            return FailureType.NETWORK_FAIL
+        return FailureType.HEALTH
 
     def checkServiceStatus(self):
         try:
             line = "polling request"
             self.sock.sendall(line)
-            data, addr = self.sock.recvfrom(1024)
+            data, addr = self.sock.recvfrom(self.max_message_size)
             if data == "OK":
-                return State.HEALTH
+                return FailureType.HEALTH
             elif "error" in data:
                 print data
                 print "[" + self.node + "]service Failed"
@@ -77,43 +78,43 @@ class Detector(object):
                 print "[" + self.node + "]no ACK"
             else:
                 print "[" + self.node + "]Receive:" + data
-            return State.SERVICE_FAIL
+            return FailureType.SERVICE_FAIL
         except Exception as e:
             logging.error(str(e))
             fail_services = "agents"
             print "[" + self.node + "] connection failed"
             self.sock.connect((self.node, self.port))
-            return State.SERVICE_FAIL
+            return FailureType.SERVICE_FAIL
 
     def checkPowerStatus(self):
         if not self.ipmi_status:
-            return State.HEALTH
+            return FailureType.HEALTH
         status = self.ipmi_manager.getPowerStatus(self.node)
         if status == "OK":
-            return State.HEALTH
-        return State.POWER_FAIL
+            return FailureType.HEALTH
+        return FailureType.POWER_FAIL
 
     def checkOSStatus(self):
         if not self.ipmi_status:
-            return State.HEALTH
+            return FailureType.HEALTH
         status = self.ipmi_manager.getOSStatus(self.node)
         if status == "OK":
-            return State.HEALTH
-        return State.OS_FAIL
+            return FailureType.HEALTH
+        return FailureType.OS_FAIL
 
     def checkSensorStatus(self):
         if not self.ipmi_status:
-            return State.HEALTH
+            return FailureType.HEALTH
         status = self.ipmi_manager.getSensorStatus(self.node) 
         if status == "OK":
-            return State.HEALTH
-        return State.SENSOR_FAIL
+            return FailureType.HEALTH
+        return FailureType.SENSOR_FAIL
 
     def getFailServices(self):
         try:
             line = "polling request"
             self.sock.sendall(line)
-            data, addr = self.sock.recvfrom(1024)
+            data, addr = self.sock.recvfrom(self.max_message_size)
             if data != "OK":
                 return data
         except Exception as e:

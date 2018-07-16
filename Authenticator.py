@@ -56,6 +56,7 @@ class Authenticator(object):
       data["userAccount"] = iserv_user
       data["password"] = iserv_password
       data["enterpriseName"] = iserv_enterprise
+      data = json.dumps(data)
       http_client = httplib.HTTPConnection(REST_host, iserv_port, timeout=30)
       http_client.request("POST", "/iServCloud/users/tokens", body=data, headers=headers)
       return json.loads(http_client.getresponse().read())["DATA"]["token"]
@@ -83,3 +84,7 @@ class Authenticator(object):
     finally:
       if http_client:
         http_client.close()
+
+if __name__ == '__main__':
+  a = Authenticator()
+  print a.get_iserv_token()

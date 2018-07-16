@@ -27,7 +27,7 @@ class NovaClient(object):
     def __init__(self):
         self.config = ConfigParser.RawConfigParser()
         self.config.read('/etc/hass.conf')
-        self.version = self.config.get("openstack_version", "version")
+        self.openstack_version = self.config.get("version", "openstack_version")
         if NovaClient._instance != None:
             raise Exception("This class is a singleton! , cannot initialize twice")
         else:
@@ -53,7 +53,7 @@ class NovaClient(object):
                            user_domain_name=self.config.get("openstack", "openstack_user_domain_id"),
                            project_domain_name=self.config.get("openstack", "openstack_project_domain_id"))
         sess = session.Session(auth=auth)
-        if self.version == "mitaka":
+        if self.openstack_version == "mitaka":
             novaClient = client.Client(2.25, session=sess)
         else:
             novaClient = client.Client(2.29, session=sess)
@@ -153,10 +153,10 @@ class NovaClient(object):
     def evacuate(self, instance, target_host, fail_node):
         self.novaServiceDown(fail_node)
         openstack_instance = self.getVM(instance.id)
-        if self.version == "16":
-            NovaClient._helper.servers.evacuate(openstack_instance, target_host.name, force=True)
-        else:
+        if self.openstack_version == "mitaka":
             NovaClient._helper.servers.evacuate(openstack_instance, target_host.name)
+        else:
+            NovaClient._helper.servers.evacuate(openstack_instance, target_host.name, force=True)
         self.novaServiceUp(fail_node)
 
 

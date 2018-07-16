@@ -73,12 +73,12 @@ class RESTClient(object):
 		return self._get_HASS_response("/HASS/api/updateDB", "GET")
 
 	def send_recover_service_failed(self, node, service):
-		subject = "recover service failed"
+		subject = "HASS recover service failed"
 		data = "recover %s %s failed" % (node.name, service)
 		response = self.send_iservcloud_notification(subject, data)
-		if response["RESULT"] == "1":
-			return True
-		return False
+		if response["RESULT"] == 1:
+			return False
+		return True
 
 	def send_ipmi_failed(self, node):
 		subject = "ipmi opereation failed"
@@ -87,11 +87,12 @@ class RESTClient(object):
 
 	def send_iservcloud_notification(self, subject, content):
 		data = {}	
-		data["notification_type"] = "1"
-		data["bulletin_type"] = "1"
+		data["notification_type"] = 1
+		data["bulletin_type"] = 3
 		data["subject"] = subject
 		data["content"] = content
-		data["receiver_userid"] = "3"
+		data["publisher_userid"] = 4
+		data["receiver_userid"] = 3
 		return self._get_iservcloud_response("/iServCloud/SendNotification", "POST", data)
 
 	def _get_HASS_response(self, endpoint, method, data=None):
@@ -106,8 +107,7 @@ class RESTClient(object):
 
 	def _get_iservcloud_response(self, endpoint, method, data=None):
 		try:
-			headers = {'Content-Type' : 'application/json',
-					   'iServ-Token' : self.authenticator.get_iserv_token()}
+			headers = {'Content-Type' : 'application/json'}
 			return  self._get_response(REST_host, iServCloud_port, endpoint, method, headers, data)
 		except Exception as e:
 			print str(e)
@@ -125,4 +125,4 @@ class RESTClient(object):
 
 if __name__ == '__main__':
 	a = RESTClient.getInstance()
-	print a.list_node("23")
+	print a.send_iservcloud_notification("xxx","ggg")
