@@ -87,20 +87,22 @@ class RecoveryManager(object):
 
         network_transient_time = int(self.config.get("default", "network_transient_time"))
         second_chance = FailureType.HEALTH
-        try:
-            print "start second_chance..."
-            print "wait %s seconds and check again" % network_transient_time
-            time.sleep(network_transient_time)  # sleep certain transient seconds and ping host again
-            response = subprocess.check_output(['timeout', '0.2', 'ping', '-c', '1', fail_node.name],
+        while network_transient_time > 0:
+            try:
+                subprocess.check_output(['timeout', '0.2', 'ping', '-c', '1', fail_node.name],
                                                stderr=subprocess.STDOUT, universal_newlines=True)
-        except subprocess.CalledProcessError:
-            print "After 30 senconds, the network status of %s is still unreachable" % fail_node.name
-            second_chance = FailureType.NETWORK_FAIL
-
+                second_chance = FailureType.HEALTH
+                break
+            except subprocess.CalledProcessError:
+                print "network unreachable for %s" % fail_node_name
+                network_transient_time -= 1
+                time.sleep(1)
+                second_chance = FailureType.NETWORK_FAIL
         if second_chance == FailureType.HEALTH:
             print "The network status of %s return to health" % fail_node.name
             return True
         else:
+            print "after 30 seconds, network still unreachable, start recovery."
             print "fail node is %s" % fail_node.name
             print "start recovery vm"
             self.recoverVM(cluster, fail_node)
@@ -198,7 +200,7 @@ class RecoveryManager(object):
         cluster.updateInstance()
 
         if self.iii_support:
-            self.iii.update_iii_database(protected_instance_list)
+            self.iii.update_iii_database(protected_instance_list, target_host, fail_node)
             
 
     def recoverNodeByReboot(self, fail_node):
