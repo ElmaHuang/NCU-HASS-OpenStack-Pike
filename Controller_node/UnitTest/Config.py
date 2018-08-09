@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 HASS_LISTENPORT = 61209
-RPC_AUTH_URL = "http://user:0928759204@127.0.0.1:61209"
+RPC_AUTH_URL = "http://user:openstack1234!@127.0.0.1:61209"
 INSTANCE_NAME = "unit_test"
 IMAGE_ID = "66e04c13-646c-4470-a4ba-26160a6e076d"  # cirror
 HOST = "compute2"
