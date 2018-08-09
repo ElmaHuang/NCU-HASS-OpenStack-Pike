@@ -51,7 +51,7 @@ class InstanceFailure(threading.Thread):
                                                           self._check_vm_watchdog, None)
                 # Adds a callback to receive notifications of arbitrary domain events occurring on a domain.
                 while True:
-                    # self._check_network()
+                    self._check_network()
                     time.sleep(5)
                     if not self.check_libvirt_connect(libvirt_connection):  # 1 if alive, 0 if dead, -1 on error
                         break

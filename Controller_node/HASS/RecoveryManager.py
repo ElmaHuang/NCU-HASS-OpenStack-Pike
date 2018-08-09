@@ -71,11 +71,11 @@ class RecoveryManager(object):
         finish_os_recover_vm = time.time()
         print("vm recovery time : %s" % str(finish_os_recover_vm - start_os_recover_vm))
         print("end recovery vm")
-        return self.recoverNodeByReboot(fail_node)
-        # temp = self.recoverNodeByReboot(fail_node)
-        # start_os_recover_host = time.time()
-        # print("host recovery time : %s" % str(start_os_recover_host - finish_os_recover_vm))
-        # return temp
+        # return self.recoverNodeByReboot(fail_node)
+        temp = self.recoverNodeByReboot(fail_node)
+        start_os_recover_host = time.time()
+        print("host recovery time : %s" % str(start_os_recover_host - finish_os_recover_vm))
+        return temp
 
     def recoverPowerOff(self, cluster_id, fail_node_name):
         """
@@ -98,11 +98,11 @@ class RecoveryManager(object):
         finish_power_recover_vm = time.time()
         print("vm recovery time : %s" % str(finish_power_recover_vm - start_power_recover_vm))
         print("end recovery vm")
-        return self.recoverNodeByStart(fail_node)
-        # temp = self.recoverNodeByStart(fail_node)
-        # finish_power_recover_host = time.time()
-        # print("host recovery time : %s" % str(finish_power_recover_host - finish_power_recover_vm))
-        # return temp
+        # return self.recoverNodeByStart(fail_node)
+        temp = self.recoverNodeByStart(fail_node)
+        finish_power_recover_host = time.time()
+        print("host recovery time : %s" % str(finish_power_recover_host - finish_power_recover_vm))
+        return temp
 
     def recoverNetworkIsolation(self, cluster_id, fail_node_name):
         """
@@ -136,18 +136,18 @@ class RecoveryManager(object):
             return True
         else:
             print("fail node is %s" % fail_node.name)
-            print("start recovery vm")
+            start_net_recover_vm = time.time()
+            print("start recovery vm", start_net_recover_vm)
             self.recoverVMByEvacuate(cluster, fail_node)
             finish_net_recover_vm = time.time()
-            print("host recovery time : %s" % str(finish_net_recover_vm - start_net_recover_vm))
-
+            print("vm recovery time : %s" % str(finish_net_recover_vm - start_net_recover_vm))
             print("end recovery vm")
-            return self.recoverNodeByReboot(fail_node)
-            # start_net_recover_host = time.time()
-            # temp = self.recoverNodeByReboot(fail_node)
-            # finish_net_recover_host = time.time()
-            # print("host recovery time : %s" % str(finish_net_recover_host - start_net_recover_host))
-            # return temp
+            # return self.recoverNodeByReboot(fail_node)
+            start_net_recover_host = time.time()
+            temp = self.recoverNodeByReboot(fail_node)
+            finish_net_recover_host = time.time()
+            print("host recovery time : %s" % str(finish_net_recover_host - start_net_recover_host))
+            return temp
 
     def recoverSensorCritical(self, cluster_id, fail_node_name):
         """
@@ -163,8 +163,8 @@ class RecoveryManager(object):
         fail_node = cluster.getNodeByName(fail_node_name)
         print("fail node is %s" % fail_node.name)
         print("start recovery vm")
-        # self.recoverVMByEvacuate(cluster, fail_node)
-        self.recoverVMByLiveMigrate(cluster, fail_node)
+        self.recoverVMByEvacuate(cluster, fail_node)
+        # self.recoverVMByLiveMigrate(cluster, fail_node)
         print("end evacuate vm")
         return self.recoverNodeByShutoff(fail_node)
 
@@ -181,13 +181,15 @@ class RecoveryManager(object):
             logging.error("RecoverManager : cluster not found")
             return
         fail_node = cluster.getNodeByName(fail_node_name)
-        print("start live migration vm:", time.time())
+        print("start recover vm:", time.time())
         self.recoverVMByLiveMigrate(cluster, fail_node)
-        print("end live migrate vm and start reboot host", time.time())
-        return self.recoverNodeByReboot(fail_node)
-        # temp = self.recoverNodeByReboot(fail_node)
-        # print("finish recover host:", time.time())
-        # return temp
+        # self.recoverVMByEvacuate(cluster, fail_node) # test
+        print("end recover vm and start reboot host", time.time())
+        # return self.recoverNodeByReboot(fail_node)
+        temp = self.recoverNodeByReboot(fail_node)
+        print("finish recover host:", time.time())
+        return temp
+        # return True
 
     def recoverServiceFail(self, cluster_id, fail_node_name):
         """
@@ -274,8 +276,9 @@ class RecoveryManager(object):
             except Exception as e:
                 print("RecoveryManager recoverVMByLiveMigrate --Except:" + str(e))
                 logging.error("RecoverManager - The instance %s live migrate failed" % instance.id)
-            print("update instance")
-            cluster.updateInstance()
+            finally:
+                print("update instance")
+                cluster.updateInstance()
 
     def recoverVMByEvacuate(self, cluster, fail_node):
         """
@@ -284,7 +287,7 @@ class RecoveryManager(object):
         :param fail_node: 
         :return: 
         """
-        start_power_recover_vm = time.time()
+        # start_power_recover_vm = time.time()
         if len(cluster.node_list) < 2:
             message = "RecoverManager : evacuate fail, cluster only one node"
             print(message)
@@ -319,6 +322,7 @@ class RecoveryManager(object):
                     print("evacuate success")
                     print("check instance network status")
                     status = self.checkInstanceNetworkStatus(fail_node, cluster)
+                    print("network status:", status)
                     if not status:
                         logging.error("RecoverManager : check vm network status false")
                     ping_vm = time.time()
@@ -326,8 +330,9 @@ class RecoveryManager(object):
             except Exception as e:
                 print("RecoveryManager recoverVMByEvacuate --Except:" + str(e))
                 logging.error("RecoverManager - The instance %s evacuate failed" % instance.id)
-            print("update instance")
-            cluster.updateInstance()
+            finally:
+                print("update instance")
+                cluster.updateInstance()
 
         if self.iii_support:
             self.iii_database = IIIDatabaseManager()
