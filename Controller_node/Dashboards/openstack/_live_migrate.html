@@ -1,0 +1,21 @@
+<!--/usr/share/openstack-dashboard/openstack_dashboard/dashboards/admin/instances/templates/instances/_live_migrate.html-->
+{% extends "horizon/common/_modal_form.html" %}
+{% load i18n %}
+
+{% block form_id %}live_migrate_form{% endblock %}
+{% block form_action %}{% url 'horizon:admin:instances:live_migrate' instance_id %}{% endblock %}
+
+{% block modal-header %}{% trans "Live Migrate" %}{% endblock %}
+
+{% block modal-body %}
+<div class="left">
+    <fieldset>
+        {% include "horizon/common/_form_fields.html" %}
+    </fieldset>
+</div>
+<div class="right">
+    <h3>{% trans "Description:" %}</h3>
+    <p>{% trans "Live migrate an instance to a specific host." %}</p>
+    <p>{% trans "If the 'New Host' which you choose is not in the HA Cluster, it will cancel the protection" %}</p>
+</div>
+{% endblock %}

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="PublishConfigData" serverName="openstack_newton_compute" compareModeInSync="TEXT">
+    <serverData>
+      <paths name="Copy of project-level server 'openstack_pike_controller'">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/HASS" local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="openstack_newton_compute">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/MOST" local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="openstack_newton_controller">
+        <serverdata>
+          <mappings>
+            <mapping local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="openstack_pike_compute2">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/HASS" local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="openstack_pike_controller">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/HASS" local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+    </serverData>
+  </component>
+</project>

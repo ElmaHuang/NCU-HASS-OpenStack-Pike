@@ -1,0 +1,14 @@
+[Unit]
+Description=DetectionAgent
+After=libvirt-bin.service
+
+[Service]
+ExecStart=/home/compute2/Desktop/HASS/Compute_node/HASS/start_agent.sh
+
+[Install]
+WantedBy=multi-user.target
+
+#1.put into /etc/systemd/system/
+#2.sudo systemctl daemon-reload
+#3.systemctl start detectionaget
+#4.systemctl enable detectionaget
